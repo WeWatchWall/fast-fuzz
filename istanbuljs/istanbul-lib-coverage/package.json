@@ -1,0 +1,32 @@
+{
+  "name": "istanbul-lib-coverage",
+  "version": "3.1.0",
+  "description": "Data library for istanbul coverage objects",
+  "author": "Krishnan Anantheswaran <kananthmail-github@yahoo.com>",
+  "main": "index.js",
+  "files": [
+    "lib",
+    "index.js"
+  ],
+  "scripts": {
+    "test": "nyc mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/istanbuljs/istanbuljs.git",
+    "directory": "packages/istanbul-lib-coverage"
+  },
+  "keywords": [
+    "istanbul",
+    "coverage",
+    "data"
+  ],
+  "license": "BSD-3-Clause",
+  "bugs": {
+    "url": "https://github.com/istanbuljs/istanbuljs/issues"
+  },
+  "homepage": "https://istanbul.js.org/",
+  "engines": {
+    "node": ">=8"
+  }
+}
