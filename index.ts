@@ -5,8 +5,8 @@ import { diff } from 'deep-object-diff';
 import { createInstrumenter } from 'istanbul-lib-instrument';
 import { hookRequire } from 'istanbul-lib-hook';
 
-const instrumenter = createInstrumenter({compact: true});
-// @ts-ignore
+const instrumenter = createInstrumenter({ compact: true });
+
 hookRequire((filePath) => true, (code, {filename}) => {
     const newCode = instrumenter.instrumentSync(code, filename);
     return newCode;
@@ -18,7 +18,9 @@ const makeArbitrary = function (schema, mode = -1, literals = null) {
     return fc.falsy();
   } else if (typeof schema === 'string' && Object.prototype.toString.call(schema) === '[object String]') {
     let obj;
-    try { obj = JSON.parse(schema); } catch { }
+    try { obj = JSON.parse(schema); } catch {
+      // Just generate falsy.
+    }
     if (!obj || !obj.type) {
       return fc.constant(schema);
     } else if (obj.type === 'bool' || obj.type === 'boolean') {
@@ -91,13 +93,13 @@ const makeArbitrary = function (schema, mode = -1, literals = null) {
     }
   } else if (Array.isArray(schema)) {
     // Recurse on elements and return wrapped with tuple.
-    let result = [];
+    const result = [];
     for (const element of schema) {
       result.push(makeArbitrary(element, mode, literals));
     }
     return fc.tuple(...result);
   } else if (typeof schema === 'object') {
-    let result = {};
+    const result = {};
     for (const key in schema) {
       result[key] = makeArbitrary(schema[key], mode, literals);
     }
@@ -112,7 +114,7 @@ const makeArbitrary = function (schema, mode = -1, literals = null) {
 // Organizes the literals by type and calculates their boundaries.
 const getLiterals = function (literals) {
   // Init.
-  let result = {
+  const result = {
     date: { values: [], max: undefined, min: undefined },
     int: { values: [], max: undefined, min: undefined },
     float: { values: [], max: undefined, min: undefined },
@@ -208,16 +210,16 @@ module.exports.fastFuzz = function (filePath, methodName = null, parameterSchema
     testFunc = testFunc[methodName];
   }
 
-  var litResult = getLiterals(literals);
+  const litResult = getLiterals(literals);
 
   // Track progress.
-  var covResults = new Set();
-  var results = [];
+  const covResults = new Set();
+  const results = [];
 
   // Expand and repeat the fuzz area.
   const maxMode = 4;
-  var numResults = 1;
-  for (var mode = 0; mode <= maxMode; mode++) {
+  let numResults = 1;
+  for (let mode = 0; mode <= maxMode; mode++) {
     // Vary the number of runs based on target area.
     let maxRunsLocal;
     if (mode == 0) {
@@ -229,26 +231,28 @@ module.exports.fastFuzz = function (filePath, methodName = null, parameterSchema
     }
     
     // Use the full range after growth.
-    let arbitrary = makeArbitrary(parameterSchema, mode === maxMode ? -1 : mode, litResult);
+    const arbitrary = makeArbitrary(parameterSchema, mode === maxMode ? -1 : mode, litResult);
     
     // Store coverage pointer for the sake of performance.
-    var fileCoverage = {
+    const fileCoverage = {
       b: global.__coverage__[filePath].b,
       bT: global.__coverage__[filePath].bT
     };
 
     // Run the tests.
-    var numRuns = 0;
-    var start = new Date().getTime();
-    var isExpired = false;
+    let numRuns = 0;
+    const start = new Date().getTime();
+    let isExpired = false;
     try {
       fc.assert(fc.property(arbitrary.filter(args => {
           if (numRuns % 1e3 == 0) { isExpired = new Date().getTime() - start > maxTime; }
           if (isExpired || numRuns++ > maxRunsLocal) { throw new Error("Test run aborted."); }
           
-          let covBefore = copy(fileCoverage);
+          const covBefore = copy(fileCoverage);
           
-          try { testFunc(args); } catch { }
+          try { testFunc(args); } catch { 
+            // Will get caught when running the test and saved in the result.
+          }
           
           // Hash difference between coverage.
           let covDiff = JSON.stringify({
@@ -258,12 +262,12 @@ module.exports.fastFuzz = function (filePath, methodName = null, parameterSchema
             bT: diff(covBefore === null || covBefore === void 0 ? void 0 : covBefore.bT, fileCoverage.bT)
           });
           covDiff = covDiff.replace(/:\d+/g, ":1");
-          let covHash = simpleHash(covDiff);
+          const covHash = simpleHash(covDiff);
           
           // Track coverage history.
           if (covResults.has(covHash)) { return false; }
           covResults.add(covHash);
-          let tempRuns = numRuns;
+          const tempRuns = numRuns;
           numRuns = 0;
 
           if (!verbose) { return true; }
@@ -285,12 +289,12 @@ module.exports.fastFuzz = function (filePath, methodName = null, parameterSchema
           } catch (error) {
             result = error;
           }
-          let argResult = {
+          const argResult = {
             arg: arg,
             result: result
           };
           results.push(argResult);
-          if (verbose) { console.log(`${numResults++} ${JSON.stringify(argResult)}`) };
+          if (verbose) { console.log(`${numResults++} ${JSON.stringify(argResult)}`) }
 
           // Keep running.
           return true;
@@ -302,10 +306,11 @@ module.exports.fastFuzz = function (filePath, methodName = null, parameterSchema
         ignoreEqualValues: true // true
       });
     } catch {
+      // Ignore self-generated exceptions for exiting the test loop.
     }
   }
 
-  let coverage = copy(global.__coverage__);
+  const coverage = copy(global.__coverage__);
 
   if (reset) {
     resetCoverage(filePath);
