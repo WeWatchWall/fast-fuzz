@@ -117,8 +117,8 @@ The verbose mode outputs this:
             "0": 1
         }
     },
-    "bT": {                 // Logical conditions satisfied by this test. (Ammended IstanbulJS with logical evaluation)
-        "6": {
+    "bT": {                 // Logical conditions satisfied by this test.
+        "6": {              // (Ammended IstanbulJS with logical evaluation.)
             "0": 1
         }
     }
