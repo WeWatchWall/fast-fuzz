@@ -49,7 +49,7 @@ let result = fastFuzz(
       '{"type":"bool"}',
       '{"type":"int","min":0}'
     ],
-    [69366, 42808, 5, 26, new Date()],                // Literals/Constants for Stuffing Arguments [Optional]
+    [69366, 42808, 5, 26, new Date()],    // Literals/Constants for Stuffing Arguments [Optional]
     1e4,                                  // Time Limit [Optional]
     5e7,                                  // Iterations Limit [Optional]
     true,                                 // Reset Coverage [Optional]
