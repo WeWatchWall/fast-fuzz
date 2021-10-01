@@ -1,4 +1,4 @@
-const { classes } = require('istanbul-lib-coverage');
+const { classes } = require('../../istanbul-lib-coverage/index');
 
 function cloneLocation(loc) {
     return {
