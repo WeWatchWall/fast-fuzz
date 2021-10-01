@@ -49,7 +49,7 @@ let result = fastFuzz(
       '{"type":"bool"}',
       '{"type":"int","min":0}'
     ],
-    [69366, 42808, 5, 26],                // Literals/Constants for Stuffing Arguments [Optional]
+    [69366, 42808, 5, 26, new Date()],                // Literals/Constants for Stuffing Arguments [Optional]
     1e4,                                  // Time Limit [Optional]
     5e7,                                  // Iterations Limit [Optional]
     true,                                 // Reset Coverage [Optional]
@@ -68,7 +68,7 @@ Parameters:
   - ```'{"type":"bool | boolean"}'``` Generates a random boolean.
   - ```'{"type":"int | integer", "min":0, "max":16}'``` Generates a random integer. Min and max are optional.
   - ```'{"type":"float | number", "min":0, "max":1.6}'``` Generates a random floating point number. Min and max are optional.
-  - ```'{"type":"date", "min":new Date().getTime(), "max":new Date().getTime()}'``` Generates a random date. Min and max are optional, expressed in milliseconds.
+  - ```'{"type":"date", "min":1633103400000, "max":1633103446168}'``` Generates a random date. Min and max are optional, expressed in milliseconds.
   - ```'{"type":"string", "min":0, "max":16}'``` Generates a random string. Min and max are optional, represents the length.
   - ```null```  Generates a random falsy value.
   - Any other value that is not one of the above, object, or array, will be treated as a constant object.
