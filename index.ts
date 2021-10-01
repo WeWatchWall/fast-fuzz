@@ -254,8 +254,8 @@ module.exports.fastFuzz = function (filePath, methodName = null, parameterSchema
           let covDiff = JSON.stringify({
             // f: diff(fileCoverageBefore?.f, fileCoverage.f),
             // s: diff(fileCoverageBefore?.s, fileCoverage.s),
-            b: diff(covBefore?.b, fileCoverage.b),
-            bT: diff(covBefore?.bT, fileCoverage.bT)
+            b: diff(covBefore === null || covBefore === void 0 ? void 0 : covBefore.b, fileCoverage.b),
+            bT: diff(covBefore === null || covBefore === void 0 ? void 0 : covBefore.bT, fileCoverage.bT)
           });
           covDiff = covDiff.replace(/:\d+/g, ":1");
           let covHash = simpleHash(covDiff);

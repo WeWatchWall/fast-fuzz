@@ -37,7 +37,7 @@ describe('Simple literal fuzzing.', function () {
         '{"type":"int"}'
       ],
       ['Bob', 'Alice', 220, 100, 70],
-      3e4,
+      4e4,
       5e6,
       true,
       false
