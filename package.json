@@ -8,7 +8,8 @@
     "build-all": "yarn clean && yarn install",
     "lint": "eslint ./ --ext .js,.jsx,.ts,.tsx",
     "postinstall": "node ./postinstall.js",
-    "test": "mocha"
+    "test": "mocha",
+    "publish": "node publish.js" 
   },
   "keywords": [
     "testing",
