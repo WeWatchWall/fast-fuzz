@@ -9,7 +9,7 @@
     "lint": "eslint ./ --ext .js,.jsx,.ts,.tsx",
     "postinstall": "node ./postinstall.js",
     "test": "mocha",
-    "publish": "node publish.js" 
+    "publish": "node publish.js"
   },
   "keywords": [
     "testing",
@@ -42,6 +42,7 @@
     "@typescript-eslint/parser": "^4.32.0",
     "chai": "^4.3.4",
     "eslint": "^7.32.0",
+    "latest-version": "^6.0.0",
     "mocha": "^9.1.2",
     "typescript": "^4.1.3"
   }
