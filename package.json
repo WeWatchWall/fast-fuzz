@@ -1,6 +1,6 @@
 {
   "name": "fast-fuzz",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "Test case generator based on branch coverage and fast-check.",
   "main": "dist/index.js",
   "scripts": {

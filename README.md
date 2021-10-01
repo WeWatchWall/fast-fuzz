@@ -11,6 +11,10 @@ Mainly tested with the [Mocha](https://mochajs.org/) testing framework. The [Jes
 
 ```bash
 npm i fast-fuzz
+
+# This package has bundled dependencies, sometimes they need to also be installed manually
+cd node_modules/fast-fuzz/
+npm i
 ```
 
 ## Usage and Options
