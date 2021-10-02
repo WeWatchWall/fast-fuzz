@@ -19,7 +19,7 @@ const makeArbitrary = function (schema, mode = -1, literals = null) {
   } else if (typeof schema === 'string' && Object.prototype.toString.call(schema) === '[object String]') {
     let obj;
     try { obj = JSON.parse(schema); } catch {
-      // Just generate falsy.
+      // Just generate constant.
     }
     if (!obj || !obj.type) {
       return fc.constant(schema);
