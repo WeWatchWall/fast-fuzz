@@ -20,7 +20,6 @@ async function Main() {
     stdout = await execShellCommand(`cd ./istanbuljs/${folder} && npm i && cd ../..`);
 	  console.log(stdout);
   }
-  await execShellCommand(`cd ./istanbuljs/istanbul-lib-hook/node_modules/default-require-extensions && npm i && cd ../../../..`);
   console.log(`2. Installed: Istanbul coverage library.`);
 }
 Main();

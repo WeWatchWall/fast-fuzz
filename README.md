@@ -12,7 +12,7 @@ Mainly tested with the [Mocha](https://mochajs.org/) testing framework. The [Jes
 ```bash
 npm i fast-fuzz
 
-# This package has bundled dependencies, sometimes they need to also be installed manually
+# This package has bundled dependencies, they need to also be installed manually.
 cd node_modules/fast-fuzz/
 npm i
 ```
@@ -31,7 +31,7 @@ Tips:
 
 - Coverage results can be visualized with the [IstanbulJS API](https://medium.com/@kushmisra7/one-report-for-all-test-cases-easily-merging-multiple-tests-reports-b0f5e5211a2a). Any help is appreciated for integrating this into the tool.
 
-- The SUT function needs to be externally synchornized. This means that any async code inside the tested logic needs to be awaited until the result is returned; this is for the coverage to be agregated.
+- The SUT function needs to be all synchronous for now. If Fast-Check can be changed to handle async, any async code inside the tested logic will need to be awaited until the result is returned; this is for the coverage to be agregated.
 
 Example:
 
