@@ -57,9 +57,11 @@ const regularInternal2 = function (isFalse, cityCode, amount, interest, isExtra,
     let netInterest = interest + extraInterest;
     let extraInterestTO;
 
-    if (isExtra) {
-      if (isFalse || netInterest > constants[0]) {
+    if (isExtra) {      
+      if (netInterest > constants[0]) {
         amount = 0;
+        extraInterestTO = 0;
+      } else if (isFalse) {
         extraInterestTO = 0;
       } else {
         extraInterestTO = extraInterest;  
