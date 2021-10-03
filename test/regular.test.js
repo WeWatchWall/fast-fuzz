@@ -50,6 +50,6 @@ describe('Regular fuzzing.', function () {
     );
 
     assert.ok(result);
-    assert.ok(result.tests.length == 7);
+    assert.ok(result.tests.length == 8);
   });
 })

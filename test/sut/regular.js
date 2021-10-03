@@ -52,21 +52,13 @@ const regularInternal1 = function (isFalse, cityCode, amount, interest, isExtra,
 const regularInternal2 = function (isFalse, cityCode, amount, interest, isExtra, extraInterest) {
 
   let result;
-  if (isFalse || amount === 0)
-  {
-    result = {
-      type: 'false',
-      cityCode: cityCode,
-      amount: 0
-    };
-  }
-  else if (cityCode == 12)
+  if (cityCode == 12)
   {
     let netInterest = interest + extraInterest;
     let extraInterestTO;
 
     if (isExtra) {
-      if (netInterest > constants[0]) {
+      if (isFalse || netInterest > constants[0]) {
         amount = 0;
         extraInterestTO = 0;
       } else {
@@ -86,6 +78,14 @@ const regularInternal2 = function (isFalse, cityCode, amount, interest, isExtra,
       cityCode: cityCode,
       amount: amount,
       extraInterestTO: extraInterestTO
+    };
+  }
+  else if (isFalse || amount === 0)
+  {
+    result = {
+      type: 'false',
+      cityCode: cityCode,
+      amount: 0
     };
   }
   else
