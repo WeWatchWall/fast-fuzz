@@ -21,7 +21,7 @@ npm i
 
 Tips:
 
-- Performance depends on the run time of the tested function, so check that it is optimized.
+- Performance depends on the run time of the tested function, so check that its performance is optimized.
 
 - Coverage is detected only for the file in the arguments. Thus, edge cases will only be detected there. See the [Factory Pattern](https://en.wikipedia.org/wiki/Factory_method_pattern), [SOLID](https://en.wikipedia.org/wiki/SOLID), and [Holywood](https://en.wiktionary.org/wiki/Hollywood_principle) Principles.
 
