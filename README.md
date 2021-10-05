@@ -63,8 +63,33 @@ Parameters:
 
 - {string}  methodName  [Optional]  Name of specific SUT method if the file has no default. Default = null
 
-- {object | array}  parameterSchema Object or Array of parameters to be passed into the SUT function. The easiest way to generate is to create an example parameter and replace each built-in type with a JSON string according to the following API:
+- {object | array}  parameterSchema Object or Array of parameters to be passed into the SUT function.
   
+  - Object options property:
+  
+  ```typescript
+    {
+      object_options: {
+        object_required: [0, 1, 2], // Overwrites object_partial to mark non-optional properties
+        object_partial: true        // All properties are optionally included in the end value.
+      },
+      ... other object properties here
+    }  
+  ```
+
+  - Array options object at index 0. If you need a partial, non-shuffled alternative, consider an object with numeric properties {0: ..., 1: ..., 2: ...}
+
+  ```typescript
+    [
+      {
+        array_partial: true,  // Assumes array_shuffled is true. Generates any possibly shorter combination of array elements.
+        array_shuffled: true  // Can be used alone to generate shuffled, same-length arrays.
+      },
+      ... other array elements here
+    ]  
+  ```
+
+- Built-in types. The easiest way to generate is to create an example parameter and replace each built-in type with a JSON string according to the following API:
   - ```'{"type":"bool | boolean"}'``` Generates a random boolean.
   - ```'{"type":"int | integer", "min":0, "max":16}'``` Generates a random integer. Min and max are optional.
   - ```'{"type":"float | number", "min":0, "max":1.6}'``` Generates a random floating point number. Min and max are optional.

@@ -12,8 +12,15 @@ hookRequire((filePath) => true, (code, {filename}) => {
     return newCode;
 });
 
+const arrayPartialTag = 'array_partial';
+const arrayShuffledTag = 'array_shuffled';
+const objectOptionsTag = 'object_options';
+const objectRequiredKeysTag = 'object_required';
+const objectWithDeletedKeysTag = 'object_partial';
+
 // Creates random generators from the API and literals.
 const makeArbitrary = function (schema, mode = -1, literals = null) {
+
   if (schema === null) {
     return fc.falsy();
   } else if (typeof schema === 'string' && Object.prototype.toString.call(schema) === '[object String]') {
@@ -92,18 +99,34 @@ const makeArbitrary = function (schema, mode = -1, literals = null) {
       return fc.constant(schema);
     }
   } else if (Array.isArray(schema)) {
+    const isOptions = schema.length && typeof schema[0] === 'object' &&
+      ((arrayPartialTag in schema[0]) || (arrayShuffledTag in schema[0]));
     // Recurse on elements and return wrapped with tuple.
     const result = [];
+    let i = 0;
     for (const element of schema) {
+      if (isOptions && i++ === 0) { continue; }
       result.push(makeArbitrary(element, mode, literals));
     }
-    return fc.tuple(...result);
+
+    if (!isOptions) { return fc.tuple(...result); }
+
+    return fc.tuple(...result).chain(array => fc.shuffledSubarray(array, { minLength: schema[0][arrayPartialTag] ? 0 : result.length }));
   } else if (typeof schema === 'object') {
+    const isOptions = schema[objectOptionsTag];
     const result = {};
     for (const key in schema) {
+      if (key === objectOptionsTag) { continue; }
       result[key] = makeArbitrary(schema[key], mode, literals);
     }
-    return fc.record(result);
+    if (!isOptions) { return fc.record(result); }
+
+    return fc.record(
+      result,
+      schema[objectOptionsTag][objectRequiredKeysTag] ?
+        { requiredKeys: schema[objectOptionsTag][objectRequiredKeysTag] } :
+        { withDeletedKeys: schema[objectOptionsTag][objectWithDeletedKeysTag] }
+    );
   // } else if (typeof schema === 'function') {
   //   return undefined;
   } else {
