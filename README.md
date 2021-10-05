@@ -65,7 +65,7 @@ Parameters:
 
 - {object | array}  parameterSchema Object or Array of parameters to be passed into the SUT function.
   
-  - Object options property:
+  - Object options property [Optional]:
   
   ```typescript
     {
@@ -77,7 +77,7 @@ Parameters:
     }  
   ```
 
-  - Array options object at index 0. If you need a partial, non-shuffled alternative, consider an object with numeric properties { 0: ..., 1: ..., 2: ... }
+  - Array options object at index 0 [Optional]. If you need a partial, non-shuffled alternative, consider an object with numeric properties { 0: ..., 1: ..., 2: ... }
 
   ```typescript
     [
