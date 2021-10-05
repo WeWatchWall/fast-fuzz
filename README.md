@@ -70,19 +70,19 @@ Parameters:
   ```typescript
     {
       object_options: {
-        object_required: [0, 1, 2], // Overwrites object_partial to mark non-optional properties
+        object_required: ["Key0", 1, "Key2"], // Overwrites object_partial to mark non-optional properties
         object_partial: true        // All properties are optionally included in the end value.
       },
       ... other object properties here
     }  
   ```
 
-  - Array options object at index 0. If you need a partial, non-shuffled alternative, consider an object with numeric properties {0: ..., 1: ..., 2: ...}
+  - Array options object at index 0. If you need a partial, non-shuffled alternative, consider an object with numeric properties { 0: ..., 1: ..., 2: ... }
 
   ```typescript
     [
       {
-        array_partial: true,  // Assumes array_shuffled is true. Generates any possibly shorter combination of array elements.
+        array_partial: true,  // Assumes array_shuffled=true. Returns a possibly shorter combination of elements.
         array_shuffled: true  // Can be used alone to generate shuffled, same-length arrays.
       },
       ... other array elements here
