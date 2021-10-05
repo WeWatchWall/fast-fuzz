@@ -70,7 +70,7 @@ Parameters:
   ```typescript
     {
       object_options: {
-        object_required: ["Key0", 1, "Key2"], // Overwrites object_partial to mark non-optional properties
+        object_required: ["Key0", 1, "2"], // Overwrites object_partial to mark non-optional properties
         object_partial: true        // All properties are optionally included in the end value.
       },
       ... other object properties here
