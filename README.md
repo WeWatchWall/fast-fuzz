@@ -31,14 +31,14 @@ Tips:
 
 - Coverage results can be visualized with the [IstanbulJS API](https://medium.com/@kushmisra7/one-report-for-all-test-cases-easily-merging-multiple-tests-reports-b0f5e5211a2a). Any help is appreciated for integrating this into the tool.
 
-- The SUT function needs to be all synchronous for now. If Fast-Check can be changed to handle async, any async code inside the tested logic will need to be awaited until the result is returned; this is for the coverage to be agregated.
+- The SUT function can be async. Any async code inside the tested logic will need to be awaited until the result is returned; this is for the coverage to be agregated.
 
 Example:
 
 ```typescript
 import { fastFuzz } from "fast-fuzz";
 
-let result = fastFuzz(
+let result = await fastFuzz(
     './test/sut/regular.js',              // SUT File
     'regular',                            // SUT's Function [Optional]
     [                                     // Argument Structure
@@ -129,31 +129,31 @@ The verbose mode outputs this:
 ```typescript
 1 // New test entry index
 {
-    "mode": 0,              // Mode [0]: stuffing & falsy, [1-3]: small potatoes, 4: full
-    "numRuns": 1,           // Iterations counter
-    "speed": 4,             // Mode Time / Iterations
-    "isLinesCovered": false // All branches and conditions return true after this test.
-}
-{                           // Branches satisfied by this test.
+  "mode": 0,              // Mode [0]: stuffing & falsy, [1-3]: small potatoes, 4: full
+  "numRuns": 1,           // Iterations counter
+  "speed": 4,             // Mode Time / Iterations
+  "isLinesCovered": false // All branches and conditions return true after this test.,
+  "argResult": {
+    "arg": ...,           // Test args object / array
+    "result": ...         // Test result / exception
+  },
+  "covDiff": {            // Branches satisfied by this test.
     "b": {
-        "0": {
-            "1": 1
-        },
-        "5": {
-            "0": 1
-        },
-        "6": {
-            "0": 1
-        }
+      "0": {
+          "1": 1
+      },
+      "5": {
+          "0": 1
+      },
+      "6": {
+          "0": 1
+      }
     },
-    "bT": {                 // Logical conditions satisfied by this test.
-        "6": {              // (Ammended IstanbulJS with logical evaluation.)
-            "0": 1
-        }
+    "bT": {               // Logical conditions satisfied by this test.
+      "6": {              // (Ammended IstanbulJS with logical evaluation.)
+          "0": 1
+      }
     }
-}
-{
-  "arg": ...,               // Test args object / array
-  "result": ...             // Test result / exception
+  }
 }
 ```

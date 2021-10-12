@@ -42,6 +42,7 @@ const makeArbitrary = function (schema, mode = -1, literals = null) {
       } else if (mode > 0) {
         min = (isNaN(obj.min) ? 0  - 10 ** mode : obj.min);
         max = (isNaN(obj.max) ? 0 + 10 ** mode : obj.max);
+        min = Math.min(min, Math.max(max - 1, 0));
       }
 
       return localLits || fc.oneof(fc.constantFrom(...[...literals.int.values, 0]), fc.integer({
@@ -57,7 +58,8 @@ const makeArbitrary = function (schema, mode = -1, literals = null) {
         localLits = fc.oneof(fc.constantFrom(...[...literals.float.values, 0]), fc.falsy());
       } else if (mode > 0) {
         min = (isNaN(obj.min) ? 0 - 10 ** mode : obj.min);
-        max = (isNaN(obj.max) ? 0  + 10 ** mode : obj.max);
+        max = (isNaN(obj.max) ? 0 + 10 ** mode : obj.max);
+        min = Math.min(min, Math.max(max - 1, 0));
       }
 
       return localLits || fc.oneof(fc.constantFrom(...[...literals.float.values, 0]), fc.float({
@@ -73,8 +75,11 @@ const makeArbitrary = function (schema, mode = -1, literals = null) {
       if (mode === 0) {
         localLits = fc.oneof(fc.constantFrom(...[...literals.date.values, new Date()]), fc.falsy());
       } else if (mode > 0) {
-        min = new Date((isNaN(obj.min) ? new Date().getTime() - dateOffset * 2 ** mode : obj.min));
-        max = new Date((isNaN(obj.max) ? new Date().getTime() +  dateOffset * 2 ** mode : obj.max));
+        min = (isNaN(obj.min) ? Date.now() - dateOffset * 2 ** mode : obj.min);
+        max = (isNaN(obj.max) ? Date.now() + dateOffset * 2 ** mode : obj.max);
+        min = Math.min(min, Math.max(max - 1e3, 0));
+        min = new Date(min);
+        max = new Date(max);
       }
       
       return localLits || fc.oneof(fc.constantFrom(...[...literals.date.values, new Date()]), fc.date({
@@ -89,6 +94,9 @@ const makeArbitrary = function (schema, mode = -1, literals = null) {
         localLits = fc.oneof(fc.constantFrom(...[...literals.string.values, '']), fc.falsy());
       } else if (mode > 0) {
         min = isNaN(obj.min) ? 0 + mode : obj.min;
+        if (!isNaN(obj.max) && obj.max) {
+          min = Math.min(min, obj.max - 1);
+        }
       }
       
       return localLits || fc.oneof(fc.constantFrom(...[...literals.string.values, '']), fc.string({
@@ -224,7 +232,7 @@ const simpleHash = str => {
 };
 
 // Main fuzzing function that runs the tests and reports the results. 
-module.exports.fastFuzz = function (filePath, methodName = null, parameterSchema = null, literals = [], maxTime = 1e4, maxRuns = 1e5, reset = true, verbose = false) {
+module.exports.fastFuzz = async function (filePath, methodName = null, parameterSchema = null, literals = [], maxTime = 1e4, maxRuns = 1e5, reset = true, verbose = false) {
   // Resolve and import the system under test(SUT).
   filePath = path.resolve(filePath);
   delete require.cache[require.resolve(filePath)]
@@ -264,19 +272,30 @@ module.exports.fastFuzz = function (filePath, methodName = null, parameterSchema
 
     // Run the tests.
     let numRuns = 0;
-    const start = new Date().getTime();
+    let start = Date.now();
     let isExpired = false;
+    let isShrinking = false;
     try {
-      fc.assert(fc.property(arbitrary.filter(args => {
-          if (numRuns % 1e3 == 0) { isExpired = new Date().getTime() - start > maxTime; }
-          if (isExpired || numRuns++ > maxRunsLocal) { throw new Error("Test run aborted."); }
-          
-          const covBefore = copy(fileCoverage);
-          
-          try { testFunc(args); } catch { 
-            // Will get caught when running the test and saved in the result.
+      await fc.assert(fc.asyncProperty(arbitrary,
+        async arg => {
+          if (numRuns % 1e3 == 0) {
+            isExpired = Date.now() - start > maxTime;
           }
-          
+          if (!isShrinking && (numRuns++ > maxRunsLocal || isExpired)) {
+            isShrinking = true;
+            return false;
+          }
+
+          const covBefore = copy(fileCoverage);
+
+          // Run and store the results.
+          let result;
+          try {
+            result = await testFunc(arg);
+          } catch (error) {
+            result = error;
+          }
+
           // Hash difference between coverage.
           let covDiff = JSON.stringify({
             // f: diff(fileCoverageBefore?.f, fileCoverage.f),
@@ -288,48 +307,42 @@ module.exports.fastFuzz = function (filePath, methodName = null, parameterSchema
           const covHash = simpleHash(covDiff);
           
           // Track coverage history.
-          if (covResults.has(covHash)) { return false; }
+          if (covResults.has(covHash)) { return true; }
           covResults.add(covHash);
           const tempRuns = numRuns;
           numRuns = 0;
+          const tempStart = start;
+          start = Date.now();
 
-          if (!verbose) { return true; }
-          
-          // Print stats when verbose.
-          console.log(`${numResults} ${JSON.stringify({
-            mode: mode,
-            numRuns: tempRuns,
-            speed: (new Date().getTime() - start) / tempRuns,
-            isLinesCovered: isCovered(filePath)
-          })} ${covDiff}`);
-          return true;
-        }),
-        arg => {
-          // Run and store the results.
-          let result;
-          try {
-            result = testFunc(arg);
-          } catch (error) {
-            result = error;
-          }
           const argResult = {
             arg: arg,
             result: result
           };
           results.push(argResult);
-          if (verbose) { console.log(`${numResults++} ${JSON.stringify(argResult)}`) }
+          if (!verbose) { return !isShrinking; }
+
+          console.log(`${JSON.stringify({
+            id: numResults++,
+            mode: mode,
+            numRuns: tempRuns,
+            speed: (tempRuns / (Date.now() - tempStart)).toPrecision(4),
+            isLinesCovered: isCovered(filePath),
+            argResult: argResult,
+            covDiff: JSON.parse(covDiff)
+          })}`);
 
           // Keep running.
-          return true;
+          return !isShrinking;
         }
       ),
       {
         verbose: false, // true
         numRuns: maxRuns, // 10000000
-        ignoreEqualValues: true // true
+        ignoreEqualValues: false // true
       });
-    } catch {
+    } catch (error) {
       // Ignore self-generated exceptions for exiting the test loop.
+      isShrinking = false;
     }
   }
 

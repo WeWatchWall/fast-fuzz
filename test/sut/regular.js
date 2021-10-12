@@ -1,3 +1,9 @@
+const { ObjectModel, BasicModel } = require('objectmodel');
+
+const PositiveNumber = BasicModel(Number).assert(n => n >= 0 ).as("PositiveNumber");
+// const Integer = BasicModel(Number).assert(Number.isSafeInteger).as("Integer");
+const PositiveInteger = PositiveNumber.extend().assert(Number.isSafeInteger).as("PositiveInteger");
+
 const constants = [69366, 42808];
 
 //                                bool     int,0,16  int,0   int,0     bool     int,0
@@ -102,11 +108,41 @@ const regularInternal2 = function (isFalse, cityCode, amount, interest, isExtra,
   return result;
 };
 
+//                                        bool     int,0,16  int,0   int,0     bool     int,0
+const regularInternal3 = function (isFalse, cityCode, amount, interest, isExtra, extraInterest) {
+  let typeChecker = ObjectModel({
+    isFalse: Boolean,
+    cityCode: PositiveInteger,
+    amount: PositiveInteger,
+    interest: PositiveInteger,
+    isExtra: Boolean,
+    extraInterest: PositiveInteger,
+  });
+  
+  let isError = false;
+  typeChecker.test({ isFalse, cityCode, amount, interest, isExtra, extraInterest }, function (errors) {
+    isError = true;
+  });
+
+  if (isError) {
+    return {
+      type: 'invalid',
+      cityCode: cityCode,
+      amount: 0
+    };
+  }
+
+  return regularInternal2(isFalse, cityCode, amount, interest, isExtra, extraInterest);
+};
+
 module.exports.regular1 = function (args) {
   return regularInternal1(...args);
 };
 
-
 module.exports.regular2 = function (args) {
   return regularInternal2(...args);
+};
+
+module.exports.regular3 = function (args) {
+  return regularInternal3(...args);
 };
