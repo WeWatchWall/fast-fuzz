@@ -127,8 +127,8 @@ result = {
 The verbose mode outputs this:
 
 ```typescript
-1 // New test entry index
 {
+  "id": 1                 // New test entry index
   "mode": 0,              // Mode [0]: stuffing & falsy, [1-3]: small potatoes, 4: full
   "numRuns": 1,           // Iterations counter
   "speed": 4,             // Mode Time / Iterations
