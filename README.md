@@ -31,7 +31,7 @@ Tips:
 
 - Coverage results can be visualized with the [IstanbulJS API](https://medium.com/@kushmisra7/one-report-for-all-test-cases-easily-merging-multiple-tests-reports-b0f5e5211a2a). Any help is appreciated for integrating this into the tool.
 
-- The SUT function can be async. Any async code inside the tested logic will need to be awaited until the result is returned; this is for the coverage to be agregated.
+- The SUT function can be async when called like `await fastFuzzAsync(...args)`. Any async code inside the tested logic will need to be awaited until the result is returned; this is for the coverage to be agregated.
 
 Example:
 
