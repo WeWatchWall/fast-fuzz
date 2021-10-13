@@ -2,13 +2,13 @@
 /* global describe, it */
 
 const assert = require('chai').assert;
-const { fastFuzz } = require('../dist/index.js');
+const { fastFuzz, fastFuzzAsync } = require('../dist/index.js');
 
 describe('Simple literal fuzzing.', function () {
   this.timeout(0);
 
-  it('Stuffs literals.', async () => {
-    let result = await fastFuzz(
+  it('Stuffs literals.', () => {
+    let result = fastFuzz(
       './test/sut/simple.js',
       null,
       [
@@ -27,8 +27,28 @@ describe('Simple literal fuzzing.', function () {
     assert.ok(result.tests.length == 6);
   });
 
-  it('Fuzzes full search.', async () => {
-    let result = await fastFuzz(
+  it('Sync fuzzes full search.', () => {
+    let result = fastFuzz(
+      './test/sut/simple.js',
+      null,
+      [
+        '{"type":"string"}',
+        '{"type":"int"}',
+        '{"type":"int"}'
+      ],
+      ['Bob', 'Alice', 220, 100, 70],
+      6e4,
+      5e6,
+      true,
+      false
+    );
+
+    assert.ok(result);
+    assert.ok(result.tests.length == 6);
+  });
+
+  it('Async fuzzes full search.', async () => {
+    let result = await fastFuzzAsync(
       './test/sut/simple.js',
       null,
       [
@@ -70,8 +90,32 @@ describe('Simple literal fuzzing.', function () {
     assert.ok(result.tests.length == 6);
   });
 
-  it('Slices arrays.', async () => {
-    let result = await fastFuzz(
+  it('Sync slices arrays.', () => {
+    let result = fastFuzz(
+      './test/sut/simple.js',
+      null,
+      [
+        {
+          array_partial: true
+        },
+        '{"type":"int"}',
+        '{"type":"bool"}',
+        '{"type":"int"}',
+        '{"type":"string"}'
+      ],
+      ['Bob', 'Alice', 22, 10, 7],
+      1e3,
+      5e6,
+      true,
+      false
+    );
+
+    assert.ok(result);
+    assert.ok(result.tests.length == 6);
+  });
+
+  it('Async slices arrays.', async () => {
+    let result = await fastFuzzAsync(
       './test/sut/simple.js',
       null,
       [
@@ -94,8 +138,8 @@ describe('Simple literal fuzzing.', function () {
     assert.ok(result.tests.length == 6);
   });
   
-  it('Requires object keys.', async () => {
-    let result = await fastFuzz(
+  it('Requires object keys.', () => {
+    let result = fastFuzz(
       './test/sut/simple.js',
       null,
       {
@@ -119,8 +163,8 @@ describe('Simple literal fuzzing.', function () {
     assert.ok(result.tests.length == 6);
   });
     
-  it('Slices objects.', async () => {
-    let result = await fastFuzz(
+  it('Slices objects.', () => {
+    let result = fastFuzz(
       './test/sut/simple.js',
       null,
       {

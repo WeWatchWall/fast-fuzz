@@ -2,13 +2,13 @@
 /* global describe, it */
 
 const assert = require('chai').assert;
-const { fastFuzz } = require('../dist/index.js');
+const { fastFuzz, fastFuzzAsync } = require('../dist/index.js');
 
 describe('Regular fuzzing.', function () {
-  this.timeout(0);
+  this.timeout(3e4);
 
-  it('Finds solution in reasonable time 1.', async () => {
-    let result = await fastFuzz(
+  it('Finds solution in reasonable time 1.', () => {
+    let result = fastFuzz(
       './test/sut/regular.js',
       'regular1',
       [
@@ -30,8 +30,8 @@ describe('Regular fuzzing.', function () {
     assert.ok(result.tests.length == 12);
   });
 
-  it('Finds solution in reasonable time 2.', async () => {
-    let result = await fastFuzz(
+  it('Finds solution in reasonable time 2.', () => {
+    let result = fastFuzz(
       './test/sut/regular.js',
       'regular2',
       [
@@ -53,9 +53,8 @@ describe('Regular fuzzing.', function () {
     assert.ok(result.tests.length == 8);
   });
 
-    
-  it('Finds solution in reasonable time 3.', async () => {
-    let result = await fastFuzz(
+  it('Finds solution in reasonable time 3 - async.', async () => {
+    let result = await fastFuzzAsync(
       './test/sut/regular.js',
       'regular3',
       [
