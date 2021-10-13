@@ -38,13 +38,14 @@ Example:
 ```typescript
 import { fastFuzz, fastFuzzAsync } from "fast-fuzz";
 
-// Slower, less guidance that needs more min and/or max limits, and able to handle async SUT
-let result = await fastFuzzAsync(
-
-// OR
 
 // Faster, more guidance that needs less limits, and only handles sync code across SUT
 let result = fastFuzz(
+
+// OR
+
+// Slower, less guidance that needs more min and/or max limits, and able to handle async SUT
+let result = await fastFuzzAsync(
 
     './test/sut/regular.js',              // SUT File
     'regular',                            // SUT's Function [Optional]
