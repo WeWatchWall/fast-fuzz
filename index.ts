@@ -270,13 +270,15 @@ module.exports.fastFuzz = function (filePath, methodName = null, parameterSchema
       bT: global.__coverage__[filePath].bT
     };
 
-    // Run the tests.
+    // Test loop stats.
     let numRuns = 0;
     const start = Date.now();
     let isExpired = false;
     let verboseResult;
+    
     try {
       fc.assert(fc.property(arbitrary.filter(args => {
+          // Check the running stats for termination.
           if (numRuns % 1e3 == 0) { isExpired = Date.now() - start > maxTime; }
           if (isExpired || numRuns++ > maxRunsLocal) { throw new Error("Test run aborted."); }
           
@@ -328,6 +330,8 @@ module.exports.fastFuzz = function (filePath, methodName = null, parameterSchema
             result: result
           };
           results.push(argResult);
+
+          // Report verbose info to stdout.
           if (verbose) {
             numResults++;
             verboseResult.argResult = argResult;
@@ -339,9 +343,9 @@ module.exports.fastFuzz = function (filePath, methodName = null, parameterSchema
         }
       ),
       {
-        verbose: false, // true
-        numRuns: maxRuns, // 10000000
-        ignoreEqualValues: true // true
+        verbose: false,
+        numRuns: maxRuns,
+        ignoreEqualValues: true
       });
     } catch {
       // Ignore self-generated exceptions for exiting the test loop.
@@ -400,14 +404,16 @@ module.exports.fastFuzzAsync = async function (filePath, methodName = null, para
       bT: global.__coverage__[filePath].bT
     };
 
-    // Run the tests.
+    // Test loop stats.
     let numRuns = 0;
     let start = Date.now();
     let isExpired = false;
     let isShrinking = false;
+
     try {
       await fc.assert(fc.asyncProperty(arbitrary,
         async arg => {
+          // Check the running stats for termination.
           if (numRuns % 1e3 == 0) {
             isExpired = Date.now() - start > maxTime;
           }
@@ -433,24 +439,28 @@ module.exports.fastFuzzAsync = async function (filePath, methodName = null, para
             b: diff(covBefore === null || covBefore === void 0 ? void 0 : covBefore.b, fileCoverage.b),
             bT: diff(covBefore === null || covBefore === void 0 ? void 0 : covBefore.bT, fileCoverage.bT)
           });
-          covDiff = covDiff.replace(/:\d+/g, ":1");
+          covDiff = covDiff.replace(/:\d+/g, ":1");  // All counter values get replaced by 1.
           const covHash = simpleHash(covDiff);
           
           // Track coverage history.
           fc.pre(!covResults.has(covHash));
           covResults.add(covHash);
+
+          // Reset stats for next test case.
           const tempRuns = numRuns;
           numRuns = 0;
           const tempStart = start;
           start = Date.now();
 
+          // Report test case.
           const argResult = {
             arg: arg,
             result: result
           };
           results.push(argResult);
-          if (!verbose) { return !isShrinking; }
 
+          // Report verbose info to stdout.
+          if (!verbose) { return !isShrinking; }
           console.log(`${JSON.stringify({
             id: numResults++,
             mode: mode,
@@ -466,12 +476,12 @@ module.exports.fastFuzzAsync = async function (filePath, methodName = null, para
         }
       ),
       {
-        verbose: false, // true
-        numRuns: maxRuns, // 10000000
-        ignoreEqualValues: false // true
+        verbose: false,
+        numRuns: maxRuns,
+        ignoreEqualValues: false
       });
     } catch (error) {
-      // Ignore self-generated exceptions for exiting the test loop.
+      // Ignore exceptions from the test loop.
       isShrinking = false;
     }
   }
