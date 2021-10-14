@@ -47,7 +47,7 @@ describe('Simple literal fuzzing.', function () {
     assert.ok(result.tests.length == 6);
   });
 
-  it('Async fuzzes full search.', async () => {
+  it('Fuzzes full search - async interface.', async () => {
     let result = await fastFuzzAsync(
       './test/sut/simple.js',
       null,
@@ -61,6 +61,26 @@ describe('Simple literal fuzzing.', function () {
       5e6,
       true,
       false
+    );
+
+    assert.ok(result);
+    assert.ok(result.tests.length == 6);
+  });
+
+  it('Fuzzes full search - async.', async () => {
+    let result = await fastFuzzAsync(
+      './test/sut/async.js',
+      null,
+      [
+        '{"type":"string", "max":1}',
+        '{"type":"int", "min":7, "max":22}',
+        '{"type":"int", "min":7, "max":22}'
+      ],
+      ['Bob', 'Alice', 220, 100, 70],
+      30e3,
+      2e3,
+      true,
+      true
     );
 
     assert.ok(result);

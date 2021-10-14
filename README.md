@@ -97,15 +97,15 @@ Parameters:
     ]  
   ```
 
-- Built-in types. The easiest way to generate is to create an example parameter and replace each built-in type with a JSON string according to the following API:
-  - ```'{"type":"bool | boolean"}'``` Generates a random boolean.
-  - ```'{"type":"int | integer", "min":0, "max":16}'``` Generates a random integer. Min and max are optional.
-  - ```'{"type":"float | number", "min":0, "max":1.6}'``` Generates a random floating point number. Min and max are optional.
-  - ```'{"type":"date", "min":1633103400000, "max":1633103446168}'``` Generates a random date. Min and max are optional, expressed in milliseconds.
-  - ```'{"type":"string", "min":0, "max":16}'``` Generates a random string. Min and max are optional, represents the length.
-  - ```null```  Generates a random falsy value.
-  - Any other value that is not one of the above, object, or array, will be treated as a constant object.
-  - All values are generated acording to the [IstanbulJS Arbitraries API](https://github.com/dubzzz/fast-check/blob/main/documentation/Arbitraries.md).
+  - Built-in types. The easiest way to generate is to create an example parameter and replace each built-in type with a JSON string according to the following API:
+    - ```'{"type":"bool | boolean"}'``` Generates a random boolean.
+    - ```'{"type":"int | integer", "min":0, "max":16}'``` Generates a random integer. Min and max are optional.
+    - ```'{"type":"float | number", "min":0, "max":1.6}'``` Generates a random floating point number. Min and max are optional.
+    - ```'{"type":"date", "min":1633103400000, "max":1633103446168}'``` Generates a random date. Min and max are optional, expressed in milliseconds.
+    - ```'{"type":"string", "min":0, "max":16}'``` Generates a random string. Min and max are optional, represents the length.
+    - ```null```  Generates a random falsy value.
+    - Any other value that is not one of the above, object, or array, will be treated as a constant object.
+    - All values are generated acording to the [IstanbulJS Arbitraries API](https://github.com/dubzzz/fast-check/blob/main/documentation/Arbitraries.md).
 
 - {array[built-in types]} literals  [Optional]  Literals or constants of various types. Will be organized by their type and stuffed in the apropiate places. For example, one needs both 1.0 for integers and 1.0001 for float stuffing. Default = []
 

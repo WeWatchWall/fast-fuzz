@@ -53,7 +53,7 @@ describe('Regular fuzzing.', function () {
     assert.ok(result.tests.length == 8);
   });
 
-  it('Finds solution in reasonable time 3 - async.', async () => {
+  it('Finds solution in reasonable time 3 - async interface.', async () => {
     let result = await fastFuzzAsync(
       './test/sut/regular.js',
       'regular3',
