@@ -437,7 +437,7 @@ module.exports.fastFuzzAsync = async function (filePath, methodName = null, para
           const covHash = simpleHash(covDiff);
           
           // Track coverage history.
-          if (covResults.has(covHash)) { return true; }
+          fc.pre(!covResults.has(covHash));
           covResults.add(covHash);
           const tempRuns = numRuns;
           numRuns = 0;

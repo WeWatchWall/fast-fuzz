@@ -21,17 +21,17 @@ npm i
 
 Tips:
 
-- Performance depends on the run time of the tested function, so check that its performance is optimized.
+- The SUT function can be async when called like `await fastFuzzAsync(...args)`. Any async code inside the tested logic will need to be awaited until the result is returned; this is for the coverage to be agregated.
+
+- Performance depends on the run time of the tested function(SUT), so check that its performance is optimized.
 
 - Coverage is detected only for the file in the arguments. Thus, edge cases will only be detected there. See the [Factory Pattern](https://en.wikipedia.org/wiki/Factory_method_pattern), [SOLID](https://en.wikipedia.org/wiki/SOLID), and [Holywood](https://en.wiktionary.org/wiki/Hollywood_principle) Principles.
 
-- For an easier experience, put all the subject under test(SUT) literals/constants in an array. The test's literals argument can be updated with any interesting arguments that are detected through the generation process.
+- For an easier experience, put all the subject under test literals/constants in an array. The test's literals argument can be updated with any interesting arguments that are detected through the generation process.
 
-- The argument-result pairs can be saved and later compared to pragmatically demonstrate the effects of code changes. Functionality related to this may be added later.
+- The argument-result pairs can be saved and later compared to pragmatically demonstrate the effects of code changes. Functionality related to this will be added later.
 
 - Coverage results can be visualized with the [IstanbulJS API](https://medium.com/@kushmisra7/one-report-for-all-test-cases-easily-merging-multiple-tests-reports-b0f5e5211a2a). Any help is appreciated for integrating this into the tool.
-
-- The SUT function can be async when called like `await fastFuzzAsync(...args)`. Any async code inside the tested logic will need to be awaited until the result is returned; this is for the coverage to be agregated.
 
 Example:
 
@@ -39,12 +39,12 @@ Example:
 import { fastFuzz, fastFuzzAsync } from "fast-fuzz";
 
 
-// Faster, more guidance that needs less limits, and only handles sync code across SUT
+// Faster, meaning it needs less limits, but it only handles sync code across SUT.
 let result = fastFuzz(
 
 // OR
 
-// Slower, less guidance that needs more min and/or max limits, and able to handle async SUT
+// Able to handle async SUT but is slower, meaning it needs more min and/or max limits.
 let result = await fastFuzzAsync(
 
     './test/sut/regular.js',              // SUT File
@@ -139,7 +139,7 @@ The verbose mode outputs this:
   "id": 1                 // New test entry index
   "mode": 0,              // Mode [0]: stuffing & falsy, [1-3]: small potatoes, 4: full
   "numRuns": 1,           // Iterations counter
-  "speed": 4,             // Mode Time / Iterations
+  "speed": 4,             // Iterations / Mode Time
   "isLinesCovered": false // All branches and conditions return true after this test.,
   "argResult": {
     "arg": ...,           // Test args object / array
