@@ -73,14 +73,14 @@ describe('Simple literal fuzzing.', function () {
       null,
       [
         '{"type":"string", "max":1}',
-        '{"type":"int", "min":7, "max":22}',
-        '{"type":"int", "min":7, "max":22}'
+        '{"type":"int", "min":20, "max":25}',
+        '{"type":"int", "min":5, "max":10}'
       ],
       ['Bob', 'Alice', 220, 100, 70],
-      30e3,
-      2e3,
+      1e4,
+      1e3,
       true,
-      true
+      false
     );
 
     assert.ok(result);
