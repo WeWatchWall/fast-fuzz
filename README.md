@@ -46,9 +46,12 @@ let result = fastFuzz(
 
 // Able to handle async SUT but is slower, meaning it needs more min and/or max limits.
 let result = await fastFuzzAsync(
-
+    () => {
+      // SUT Function
+      const func = require('./test/sut/regular.js');
+      return func();
+    }
     './test/sut/regular.js',              // SUT File
-    'regular',                            // SUT's Function [Optional]
     [                                     // Argument Structure
       '{"type":"bool"}',
       '{"type":"int","min":0,"max":16}',
@@ -67,9 +70,9 @@ let result = await fastFuzzAsync(
 
 Parameters:
 
-- {relative/absolute path}  filePath Path for the file to be covered. Can provide a default export function.
+- {function}  method  SUT method calling into the file.
 
-- {string}  methodName  [Optional]  Name of specific SUT method if the file has no default. Default = null
+- {relative/absolute path}  filePath Path for the file to be covered. Can provide a default export function.
 
 - {object | array}  parameterSchema Object or Array of parameters to be passed into the SUT function.
   
