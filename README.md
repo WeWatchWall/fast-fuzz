@@ -50,7 +50,7 @@ let result = await fastFuzzAsync(
       // SUT Function
       const func = require('./test/sut/regular.js');
       return func();
-    }
+    },
     './test/sut/regular.js',              // SUT File
     [                                     // Argument Structure
       '{"type":"bool"}',
