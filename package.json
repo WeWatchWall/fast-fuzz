@@ -1,6 +1,6 @@
 {
   "name": "fast-fuzz",
-  "version": "2.2.0",
+  "version": "3.0.0",
   "description": "Test case generator based on branch coverage and fast-check.",
   "main": "dist/index.js",
   "scripts": {
@@ -30,8 +30,8 @@
     "deep-object-diff": "^1.1.0",
     "fast-check": "^2.17.0",
     "fast-copy": "^2.1.1",
-    "istanbul-lib-hook": "file:./istanbuljs/istanbul-lib-hook",
-    "istanbul-lib-instrument": "file:./istanbuljs/istanbul-lib-instrument"
+    "istanbul-lib-hook": "^3.0.0",
+    "istanbul-lib-instrument": "^5.1.0"
   },
   "devDependencies": {
     "@types/node": "^16.10.1",

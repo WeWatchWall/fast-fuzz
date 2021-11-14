@@ -5,9 +5,13 @@ import { diff } from 'deep-object-diff';
 import { createInstrumenter } from 'istanbul-lib-instrument';
 import { hookRequire } from 'istanbul-lib-hook';
 
-const instrumenter = createInstrumenter({ compact: true });
+const instrumenter = createInstrumenter({ compact: true, reportLogic: true });
 
-hookRequire((filePath) => true, (code, {filename}) => {
+hookRequire((filePath) => true, (code, { filename }) => {
+    if (filename.includes('node_modules')) {
+      return code;
+    }
+
     const newCode = instrumenter.instrumentSync(code, filename);
     return newCode;
 });
@@ -232,15 +236,11 @@ const simpleHash = str => {
 };
 
 // Main fuzzing function that runs the tests and reports the results. 
-module.exports.fastFuzz = function (filePath, methodName = null, parameterSchema = null, literals = [], maxTime = 1e4, maxRuns = 1e5, reset = true, verbose = false) {
-  // Resolve and import the system under test(SUT).
+module.exports.fastFuzz = function (testFunc, filePath, parameterSchema = null, literals = [], maxTime = 1e4, maxRuns = 1e5, reset = true, verbose = false) {
+  // Resolve the system under test(SUT).
   filePath = path.resolve(filePath);
-  delete require.cache[require.resolve(filePath)]
-  let testFunc = require(filePath);
-  if (methodName) {
-    testFunc = testFunc[methodName];
-  }
-
+  if (!global.__coverage__[filePath]) { throw new Error(`File not found: ${filePath}`); }
+  
   const litResult = getLiterals(literals);
 
   // Track progress.
@@ -323,7 +323,7 @@ module.exports.fastFuzz = function (filePath, methodName = null, parameterSchema
           try {
             result = testFunc(arg);
           } catch (error) {
-            result = error;
+            result = `Error: ${error.message}`;
           }
           const argResult = {
             arg: arg,
@@ -366,14 +366,10 @@ module.exports.fastFuzz = function (filePath, methodName = null, parameterSchema
 }
 
 // Main fuzzing function that runs the tests and reports the results. 
-module.exports.fastFuzzAsync = async function (filePath, methodName = null, parameterSchema = null, literals = [], maxTime = 1e4, maxRuns = 1e5, reset = true, verbose = false) {
-  // Resolve and import the system under test(SUT).
+module.exports.fastFuzzAsync = async function (testFunc, filePath, parameterSchema = null, literals = [], maxTime = 1e4, maxRuns = 1e5, reset = true, verbose = false) {
+  // Resolve the system under test(SUT).
   filePath = path.resolve(filePath);
-  delete require.cache[require.resolve(filePath)]
-  let testFunc = require(filePath);
-  if (methodName) {
-    testFunc = testFunc[methodName];
-  }
+  if (!global.__coverage__[filePath]) { throw new Error(`File not found: ${filePath}`); }
 
   const litResult = getLiterals(literals);
 

@@ -4,13 +4,15 @@
 const assert = require('chai').assert;
 const { fastFuzz, fastFuzzAsync } = require('../dist/index.js');
 
+const regular = require('./sut/regular.js');
+
 describe('Regular fuzzing.', function () {
   this.timeout(3e4);
 
   it('Finds solution in reasonable time 1.', () => {
     let result = fastFuzz(
+      regular.regular1,
       './test/sut/regular.js',
-      'regular1',
       [
         '{"type":"bool"}',
         '{"type":"int","min":0,"max":16}',
@@ -32,8 +34,8 @@ describe('Regular fuzzing.', function () {
 
   it('Finds solution in reasonable time 2.', () => {
     let result = fastFuzz(
+      regular.regular2,
       './test/sut/regular.js',
-      'regular2',
       [
         '{"type":"bool"}',
         '{"type":"int","min":0,"max":16}',
@@ -55,8 +57,8 @@ describe('Regular fuzzing.', function () {
 
   it('Finds solution in reasonable time 3 - async interface.', async () => {
     let result = await fastFuzzAsync(
+      regular.regular3,
       './test/sut/regular.js',
-      'regular3',
       [
         '{"type":"bool"}',
         '{"type":"int","min":0,"max":16}',

@@ -4,13 +4,16 @@
 const assert = require('chai').assert;
 const { fastFuzz, fastFuzzAsync } = require('../dist/index.js');
 
+const simple = require('./sut/simple.js');
+const async = require('./sut/async.js');
+
 describe('Simple literal fuzzing.', function () {
   this.timeout(0);
 
   it('Stuffs literals.', () => {
     let result = fastFuzz(
+      simple,
       './test/sut/simple.js',
-      null,
       [
         '{"type":"string"}',
         '{"type":"int"}',
@@ -29,8 +32,8 @@ describe('Simple literal fuzzing.', function () {
 
   it('Sync fuzzes full search.', () => {
     let result = fastFuzz(
+      simple,
       './test/sut/simple.js',
-      null,
       [
         '{"type":"string"}',
         '{"type":"int"}',
@@ -49,8 +52,8 @@ describe('Simple literal fuzzing.', function () {
 
   it('Fuzzes full search - async interface.', async () => {
     let result = await fastFuzzAsync(
+      simple,
       './test/sut/simple.js',
-      null,
       [
         '{"type":"string", "max":1}',
         '{"type":"int", "min":-50, "max":50}',
@@ -69,8 +72,8 @@ describe('Simple literal fuzzing.', function () {
 
   it('Fuzzes full search - async.', async () => {
     let result = await fastFuzzAsync(
+      async,
       './test/sut/async.js',
-      null,
       [
         '{"type":"string", "max":1}',
         '{"type":"int", "min":20, "max":25}',
@@ -89,8 +92,8 @@ describe('Simple literal fuzzing.', function () {
 
   it('Shuffles arrays.', async () => {
     let result = await fastFuzz(
+      simple,
       './test/sut/simple.js',
-      null,
       [
         {
           array_shuffled: true
@@ -112,8 +115,8 @@ describe('Simple literal fuzzing.', function () {
 
   it('Sync slices arrays.', () => {
     let result = fastFuzz(
+      simple,
       './test/sut/simple.js',
-      null,
       [
         {
           array_partial: true
@@ -136,8 +139,8 @@ describe('Simple literal fuzzing.', function () {
 
   it('Async slices arrays.', async () => {
     let result = await fastFuzzAsync(
+      simple,
       './test/sut/simple.js',
-      null,
       [
         {
           array_partial: true
@@ -160,8 +163,8 @@ describe('Simple literal fuzzing.', function () {
   
   it('Requires object keys.', () => {
     let result = fastFuzz(
+      simple,
       './test/sut/simple.js',
-      null,
       {
         object_options: {
           object_required: [0, 1, 2],
@@ -185,8 +188,8 @@ describe('Simple literal fuzzing.', function () {
     
   it('Slices objects.', () => {
     let result = fastFuzz(
+      simple,
       './test/sut/simple.js',
-      null,
       {
         object_options: {
           object_partial: true

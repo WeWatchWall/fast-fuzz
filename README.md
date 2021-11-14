@@ -5,7 +5,7 @@
 
 Library that allows for the generation of unit test argument and result pairs for a given JavaScript function. Uses [IstanbulJS](https://github.com/istanbuljs/istanbuljs) for branch coverage and [Fast-Check](https://github.com/dubzzz/fast-check) for fuzzing.
 
-Mainly tested with the [Mocha](https://mochajs.org/) testing framework. The [Jest](https://jestjs.io/) framework is clobbering the global variable ```global.__coverage__``` so any help on that failed integration is most appreciated.
+The [Mocha](https://mochajs.org/) testing framework is recommended. The [Jest](https://jestjs.io/) framework is clobbering the global variable ```global.__coverage__``` and, in general, has trouble in dealing with ESM modules and Typescript.
 
 ## Getting Started
 
@@ -31,7 +31,7 @@ Tips:
 
 - The argument-result pairs can be saved and later compared to pragmatically demonstrate the effects of code changes. Functionality related to this will be added later.
 
-- Coverage results can be visualized with the [IstanbulJS API](https://medium.com/@kushmisra7/one-report-for-all-test-cases-easily-merging-multiple-tests-reports-b0f5e5211a2a). Any help is appreciated for integrating this into the tool.
+- Coverage results can be visualized by running the [nyc library](https://github.com/istanbuljs/nyc) over the results generated side by side with fast-fuzz.
 
 Example:
 
