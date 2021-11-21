@@ -11,10 +11,6 @@ The [Mocha](https://mochajs.org/) testing framework is recommended. The [Jest](h
 
 ```bash
 npm i fast-fuzz
-
-# This package has bundled dependencies, they need to also be installed manually.
-cd node_modules/fast-fuzz/
-npm i
 ```
 
 ## Usage and Options
