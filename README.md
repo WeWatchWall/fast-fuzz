@@ -33,7 +33,7 @@ Example:
 
 ```typescript
 import { fastFuzz, fastFuzzAsync } from "fast-fuzz";
-
+import { func } from './test/sut/regular.js';
 
 // Faster, meaning it needs less limits, but it only handles sync code across SUT.
 let result = fastFuzz(
@@ -44,7 +44,6 @@ let result = fastFuzz(
 let result = await fastFuzzAsync(
     () => {
       // SUT Function
-      const func = require('./test/sut/regular.js');
       return func();
     },
     './test/sut/regular.js',              // SUT File
