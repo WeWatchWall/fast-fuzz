@@ -17,7 +17,7 @@ npm i fast-fuzz
 
 Tips:
 
-- The SUT function can be async when called like `await fastFuzzAsync(...args)`. Any async code inside the tested logic will need to be awaited until the result is returned; this is for the coverage to be agregated.
+- The SUT function can be async when called like `await fastFuzzAsync(...args)`. Waiting for any amount of time is very slow overall. Any async code inside the tested logic will need to be awaited until the result is returned; this is for the coverage to be agregated.
 
 - Performance depends on the run time of the tested function(SUT), so check that its performance is optimized.
 
