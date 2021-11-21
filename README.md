@@ -19,7 +19,7 @@ Tips:
 
 - The SUT function can be async when called like `await fastFuzzAsync(...args)`. Waiting for any amount of time is very slow overall. Any async code inside the tested logic will need to be awaited until the result is returned; this is for the coverage to be agregated.
 
-- Performance depends on the run time of the tested function(SUT); check that its performance is optimized.
+- Performance depends on the run time of the tested function(SUT), so check that its performance is optimized.
 
 - Coverage is detected only for the file in the arguments. Thus, edge cases will only be detected there. See the [Factory Pattern](https://en.wikipedia.org/wiki/Factory_method_pattern), [SOLID](https://en.wikipedia.org/wiki/SOLID), and [Holywood](https://en.wiktionary.org/wiki/Hollywood_principle) Principles.
 
