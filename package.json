@@ -4,8 +4,8 @@
   "description": "Test case generator based on branch coverage and fast-check.",
   "main": "dist/index.js",
   "scripts": {
-    "clean": "rm -rf dist build package",
-    "build-all": "yarn clean && yarn install",
+    "clean": "node clean.js dist build package",
+    "build-all": "npm run clean && npm install",
     "lint": "eslint ./ --ext .js,.jsx,.ts,.tsx",
     "postinstall": "node ./postinstall.js",
     "test": "mocha",
