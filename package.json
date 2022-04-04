@@ -1,6 +1,6 @@
 {
   "name": "fast-fuzz",
-  "version": "3.0.4",
+  "version": "3.0.5",
   "description": "Test case generator based on branch coverage and fast-check.",
   "main": "dist/index.js",
   "scripts": {
@@ -21,7 +21,7 @@
     "verification"
   ],
   "author": "Adrian Burlacu <adrian.burlacu@live.com>",
-  "license": "MIT",
+  "license": "ISC",
   "repository": {
     "type": "git",
     "url": "https://github.com/WeWatchWall/fast-fuzz.git"
