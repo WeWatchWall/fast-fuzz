@@ -40,8 +40,8 @@ describe('Simple literal fuzzing.', function () {
         '{"type":"int"}'
       ],
       ['Bob', 'Alice', 220, 100, 70],
-      6e4,
-      5e6,
+      75e3,
+      6e6,
       true,
       false
     );
@@ -60,8 +60,8 @@ describe('Simple literal fuzzing.', function () {
         '{"type":"int", "min":-50, "max":50}'
       ],
       ['Bob', 'Alice', 220, 100, 70],
-      15e3,
-      5e6,
+      3e4,
+      7e6,
       true,
       false
     );
@@ -103,14 +103,14 @@ describe('Simple literal fuzzing.', function () {
         '{"type":"int"}'
       ],
       ['Bob', 'Alice', 22, 10, 7],
-      1e3,
-      5e6,
+      5e3,
+      6e6,
       true,
       false
     );
 
     assert.ok(result);
-    assert.ok(result.tests.length == 6);
+    assert.ok(result.tests.length == 7);
   });
 
   it('Sync slices arrays.', () => {
@@ -127,14 +127,14 @@ describe('Simple literal fuzzing.', function () {
         '{"type":"string"}'
       ],
       ['Bob', 'Alice', 22, 10, 7],
-      1e3,
-      5e6,
+      3e3,
+      6e6,
       true,
       false
     );
 
     assert.ok(result);
-    assert.ok(result.tests.length == 6);
+    assert.ok(result.tests.length == 7);
   });
 
   it('Async slices arrays.', async () => {
@@ -151,14 +151,14 @@ describe('Simple literal fuzzing.', function () {
         '{"type":"string"}'
       ],
       ['Bob', 'Alice', 22, 10, 7],
-      1e3,
-      5e6,
+      3e3,
+      6e6,
       true,
       false
     );
 
     assert.ok(result);
-    assert.ok(result.tests.length == 6);
+    assert.ok(result.tests.length == 7);
   });
   
   it('Requires object keys.', () => {
@@ -183,7 +183,7 @@ describe('Simple literal fuzzing.', function () {
     );
 
     assert.ok(result);
-    assert.ok(result.tests.length == 6);
+    assert.ok(result.tests.length == 7);
   });
     
   it('Slices objects.', () => {
@@ -207,6 +207,6 @@ describe('Simple literal fuzzing.', function () {
     );
 
     assert.ok(result);
-    assert.ok(result.tests.length == 6);
+    assert.ok(result.tests.length == 7);
   });
 })

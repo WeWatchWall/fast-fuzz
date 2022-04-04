@@ -31,7 +31,7 @@
     "fast-check": "^2.17.0",
     "fast-copy": "^2.1.1",
     "istanbul-lib-hook": "^3.0.0",
-    "istanbul-lib-instrument": "^5.1.0"
+    "istanbul-lib-instrument": "https://gitpkg.now.sh/WeWatchWall/istanbuljs/packages/istanbul-lib-instrument?master"
   },
   "devDependencies": {
     "@types/node": "^16.10.1",
