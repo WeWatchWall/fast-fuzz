@@ -103,14 +103,14 @@ describe('Simple literal fuzzing.', function () {
         '{"type":"int"}'
       ],
       ['Bob', 'Alice', 22, 10, 7],
-      5e3,
+      3e3,
       6e6,
       true,
       false
     );
 
     assert.ok(result);
-    assert.ok(result.tests.length == 7);
+    assert.ok(result.tests.length == 6);
   });
 
   it('Sync slices arrays.', () => {
