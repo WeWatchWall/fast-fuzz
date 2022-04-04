@@ -1,11 +1,8 @@
-'use strict';
-/* global describe, it */
+import { assert } from 'chai';
+import { fastFuzz, fastFuzzAsync } from '../index';
 
-const assert = require('chai').assert;
-const { fastFuzz, fastFuzzAsync } = require('../dist/index.js');
-
-const simple = require('./sut/simple.js');
-const async = require('./sut/async.js');
+import simple from './sut/simple.js';
+import async from './sut/async.js';
 
 describe('Simple literal fuzzing.', function () {
   this.timeout(0);

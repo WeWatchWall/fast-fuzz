@@ -5,12 +5,13 @@
 
 Library that allows for the generation of unit test argument and result pairs for a given JavaScript function. Uses [IstanbulJS](https://github.com/istanbuljs/istanbuljs) for branch coverage and [Fast-Check](https://github.com/dubzzz/fast-check) for fuzzing.
 
-The [Mocha](https://mochajs.org/) testing framework is recommended. The [Jest](https://jestjs.io/) framework is clobbering the global variable ```global.__coverage__``` and, in general, has trouble in dealing with ESM modules and Typescript.
+The [Mocha](https://mochajs.org/) testing framework is recommended. You can use [TS-Mocha](https://www.npmjs.com/package/ts-mocha) (along with the "@types/mocha" and "@types/chai" typings) for tests that are written in TypeScript.
+The [Jest](https://jestjs.io/) framework is clobbering the global variable ```global.__coverage__``` and, in general, has trouble in dealing with ESM modules and Typescript.
 
 ## Getting Started
 
 ```bash
-npm i fast-fuzz
+npm i -D fast-fuzz
 ```
 
 ## Usage and Options
