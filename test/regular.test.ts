@@ -7,7 +7,7 @@ describe('Regular fuzzing.', function () {
   this.timeout(3e4);
 
   it('Finds solution in reasonable time 1.', () => {
-    let result = fastFuzz(
+    const result = fastFuzz(
       regular.regular1,
       './test/sut/regular.js',
       [
@@ -30,7 +30,7 @@ describe('Regular fuzzing.', function () {
   });
 
   it('Finds solution in reasonable time 2.', () => {
-    let result = fastFuzz(
+    const result = fastFuzz(
       regular.regular2,
       './test/sut/regular.js',
       [
@@ -53,7 +53,7 @@ describe('Regular fuzzing.', function () {
   });
 
   it('Finds solution in reasonable time 3 - async interface.', async () => {
-    let result = await fastFuzzAsync(
+    const result = await fastFuzzAsync(
       regular.regular3,
       './test/sut/regular.js',
       [

@@ -8,7 +8,7 @@ describe('Simple literal fuzzing.', function () {
   this.timeout(0);
 
   it('Stuffs literals.', () => {
-    let result = fastFuzz(
+    const result = fastFuzz(
       simple,
       './test/sut/simple.js',
       [
@@ -28,7 +28,7 @@ describe('Simple literal fuzzing.', function () {
   });
 
   it('Sync fuzzes full search.', () => {
-    let result = fastFuzz(
+    const result = fastFuzz(
       simple,
       './test/sut/simple.js',
       [
@@ -48,7 +48,7 @@ describe('Simple literal fuzzing.', function () {
   });
 
   it('Fuzzes full search - async interface.', async () => {
-    let result = await fastFuzzAsync(
+    const result = await fastFuzzAsync(
       simple,
       './test/sut/simple.js',
       [
@@ -68,7 +68,7 @@ describe('Simple literal fuzzing.', function () {
   });
 
   it('Fuzzes full search - async.', async () => {
-    let result = await fastFuzzAsync(
+    const result = await fastFuzzAsync(
       async,
       './test/sut/async.js',
       [
@@ -88,7 +88,7 @@ describe('Simple literal fuzzing.', function () {
   });
 
   it('Shuffles arrays.', async () => {
-    let result = await fastFuzz(
+    const result = await fastFuzz(
       simple,
       './test/sut/simple.js',
       [
@@ -111,7 +111,7 @@ describe('Simple literal fuzzing.', function () {
   });
 
   it('Sync slices arrays.', () => {
-    let result = fastFuzz(
+    const result = fastFuzz(
       simple,
       './test/sut/simple.js',
       [
@@ -135,7 +135,7 @@ describe('Simple literal fuzzing.', function () {
   });
 
   it('Async slices arrays.', async () => {
-    let result = await fastFuzzAsync(
+    const result = await fastFuzzAsync(
       simple,
       './test/sut/simple.js',
       [
@@ -159,7 +159,7 @@ describe('Simple literal fuzzing.', function () {
   });
   
   it('Requires object keys.', () => {
-    let result = fastFuzz(
+    const result = fastFuzz(
       simple,
       './test/sut/simple.js',
       {
@@ -184,7 +184,7 @@ describe('Simple literal fuzzing.', function () {
   });
     
   it('Slices objects.', () => {
-    let result = fastFuzz(
+    const result = fastFuzz(
       simple,
       './test/sut/simple.js',
       {
