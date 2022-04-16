@@ -6,11 +6,9 @@ import { tplant } from 'tplant';
 const worker = require('./src/worker');
 
 async function Main() {
-  let flatPromise = new FlatPromise();
-  const tsFiles = await getFiles(process.argv[2], false, flatPromise);
+  const tsFiles = await getFiles(process.argv[2], false);
 
-  flatPromise = new FlatPromise();
-  const jsFiles = await getFiles(process.argv[3], true, flatPromise);
+  const jsFiles = await getFiles(process.argv[3], true);
 
   console.log(`TS Files: ${JSON.stringify(tsFiles)}, JS Files: ${JSON.stringify(jsFiles)}`);
 
@@ -27,7 +25,8 @@ async function Main() {
 }
 Main();
 
-async function getFiles(filesArgument: string, isJs: boolean, flatPromise: any) {
+async function getFiles(filesArgument: string, isJs: boolean) {
+  const flatPromise = new FlatPromise();
   glob(<string>`${filesArgument}/**/*.${isJs ? 'js' : 'ts'}`, {}, (err: Error | null, matches: string[]): void => {
     if (err !== null) {
       flatPromise.reject(err);
@@ -36,6 +35,6 @@ async function getFiles(filesArgument: string, isJs: boolean, flatPromise: any) 
 
     flatPromise.resolve(matches);
   });
-  var tsFiles = await flatPromise.promise;
-  return tsFiles;
+
+  return flatPromise.promise;
 }
