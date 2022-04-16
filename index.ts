@@ -7,22 +7,15 @@ const worker = require('./src/worker');
 
 async function Main() {
   let flatPromise = new FlatPromise();
+  const tsFiles = await getFiles(process.argv[2], false, flatPromise);
 
-  glob(<string>process.argv[2], {}, (err: Error | null, matches: string[]): void => { 
-    if (err !== null) {
-      flatPromise.reject(err);
-      return;
-    }
+  flatPromise = new FlatPromise();
+  const jsFiles = await getFiles(process.argv[3], true, flatPromise);
 
-    flatPromise.resolve(matches);
-  });
+  console.log(`TS Files: ${JSON.stringify(tsFiles)}, JS Files: ${JSON.stringify(jsFiles)}`);
 
   let result: any[];
-  var files = await flatPromise.promise;
-  debugger;
-  result = tplant.generateDocumentation(files);
-
-  console.log(JSON.stringify(files));
+  result = tplant.generateDocumentation(tsFiles);
   console.log(JSON.stringify(result));
   
   
@@ -33,3 +26,16 @@ async function Main() {
   job1.worker.terminate();
 }
 Main();
+
+async function getFiles(filesArgument: string, isJs: boolean, flatPromise: any) {
+  glob(<string>`${filesArgument}/**/*.${isJs ? 'js' : 'ts'}`, {}, (err: Error | null, matches: string[]): void => {
+    if (err !== null) {
+      flatPromise.reject(err);
+      return;
+    }
+
+    flatPromise.resolve(matches);
+  });
+  var tsFiles = await flatPromise.promise;
+  return tsFiles;
+}
