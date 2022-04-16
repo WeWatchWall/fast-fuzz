@@ -48,10 +48,11 @@
     "deep-object-diff": "^1.1.0",
     "fast-check": "^2.17.0",
     "fast-copy": "^2.1.1",
+    "glob": "^8.0.1",
     "istanbul-lib-hook": "^3.0.0",
     "istanbul-lib-instrument": "https://gitpkg.now.sh/WeWatchWall/istanbuljs/packages/istanbul-lib-instrument?master",
     "multee": "^0.2.4",
-    "tplant": "github:bafolts/tplant"
+    "tplant": "file:../tplant"
   },
   "peerDependencies": {
     "typescript": "^4.X.X"
