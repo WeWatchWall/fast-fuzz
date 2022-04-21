@@ -1,8 +1,6 @@
 import glob from 'glob';
 import FlatPromise from 'flat-promise';
 
-import { tplant } from 'tplant';
-
 const worker = require('./src/worker');
 
 async function Main() {
@@ -11,10 +9,6 @@ async function Main() {
   const jsFiles = await getFiles(process.argv[3], true);
 
   console.log(`TS Files: ${JSON.stringify(tsFiles)}, JS Files: ${JSON.stringify(jsFiles)}`);
-
-  let result: any[];
-  result = tplant.generateDocumentation(tsFiles);
-  console.log(JSON.stringify(result));
   
   
   const job1 = worker.init();

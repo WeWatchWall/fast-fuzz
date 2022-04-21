@@ -51,8 +51,7 @@
     "glob": "^8.0.1",
     "istanbul-lib-hook": "^3.0.0",
     "istanbul-lib-instrument": "https://gitpkg.now.sh/WeWatchWall/istanbuljs/packages/istanbul-lib-instrument?master",
-    "multee": "^0.2.4",
-    "tplant": "github:bafolts/tplant"
+    "multee": "^0.2.4"
   },
   "peerDependencies": {
     "typescript": "^4.X.X"
