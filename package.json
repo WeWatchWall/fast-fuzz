@@ -50,6 +50,7 @@
     "fast-check": "^2.17.0",
     "fast-copy": "^2.1.1",
     "glob": "^8.0.1",
+    "intermock": "^0.2.5",
     "istanbul-lib-hook": "^3.0.0",
     "istanbul-lib-instrument": "https://gitpkg.now.sh/WeWatchWall/istanbuljs/packages/istanbul-lib-instrument?master",
     "multee": "^0.2.4",

@@ -9,10 +9,8 @@ export class Foo {
   @Expose()
   direction: Direction;
 
-  constructor(name: string, age: number) {
-    this.name = name;
-    this.age = age;
-    this.student = true;
+  constructor(init: Partial<Foo>) {
+    Object.assign(this, init);
   }
 
   public isSame(name: string, age: number, direction: Direction): boolean { 

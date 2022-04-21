@@ -1,13 +1,16 @@
 import 'reflect-metadata';
 
+import { readFile } from 'fs/promises';
+
 import glob from 'glob';
 import FlatPromise from 'flat-promise';
 
+import { mock } from 'intermock/build/src/lang/ts/intermock';
+
 // const worker = require('./worker.js');
 
-import { plainToClass } from 'class-transformer';
+import { plainToInstance } from 'class-transformer';
 import { Foo } from "./foo";
-import { Direction } from './direction';
 
 async function Main() {
   const tsFiles = await getFiles(process.argv[2], false);
@@ -23,15 +26,17 @@ async function Main() {
   // console.log((await result1));
   // job1.worker.terminate();
 
-  const example: Foo = plainToClass(Foo, {
-    name: "what",
-    age: 1,
-    student: false,
-    direction: Direction.Right
+  const example1 = mock({
+    files: [
+      ['./src/IFoo.ts', await readFile('./src/IFoo.ts', 'utf8')]
+    ],
+    isOptionalAlwaysEnabled: true,
+    output: 'object'
   });
 
+  const example2 = plainToInstance(Foo, example1['Foo']);
   debugger;
-  console.log(example);
+  console.log(example2);
 }
 Main();
 
