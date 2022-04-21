@@ -20,30 +20,34 @@ async function Main() {
   console.log(`TS Files: ${JSON.stringify(tsFiles)}, JS Files: ${JSON.stringify(jsFiles)}`);
   
 
+  const file = await readFile('./src/IFoo.ts', 'utf8');
   // const job1 = worker.init();
   // const result1 = job1.run();
 
   // console.log((await result1));
   // job1.worker.terminate();
 
-  const example1 = mock({
-    files: [
-      ['./src/IFoo.ts', await readFile('./src/IFoo.ts', 'utf8')]
-    ],
-    isOptionalAlwaysEnabled: true,
-    output: 'object'
-  });
+  for (let index = 0; index < 1000; index++) {
+    const example1 = mock({
+      files: [
+        ['./src/IFoo.ts', file]
+      ],
+      isOptionalAlwaysEnabled: true,
+      output: 'object'
+    });
 
-  const example2 = plainToInstance(
-    Foo,
-    example1['Foo'],
-    {
-      enableImplicitConversion: true
-    }
-  );
+    const example2 = plainToInstance(
+      Foo,
+      example1['Foo'],
+      {
+        enableImplicitConversion: true
+      }
+    );
 
-  debugger;
-  console.log(example2);
+    debugger;
+    console.log(example2);
+  }
+
 }
 Main();
 
