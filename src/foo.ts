@@ -1,9 +1,13 @@
+import { Expose } from 'class-transformer';
 import { Direction } from "./direction";
 
 export class Foo {
   name: string;
   readonly age: number;
-  private student: boolean;
+  student: boolean;
+  // @Transform(direction => Direction[direction.value])
+  @Expose()
+  direction: Direction;
 
   constructor(name: string, age: number) {
     this.name = name;
