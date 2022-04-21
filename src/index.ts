@@ -1,7 +1,7 @@
 import glob from 'glob';
 import FlatPromise from 'flat-promise';
 
-const worker = require('./src/worker');
+const worker = require('./worker.js');
 
 async function Main() {
   const tsFiles = await getFiles(process.argv[2], false);
@@ -14,7 +14,7 @@ async function Main() {
   const job1 = worker.init();
   const result1 = job1.run();
 
-  console.log(!!(await result1));
+  console.log((await result1));
   job1.worker.terminate();
 }
 Main();

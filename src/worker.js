@@ -26,7 +26,7 @@ const job = multee.createHandler('job', () => {
 
       return fooLocal.isSame(name, age, direction.Direction.Down)
     },
-    './dist/src/foo.js',
+    './dist/foo.js',
     [
       '{"type":"string"}',
       '{"type":"int"}',

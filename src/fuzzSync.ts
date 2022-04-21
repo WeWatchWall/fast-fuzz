@@ -99,7 +99,7 @@ export function fastFuzz (testFunc, filePath, parameterSchema = null, literals =
           try {
             result = testFunc(arg);
           } catch (error) {
-            result = `Error: ${error.message}`;
+            result = `Error: ${ (<Error>error).message }`;
           }
           const argResult = {
             arg: arg,
