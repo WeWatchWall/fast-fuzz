@@ -1,4 +1,3 @@
-import { Expose } from 'class-transformer';
 import { Direction } from "./direction";
 
 export class Foo {
@@ -6,7 +5,6 @@ export class Foo {
   readonly age: number;
   student: boolean;
   // @Transform(direction => Direction[direction.value])
-  @Expose()
   direction: Direction;
 
   constructor(init: Partial<Foo>) {

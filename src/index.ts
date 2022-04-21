@@ -34,7 +34,14 @@ async function Main() {
     output: 'object'
   });
 
-  const example2 = plainToInstance(Foo, example1['Foo']);
+  const example2 = plainToInstance(
+    Foo,
+    example1['Foo'],
+    {
+      enableImplicitConversion: true
+    }
+  );
+
   debugger;
   console.log(example2);
 }
