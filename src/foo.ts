@@ -1,11 +1,9 @@
-import { Transform } from "class-transformer";
 import { Direction } from "./direction";
 
 export class Foo {
   name: string;
   readonly age: number;
   student: boolean;
-  @Transform(direction => direction.value.value)
   direction: Direction;
 
   constructor(init: Partial<Foo>) {
