@@ -1,66 +1,29 @@
 import 'reflect-metadata';
+import { CodeUtils } from './utils/codeUtils';
 
-import { readFile } from 'fs/promises';
 
-import glob from 'glob';
-import FlatPromise from 'flat-promise';
 
-import { mock } from 'intermock/build/src/lang/ts/intermock';
 
-// const worker = require('./worker.js');
 
-import { plainToInstance } from 'class-transformer';
-import { Foo } from "./foo";
+// import { mock } from 'intermock/build/src/lang/ts/intermock';
+// import { plainToInstance } from 'class-transformer';
 
 async function Main() {
-  const tsFiles = await getFiles(process.argv[2], false);
 
-  const jsFiles = await getFiles(process.argv[3], true);
 
-  console.log(`TS Files: ${JSON.stringify(tsFiles)}, JS Files: ${JSON.stringify(jsFiles)}`);
+  // let fooI = plainToInstance(foo['Foo'],
+  //   {
+  //     name: 'Adi'
+  //   },
+  //   {
+  //   enableImplicitConversion: true
+  // });
+
+  const codeUtil = new CodeUtils();
+  await codeUtil.init(process.argv[2], process.argv[3]);
+  await codeUtil.load();
+  debugger;
   
-
-  const file = await readFile('./src/IFoo.ts', 'utf8');
-  // const job1 = worker.init();
-  // const result1 = job1.run();
-
-  // console.log((await result1));
-  // job1.worker.terminate();
-
-  for (let index = 0; index < 1000; index++) {
-    const example1 = mock({
-      files: [
-        ['./src/IFoo.ts', file]
-      ],
-      isOptionalAlwaysEnabled: true,
-      output: 'object'
-    });
-
-    const example2 = plainToInstance(
-      Foo,
-      example1['Foo'],
-      {
-        enableImplicitConversion: true
-      }
-    );
-
-    debugger;
-    console.log(example2);
-  }
-
 }
 Main();
 
-async function getFiles(filesArgument: string, isJs: boolean) {
-  const flatPromise = new FlatPromise();
-  glob(<string>`${filesArgument}/**/*.${isJs ? 'js' : 'ts'}`, {}, (err: Error | null, matches: string[]): void => {
-    if (err !== null) {
-      flatPromise.reject(err);
-      return;
-    }
-
-    flatPromise.resolve(matches);
-  });
-
-  return flatPromise.promise;
-}
