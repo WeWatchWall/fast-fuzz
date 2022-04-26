@@ -4,10 +4,11 @@ export class ModuleMethod {
   namespaces: string[];
   isStatic: boolean;
   isAsync: boolean;
+  args: string[];
 
-  argumentInterface: string;
+  IArgs: string;
 
   constructor(init: Partial<ModuleMethod>) {
-    Object.assign(init, this);
+    Object.assign(this, init);
   }
 }

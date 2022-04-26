@@ -41,7 +41,7 @@ export class CodeUtils {
     this.methods = {};    
     this.typeDefs.forEach((tsFile: any) => {
       // Check the JS file exists and skip the type if it doesn't.
-      const jsFile = tsFile.replace(this.arg.jsFiles, '').replace('.ts', '.js');
+      const jsFile = path.relative(this.arg.tsFiles, tsFile.name).replace('.ts', '.js');
       const jsFileMatch = this.jsFiles.find((jsFilePath: string) => jsFilePath.endsWith(jsFile));
       if (jsFileMatch === undefined) { return; }
 
@@ -71,17 +71,23 @@ export class CodeUtils {
   async load() {
     // Load the interfaces into memory from typings files. Skip undefined JS files.
     for (const iFile of this.iFiles) {
-      const jsFile = iFile.replace(this.arg.jsFiles, '').replace('.d.ts', '.js');
+      const jsFile = path.relative(this.arg.jsFiles, iFile).replace('.d.ts', '.js');
       const jsFileMatch = this.jsFiles.find((jsFilePath: string) => jsFilePath.endsWith(jsFile));
       if (jsFileMatch === undefined) { continue; }
       this.interfaces[jsFileMatch] = await CodeUtils.getInterfaceFile(iFile);
     }
-
+  
     // Load the argument interfaces into memory by method.
+    for (const jsFile in this.interfaces) {
+      const [, iString]: [string, string] = this.interfaces[jsFile];
+      const methods: ModuleMethod[] = this.methods[jsFile];
+
+      await CodeUtils.getMethodArguments(iString, methods);
+    }
 
     // Load the modules into memory by file. Skip undefined JS files.
     for (const jsFile of this.jsFiles) {
-      const tsFile = jsFile.replace(this.arg.jsFiles, '').replace('.js', '.ts');
+      const tsFile = path.relative(this.arg.jsFiles, jsFile).replace('.js', '.ts');
       if (this.tsFiles.find((tsFilePath: string) => tsFilePath.endsWith(tsFile)) === undefined) { continue; }
       this.modules[jsFile] = await import(jsFile);
     }
@@ -109,21 +115,29 @@ export class CodeUtils {
     return flatPromise.promise;
   }
 
-  static getMethods(filePart: any, methodsOut: ModuleMethod[], namespaces: string[], className?: string) {
+  /**
+   * Gets methods from the type analyzer.
+   * @param filePart The type node.
+   * @param methodsOut The methods array reference.
+   * @param namespaces The current namespaces.
+   * @param [className] The method's class name.
+   * @returns  The array of ModuleMethods in the methodsOut parameter.
+   */
+  private static getMethods(filePart: any, methodsOut: ModuleMethod[], namespaces: string[], className?: string): void {
     switch (filePart.componentKind) {
       case ComponentKind.NAMESPACE:
         // Handle nested namespaces with recursion.
-        filePart.parts.forEach((filePart: any) => {
-          CodeUtils.getMethods(filePart, methodsOut, namespaces.concat([filePart.name]));
+        filePart.parts.forEach((fileSubPart: any) => {
+          CodeUtils.getMethods(fileSubPart, methodsOut, namespaces.concat([filePart.name]));
         });
         break;
       case ComponentKind.CLASS:
         // Loop over the constructor and class methods and invoke recursively.
-        filePart.constructorMethods.forEach((filePart: any) => {
-          CodeUtils.getMethods(filePart, methodsOut, namespaces, filePart.name);
+        filePart.constructorMethods.forEach((fileSubPart: any) => {
+          CodeUtils.getMethods(fileSubPart, methodsOut, namespaces, filePart.name);
         });
-        filePart.members.forEach((filePart: any) => {
-          CodeUtils.getMethods(filePart, methodsOut, namespaces, filePart.name);
+        filePart.members.forEach((fileSubPart: any) => {
+          CodeUtils.getMethods(fileSubPart, methodsOut, namespaces, filePart.name);
         });
         break;
       case ComponentKind.METHOD:
@@ -141,7 +155,9 @@ export class CodeUtils {
           className,
           namespaces,
           isStatic: filePart.isStatic,
-          isAsync: filePart.isAsync
+          isAsync: filePart.isAsync,
+          // TODO: filter out functions?
+          args: filePart.parameters.map((arg: any) => arg.name)
         });
         methodsOut.push(method);
         break;
@@ -200,5 +216,39 @@ export class CodeUtils {
     });
 
     return result;
+  }
+
+  /**
+   * Gets the interfaces for the method arguments.
+   * @param iString 
+   * @param methods 
+   */
+  private static async getMethodArguments(iString: string, methods?: ModuleMethod[]) {
+    let currentIndex = 0;
+    methods?.forEach((method: ModuleMethod) => {
+      // Adjust the name for the constructor.
+      let methodName = method.name;
+      if (methodName === '__constructor') {
+        methodName = 'constructor';
+      }
+
+      // Get the method signature.
+      currentIndex = iString.indexOf(methodName, currentIndex);
+      const endSignatureIndex = iString.indexOf(';', currentIndex);
+      const methodSignature = iString.substring(currentIndex, endSignatureIndex);
+      currentIndex = endSignatureIndex;
+
+      // Get the method parameters
+      const startArgsIndex = methodSignature.indexOf('(');
+      const endArgsIndex = methodSignature.lastIndexOf(')');
+      let argsSignature = methodSignature.substring(startArgsIndex, endArgsIndex).slice(1);
+
+      method.args.forEach((arg: string) => {
+        argsSignature = argsSignature.replace(new RegExp(`\\,[\\s]*${arg}`, 'm'), `; ${arg}`);
+      });
+
+      debugger;
+      method.IArgs = `declare interface IFuzzArgs { ${argsSignature} }`;
+    });
   }
 }

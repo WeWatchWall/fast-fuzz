@@ -13,7 +13,7 @@ async function Main() {
 
   // let fooI = plainToInstance(foo['Foo'],
   //   {
-  //     name: 'Adi'
+  //     name: 'test'
   //   },
   //   {
   //   enableImplicitConversion: true
