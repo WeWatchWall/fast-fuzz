@@ -23,7 +23,6 @@ async function Main() {
   await codeUtil.init(process.argv[2], process.argv[3]);
   await codeUtil.load();
   debugger;
-  
 }
 Main();
 

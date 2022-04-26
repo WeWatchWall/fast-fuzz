@@ -15,10 +15,10 @@ export class CodeUtils {
   private tsFiles: string[];
   private iFiles: string[];
   private jsFiles: string[];
+  private typeDefs: any;
   
-  typeDefs: any;
-  methods: {[key: string]: ModuleMethod[]};
-
+  methods: { [key: string]: ModuleMethod[] };
+  
   interfaces: {[key: string]: [string, string]};
   modules: {[key: string]: any};
 
@@ -238,16 +238,17 @@ export class CodeUtils {
       const methodSignature = iString.substring(currentIndex, endSignatureIndex);
       currentIndex = endSignatureIndex;
 
-      // Get the method parameters
+      // Get the method parameters.
       const startArgsIndex = methodSignature.indexOf('(');
       const endArgsIndex = methodSignature.lastIndexOf(')');
       let argsSignature = methodSignature.substring(startArgsIndex, endArgsIndex).slice(1);
 
+      // TODO: filter out functions?
+      // Replace commas with semicolons.
       method.args.forEach((arg: string) => {
         argsSignature = argsSignature.replace(new RegExp(`\\,[\\s]*${arg}`, 'm'), `; ${arg}`);
       });
 
-      debugger;
       method.IArgs = `declare interface IFuzzArgs { ${argsSignature} }`;
     });
   }
