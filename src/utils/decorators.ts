@@ -1,5 +1,7 @@
 // import { Transform, plainToInstance } from 'class-transformer';
 
+import { Globals } from "./globals";
+
 export namespace Fuzz {
   type builtIn = 'boolean' | 'integer' | 'float' | 'date' | 'string';
 
@@ -13,6 +15,8 @@ export namespace Fuzz {
       //   console.log(value);
       //   return 1;
       // })(target, key);
+
+      if (Globals.isTest) { return; }
 
       console.log(`
         type: ${type},
@@ -39,6 +43,8 @@ export namespace Fuzz {
       //   return 1;
       // })(target, key);
 
+      if (Globals.isTest) { return; }
+
       console.log(`
         type: ${type},
         dimension: ${dimension}
@@ -57,6 +63,9 @@ export namespace Fuzz {
       key: string | symbol,
       index: number
     ) => {
+
+      if (Globals.isTest) { return; }
+
       console.log(`
         type: ${type},
         dimension: ${dimension},
@@ -78,6 +87,9 @@ export namespace Fuzz {
       key: string | symbol,
       index: number
     ) => {
+
+      if (Globals.isTest) { return; }
+
       console.log(`
         type: ${type},
         dimension: ${dimension}
@@ -97,6 +109,9 @@ export namespace Fuzz {
     key: string | symbol,
     descriptor: PropertyDescriptor
   ) => {
+
+    if (Globals.isTest) { return descriptor; }
+
     const originalMethod = descriptor.value;
 
     descriptor.value = function (...args) {

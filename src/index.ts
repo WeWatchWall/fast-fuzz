@@ -1,9 +1,6 @@
 import 'reflect-metadata';
 import { CodeUtils } from './utils/codeUtils';
-
-
-
-
+import { Globals } from './utils/globals';
 
 // import { mock } from 'intermock/build/src/lang/ts/intermock';
 // import { plainToInstance } from 'class-transformer';
@@ -29,11 +26,13 @@ async function Main() {
   //   output: 'object'
   // });
   // console.log(result);
+  
+  Globals.isTest = true;
 
   const codeUtil = new CodeUtils();
   await codeUtil.init(process.argv[2], process.argv[3]);
   await codeUtil.load();
-
+  debugger;
 }
 Main();
 

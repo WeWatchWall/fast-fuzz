@@ -7,20 +7,21 @@ import FlatPromise from 'flat-promise';
 
 import { tplant } from 'tplant';
 
-import { ModuleMethod } from './moduleMethod';
+import { ModuleMethod, ModuleType } from './modules';
 import { ComponentKind } from 'tplant/dist/Models/ComponentKind';
 
 export class CodeUtils {
-  private arg: {tsFiles: string, jsFiles: string};
+  private arg: { tsFiles: string, jsFiles: string };
   private tsFiles: string[];
   private iFiles: string[];
   private jsFiles: string[];
   private typeDefs: any;
-  
+
   methods: { [key: string]: ModuleMethod[] };
-  
-  interfaces: {[key: string]: [string, string]};
-  modules: {[key: string]: any};
+  types: { [key: string]: ModuleType[] };
+
+  interfaces: { [key: string]: [string, string] };
+  modules: { [key: string]: any };
 
   /**
    * Inits code utils with the files and type tree specified.
@@ -38,11 +39,11 @@ export class CodeUtils {
 
     this.typeDefs = tplant.generateDocumentation(this.tsFiles);
 
-    this.methods = {};    
+    /* #region  Extract the method signatures. */
+    this.methods = {};
     this.typeDefs.forEach((tsFile: any) => {
       // Check the JS file exists and skip the type if it doesn't.
-      const jsFile = path.relative(this.arg.tsFiles, tsFile.name).replace('.ts', '.js');
-      const jsFileMatch = this.jsFiles.find((jsFilePath: string) => jsFilePath.endsWith(jsFile));
+      const jsFileMatch = this.getJsFile(tsFile.name);
       if (jsFileMatch === undefined) { return; }
 
       // Initialize the methods for the file.
@@ -58,7 +59,41 @@ export class CodeUtils {
         }
       });
     });
-    
+    /* #endregion */
+
+    /* #region  Extract the type inheritance. */
+    this.types = {};
+    this.typeDefs.forEach((tsFile: any) => {
+      // Check the JS file exists and skip the type if it doesn't.
+      const jsFile = path.relative(this.arg.tsFiles, tsFile.name).replace('.ts', '.js');
+      const jsFileMatch = this.jsFiles.find((jsFilePath: string) => jsFilePath.endsWith(jsFile));
+      if (jsFileMatch === undefined) { return; }
+
+      // Initialize the methods for the file.
+      this.types[jsFileMatch] = [];
+
+      tsFile.parts.forEach((filePart: any) => {
+        if (
+          filePart.componentKind === ComponentKind.NAMESPACE ||
+          filePart.componentKind === ComponentKind.INTERFACE ||
+          filePart.componentKind === ComponentKind.CLASS ||
+          filePart.componentKind === ComponentKind.ENUM
+        ) {
+          this.getTypes(jsFileMatch, filePart, this.types[jsFileMatch], []);
+        }
+      });
+    });
+
+    Object.values(this.types).forEach((moduleTypes: ModuleType[]) => {
+      moduleTypes.forEach((moduleType: ModuleType) => {
+        CodeUtils.getExtends(undefined, undefined, moduleType, this.types);
+        moduleType.inherits.forEach((typeTarget: [string, string]) => {
+          CodeUtils.getExtends(typeTarget[1], typeTarget[0], moduleType, this.types);
+        });
+      });
+    });
+    /* #endregion */
+
     this.interfaces = {};
     this.modules = {};
 
@@ -76,7 +111,7 @@ export class CodeUtils {
       if (jsFileMatch === undefined) { continue; }
       this.interfaces[jsFileMatch] = await CodeUtils.getInterfaceFile(iFile);
     }
-  
+
     // Load the argument interfaces into memory by method.
     for (const jsFile in this.interfaces) {
       const [, iString]: [string, string] = this.interfaces[jsFile];
@@ -94,6 +129,20 @@ export class CodeUtils {
   }
 
   /**
+   * Gets js file from the ts file path.
+   * TODO: Too much like good ol' Python, fix perf...
+   * @param tsFile TS file path.
+   * @param tsFilePattern TS file pattern.
+   * @param jsFiles Array of JS files.
+   * @returns  
+   */
+  private getJsFile(tsFile: string): string {
+    const jsFile = path.relative(this.arg.tsFiles, tsFile).replace('.ts', '.js');
+    const jsFileMatch = this.jsFiles.find((jsFilePath: string) => jsFilePath.endsWith(jsFile));
+    return jsFileMatch;
+  }
+
+  /**
    * Gets the absolute file names from the specfiied patterns.
    * @param filesArgument The file glob pattern.
    * @param isJs Whether to extract TS or JS files.
@@ -107,11 +156,11 @@ export class CodeUtils {
         flatPromise.reject(err);
         return;
       }
-  
+
       const absolutePaths = matches.map((match: string) => path.resolve(match));
       flatPromise.resolve(absolutePaths);
     });
-  
+
     return flatPromise.promise;
   }
 
@@ -167,6 +216,132 @@ export class CodeUtils {
   }
 
   /**
+   * Gets type inheritance from the type analyzer.
+   * @param file The type file for later.
+   * @param filePart The type node.
+   * @param methodsOut The methods array reference.
+   * @param namespaces The current namespaces.
+   * @param [className] The method's class name.
+   * @returns  The array of ModuleMethods in the methodsOut parameter.
+   */
+  private getTypes(file: string, filePart: any, typesOut: ModuleType[], namespaces: string[]): void {
+    switch (filePart.componentKind) {
+      case ComponentKind.NAMESPACE:
+        // Handle nested namespaces with recursion.
+        filePart.parts.forEach((fileSubPart: any) => {
+          this.getTypes(file, fileSubPart, typesOut, namespaces.concat([filePart.name]));
+        });
+        break;
+      case ComponentKind.ENUM:
+        typesOut.push(new ModuleType({
+          name: filePart.name,
+          namespaces: namespaces,
+          file: file,
+          kind: 'enum',
+          inherits: []
+        }));
+        break;
+      case ComponentKind.INTERFACE:
+        typesOut.push(new ModuleType({
+          name: filePart.name,
+          namespaces: namespaces,
+          file: file,
+          kind: 'interface',
+          inherits: []
+        }));
+        break;
+      case ComponentKind.CLASS:
+        const result = new ModuleType({
+          name: filePart.name,
+          namespaces: namespaces,
+          file: file,
+          kind: 'class',
+          isAbstract: filePart.isAbstract,
+          inherits: []
+        });
+
+        if (filePart.extendsClass !== undefined) {
+          result.inherits.push([
+            this.getJsFile(path.resolve(filePart.extendsClassFile)),
+            filePart.extendsClass
+              .substring(Math.max(0, filePart.extendsClass.lastIndexOf('.')))
+              .replace('.', '')
+          ]);
+        }
+
+        filePart.implementsInterfaces.forEach((iName: string, index: number) => {
+          result.inherits.push([
+            this.getJsFile(path.resolve(filePart.implementsInterfacesFiles[index])),
+            iName
+              .substring(Math.max(0, iName.lastIndexOf('.')))
+              .replace('.', '')
+          ]);
+        });
+
+        typesOut.push(result);
+        break;
+      default:
+        break;
+    }
+  }
+
+  /**
+   * Populate the extends properties for all the types.
+   * @param target  The target type name.
+   * @param targetFile  The target type file.
+   * @param newType  The next extending type.
+   * @param types All the partially-populated types by file. 
+   */
+  private static getExtends(target: string, targetFile: string, newType: ModuleType, types: { [key: string]: ModuleType[] }): void {
+    // Update the added module's self reference.
+    // Only for concrete classes and enums.
+    if (
+      newType.kind !== 'interface' &&
+      !newType.isAbstract
+    ) {
+      if (newType.extends === undefined) { newType.extends = []; }
+
+      // Add its own type as a concrete extender.
+      const selfTypeExists = newType.extends.find((extendsType: ModuleType) => extendsType.name === newType.name);
+      if (selfTypeExists === undefined) {
+        newType.extends.push(newType);
+      }
+    } else {
+      // Nothing more to do with abstract classes and enums.
+      return;
+    }
+
+    // Allow the method to get called at least once per type.
+    if (
+      target === undefined ||
+      targetFile === undefined
+    ) {
+      return;
+    }
+
+    const targetType: ModuleType = types[targetFile].find((targetType: ModuleType) => targetType.name === target);
+
+    // Update all the inherited types with the current type.
+    if (
+      targetType.inherits !== undefined &&
+      targetType.inherits.length > 0
+    ) {
+      targetType.inherits.forEach((inherit: [string, string]) => {
+        CodeUtils.getExtends(inherit[1], inherit[0], newType, types);
+      });
+    }
+
+    // Add the new type to the target type if necessary.
+    if (targetType.extends === undefined) {
+      targetType.extends = [];
+    }
+    const moduleTypeExists: ModuleType = targetType.extends.find((extendsType: ModuleType) => extendsType.name === newType.name);
+    if (moduleTypeExists === undefined) {
+      targetType.extends.push(newType);
+    }
+  }
+
+  /**
    * Gets interface file string from raw .d.ts file.
    * @param iFile The .d.ts file.
    * @returns The interface file string.
@@ -190,16 +365,16 @@ export class CodeUtils {
   static getEnumStatements(code: string): string {
     const allEnumsPattern = new RegExp('enum [\\s\\S]*?\\}', 'gm');
     const firstEnumPattern = new RegExp('enum [\\s\\S]*?\\}', 'm');
-    const enumValuePattern = new RegExp('\\{[\\s\\S]*\\}', 'gm'); 
+    const enumValuePattern = new RegExp('\\{[\\s\\S]*\\}', 'gm');
 
     let result = code;
     code.match(allEnumsPattern)?.forEach((enumStatement: string) => {
-      const enumNamePattern = new RegExp('enum (.*?) ', 'gm'); 
+      const enumNamePattern = new RegExp('enum (.*?) ', 'gm');
       const name = enumNamePattern.exec(enumStatement)[1];
 
       const objectCode: string = enumStatement.replace(new RegExp('=', 'gm'), ':');
       // TODO: remove eval soon.
-      const valueObject: any = eval(`(${ objectCode.match(enumValuePattern)[0] })`);
+      const valueObject: any = eval(`(${objectCode.match(enumValuePattern)[0]})`);
 
       let valueDefinition: string;
       for (const key in valueObject) {
