@@ -30,4 +30,12 @@ export namespace Limits {
     min: 0,
     max: 4
   };
+
+  export const array: {
+    min: number,
+    max: number
+  } = {
+    min: 1,
+    max: 3
+  };
 }

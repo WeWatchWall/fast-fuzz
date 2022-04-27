@@ -10,7 +10,6 @@ import { CodeUtils } from './utils/codeUtils';
 
 async function Main() {
 
-
   // let fooI = plainToInstance(foo['Foo'],
   //   {
   //     name: 'test'
@@ -19,10 +18,22 @@ async function Main() {
   //   enableImplicitConversion: true
   // });
 
+  // const interfaces = Object.values(codeUtil.interfaces);
+  // interfaces.push([
+  //   './IFuzzArgs.ts',
+  //   'declare interface IFuzzArgs { name: string[]; age: number[]; direction: Foo[] }'
+  // ]);
+  // let result = mock({
+  //   files: interfaces,
+  //   isOptionalAlwaysEnabled: true,
+  //   output: 'object'
+  // });
+  // console.log(result);
+
   const codeUtil = new CodeUtils();
   await codeUtil.init(process.argv[2], process.argv[3]);
   await codeUtil.load();
-  debugger;
+
 }
 Main();
 
