@@ -1,6 +1,7 @@
 import path from 'path';
 
-import { readFile } from 'fs/promises';
+import { readFileSync } from 'fs';
+import ts from 'typescript';
 
 import glob from 'glob';
 import FlatPromise from 'flat-promise';
@@ -39,7 +40,7 @@ export class CodeUtils {
 
     this.typeDefs = tplant.generateDocumentation(this.tsFiles);
 
-    /* #region  Extract the method signatures. */
+    /* #region  Extract the method information. */
     this.methods = {};
     this.typeDefs.forEach((tsFile: any) => {
       // Check the JS file exists and skip the type if it doesn't.
@@ -49,6 +50,7 @@ export class CodeUtils {
       // Initialize the methods for the file.
       this.methods[jsFileMatch] = [];
 
+      // Extract the signatures.
       tsFile.parts.forEach((filePart: any) => {
         if (
           filePart.componentKind === ComponentKind.NAMESPACE ||
@@ -58,6 +60,8 @@ export class CodeUtils {
           CodeUtils.getMethods(filePart, this.methods[jsFileMatch], []);
         }
       });
+
+      CodeUtils.getLiterals(tsFile.name, this.methods[jsFileMatch]);
     });
     /* #endregion */
 
@@ -109,7 +113,7 @@ export class CodeUtils {
       const jsFile = path.relative(this.arg.jsFiles, iFile).replace('.d.ts', '.js');
       const jsFileMatch = this.jsFiles.find((jsFilePath: string) => jsFilePath.endsWith(jsFile));
       if (jsFileMatch === undefined) { continue; }
-      this.interfaces[jsFileMatch] = await CodeUtils.getInterfaceFile(iFile);
+      this.interfaces[jsFileMatch] = CodeUtils.getInterfaceFile(iFile);
     }
 
     // Load the argument interfaces into memory by method.
@@ -117,7 +121,7 @@ export class CodeUtils {
       const [, iString]: [string, string] = this.interfaces[jsFile];
       const methods: ModuleMethod[] = this.methods[jsFile];
 
-      await CodeUtils.getMethodArguments(iString, methods);
+      CodeUtils.getMethodArguments(iString, methods);
     }
 
     // Load the modules into memory by file. Skip undefined JS files.
@@ -164,6 +168,67 @@ export class CodeUtils {
     return flatPromise.promise;
   }
 
+  static getLiterals(fileName: any, moduleMethods: ModuleMethod[]) {
+    const file: string = readFileSync(path.resolve(fileName), 'utf8');
+    var currentIndex: number = -1;
+
+    function findLiterals(node: ts.Node) {
+      let isNew = false;
+      switch (node.kind) {
+        case ts.SyntaxKind.Constructor:
+          isNew = true;
+          break;
+        case ts.SyntaxKind.FunctionDeclaration:
+          isNew = true;
+          break;
+        case ts.SyntaxKind.MethodDeclaration:
+          // TODO: refactor with detect method type from tplant
+          const isSkipModifier: ts.Modifier = node.modifiers.find((modifier: ts.Modifier) => 
+            [
+              ts.SyntaxKind.AbstractKeyword,
+              ts.SyntaxKind.PrivateKeyword,
+              ts.SyntaxKind.ProtectedKeyword
+            ].includes(modifier.kind)
+          );
+          if (isSkipModifier === undefined) { isNew = true; }
+          break;
+        default:
+          break;
+      }
+
+      if (isNew) { currentIndex++; }
+      if (currentIndex === -1) {
+        ts.forEachChild(node, findLiterals);
+        return;
+      }
+
+      switch (node.kind) {
+        case ts.SyntaxKind.NumericLiteral:
+        case ts.SyntaxKind.BigIntLiteral:
+        case ts.SyntaxKind.StringLiteral:
+          // Check if this literal is in a decorator.
+          let isDecorator: boolean = false;
+          let parentNode = node;
+          while (parentNode.parent !== undefined) {
+            isDecorator = isDecorator || parentNode.kind === ts.SyntaxKind.Decorator;
+            parentNode = parentNode.parent;
+          }
+
+          if (!isDecorator) { moduleMethods[currentIndex].literals.push(node.getText()); }          
+          break;
+        default:
+          break;
+      }
+
+      ts.forEachChild(node, findLiterals);
+    }
+
+    if (moduleMethods.length > 0) {
+      const sourceFile = ts.createSourceFile(fileName, file, ts.ScriptTarget.ES2015, true);
+      findLiterals(sourceFile);
+    }
+  }
+
   /**
    * Gets methods from the type analyzer.
    * @param filePart The type node.
@@ -191,6 +256,7 @@ export class CodeUtils {
         break;
       case ComponentKind.METHOD:
         // Sanity check for public non-abstract methods.
+        // TODO: refactor with detect method type from typescript
         if (
           filePart.modifier !== 'public' ||
           filePart.isAbstract
@@ -203,8 +269,11 @@ export class CodeUtils {
           name: filePart.name,
           className,
           namespaces,
-          isStatic: filePart.isStatic,
+          isAbstract: filePart.isAbstract,
           isAsync: filePart.isAsync,
+          isStatic: filePart.isStatic,
+          literals: [],
+          
           // TODO: filter out functions?
           args: filePart.parameters.map((arg: any) => arg.name)
         });
@@ -346,8 +415,8 @@ export class CodeUtils {
    * @param iFile The .d.ts file.
    * @returns The interface file string.
    */
-  private static async getInterfaceFile(iFile: string): Promise<[string, string]> {
-    let code: string = await readFile(iFile, 'utf8');
+  private static getInterfaceFile(iFile: string): [string, string] {
+    let code: string = readFileSync(iFile, 'utf8');
 
     code = code.replace(new RegExp(' abstract ', 'gm'), ' ');
     code = code.replace(new RegExp(' implements ', 'gm'), ' extends ');
@@ -398,7 +467,7 @@ export class CodeUtils {
    * @param iString 
    * @param methods 
    */
-  private static async getMethodArguments(iString: string, methods?: ModuleMethod[]) {
+  private static getMethodArguments(iString: string, methods?: ModuleMethod[]): void {
     let currentIndex = 0;
     methods?.forEach((method: ModuleMethod) => {
       // Adjust the name for the constructor.

@@ -5,9 +5,11 @@ export class ModuleMethod {
   // Doesn't need to waste memory when it's externally managed.
   // Usually throws property not in use for the class.
   // file: string;
-  isStatic: boolean;
+  isAbstract: boolean;
   isAsync: boolean;
+  isStatic: boolean;
   args: string[];
+  literals: string[];
 
   IArgs: string;
 
