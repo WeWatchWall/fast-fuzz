@@ -16,22 +16,20 @@ async function Main() {
   // });
 
   // const interfaces = Object.values(codeUtil.interfaces);
-  // interfaces.push([
-  //   './IFuzzArgs.ts',
-  //   'declare interface IFuzzArgs { name: string[]; age: number[]; direction: Foo[] }'
-  // ]);
+  // interfaces.push(codeUtil.methods["path"][2].IArgs);
   // let result = mock({
   //   files: interfaces,
   //   isOptionalAlwaysEnabled: true,
   //   output: 'object'
   // });
   // console.log(result);
-  
+
   Globals.isTest = true;
 
   const codeUtil = new CodeUtils();
   await codeUtil.init(process.argv[2], process.argv[3]);
   await codeUtil.load();
+
   debugger;
 }
 Main();

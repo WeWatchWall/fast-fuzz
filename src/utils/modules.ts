@@ -11,7 +11,7 @@ export class ModuleMethod {
   args: string[];
   literals: string[];
 
-  IArgs: string;
+  IArgs: [string, string];
 
   constructor(init: Partial<ModuleMethod>) {
     Object.assign(this, init);

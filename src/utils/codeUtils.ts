@@ -118,10 +118,10 @@ export class CodeUtils {
 
     // Load the argument interfaces into memory by method.
     for (const jsFile in this.interfaces) {
-      const [, iString]: [string, string] = this.interfaces[jsFile];
+      const [iFile, iString]: [string, string] = this.interfaces[jsFile];
       const methods: ModuleMethod[] = this.methods[jsFile];
 
-      CodeUtils.getMethodArguments(iString, methods);
+      CodeUtils.getMethodArguments(iFile, iString, methods);
     }
 
     // Load the modules into memory by file. Skip undefined JS files.
@@ -467,10 +467,18 @@ export class CodeUtils {
 
   /**
    * Gets the interfaces for the method arguments.
+   * @param iFile
    * @param iString 
    * @param methods 
    */
-  private static getMethodArguments(iString: string, methods?: ModuleMethod[]): void {
+  private static getMethodArguments(iFile: string, iString: string, methods?: ModuleMethod[]): void {
+    let indexLastImport = iString.lastIndexOf('import ');
+    if (indexLastImport > -1) {
+      indexLastImport = iString.indexOf(';', indexLastImport) + 1;
+    }
+
+    const importSection = iString.substring(0, Math.max(0, indexLastImport));
+
     let currentIndex = 0;
     methods?.forEach((method: ModuleMethod) => {
       // Adjust the name for the constructor.
@@ -496,7 +504,11 @@ export class CodeUtils {
         argsSignature = argsSignature.replace(new RegExp(`\\,[\\s]*${arg}`, 'm'), `; ${arg}`);
       });
 
-      method.IArgs = `declare interface IFuzzArgs { ${argsSignature} }`;
+      const fileName = path.basename(iFile).replace('.d.ts', '');
+      method.IArgs = [
+        iFile.replace(fileName, 'IFuzzArgs'),
+        `${importSection} declare interface IFuzzArgs { ${argsSignature} }`
+      ];
     });
   }
 }
