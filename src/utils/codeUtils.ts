@@ -179,7 +179,10 @@ export class CodeUtils {
           isNew = true;
           break;
         case ts.SyntaxKind.FunctionDeclaration:
-          isNew = true;
+          const isSkipNested =
+            (currentIndex === moduleMethods.length - 1) ||
+            moduleMethods[currentIndex + 1].name !== (<ts.FunctionDeclaration>node).name.escapedText;
+          isNew = !isSkipNested;
           break;
         case ts.SyntaxKind.MethodDeclaration:
           // TODO: refactor with detect method type from tplant
@@ -190,7 +193,7 @@ export class CodeUtils {
               ts.SyntaxKind.ProtectedKeyword
             ].includes(modifier.kind)
           );
-          if (isSkipModifier === undefined) { isNew = true; }
+          isNew = isSkipModifier === undefined;
           break;
         default:
           break;
