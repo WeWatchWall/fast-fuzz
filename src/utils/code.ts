@@ -11,7 +11,7 @@ import { tplant } from 'tplant';
 import { ModuleMethod, ModuleType } from './modules';
 import { ComponentKind } from 'tplant/dist/Models/ComponentKind';
 
-export class CodeUtils {
+export class Code {
   private arg: { tsFiles: string, jsFiles: string };
   private tsFiles: string[];
   private iFiles: string[];
@@ -34,9 +34,9 @@ export class CodeUtils {
       tsFiles: path.resolve(tsFiles),
       jsFiles: path.resolve(jsFiles)
     };
-    this.tsFiles = await CodeUtils.getFiles(tsFiles, false);
-    this.iFiles = await CodeUtils.getFiles(jsFiles, false);
-    this.jsFiles = await CodeUtils.getFiles(jsFiles, true);
+    this.tsFiles = await Code.getFiles(tsFiles, false);
+    this.iFiles = await Code.getFiles(jsFiles, false);
+    this.jsFiles = await Code.getFiles(jsFiles, true);
 
     this.typeDefs = tplant.generateDocumentation(this.tsFiles);
 
@@ -57,11 +57,11 @@ export class CodeUtils {
           filePart.componentKind === ComponentKind.CLASS ||
           filePart.componentKind === ComponentKind.METHOD
         ) {
-          CodeUtils.getMethods(filePart, this.methods[jsFileMatch], []);
+          Code.getMethods(filePart, this.methods[jsFileMatch], []);
         }
       });
 
-      CodeUtils.getLiterals(tsFile.name, this.methods[jsFileMatch]);
+      Code.getLiterals(tsFile.name, this.methods[jsFileMatch]);
     });
     /* #endregion */
 
@@ -90,9 +90,9 @@ export class CodeUtils {
 
     Object.values(this.types).forEach((moduleTypes: ModuleType[]) => {
       moduleTypes.forEach((moduleType: ModuleType) => {
-        CodeUtils.getExtends(undefined, undefined, moduleType, this.types);
+        Code.getExtends(undefined, undefined, moduleType, this.types);
         moduleType.inherits.forEach((typeTarget: [string, string]) => {
-          CodeUtils.getExtends(typeTarget[1], typeTarget[0], moduleType, this.types);
+          Code.getExtends(typeTarget[1], typeTarget[0], moduleType, this.types);
         });
       });
     });
@@ -113,7 +113,7 @@ export class CodeUtils {
       const jsFile = path.relative(this.arg.jsFiles, iFile).replace('.d.ts', '.js');
       const jsFileMatch = this.jsFiles.find((jsFilePath: string) => jsFilePath.endsWith(jsFile));
       if (jsFileMatch === undefined) { continue; }
-      this.interfaces[jsFileMatch] = CodeUtils.getInterfaceFile(iFile);
+      this.interfaces[jsFileMatch] = Code.getInterfaceFile(iFile);
     }
 
     // Load the argument interfaces into memory by method.
@@ -121,9 +121,10 @@ export class CodeUtils {
       const [iFile, iString]: [string, string] = this.interfaces[jsFile];
       const methods: ModuleMethod[] = this.methods[jsFile];
 
-      CodeUtils.getMethodArguments(iFile, iString, methods);
+      Code.getMethodArguments(iFile, iString, methods);
     }
 
+    // TODO: Execute this lazily outside of this method(Keep last in this method).
     // Load the modules into memory by file. Skip undefined JS files.
     for (const jsFile of this.jsFiles) {
       const tsFile = path.relative(this.arg.jsFiles, jsFile).replace('.js', '.ts');
@@ -245,16 +246,16 @@ export class CodeUtils {
       case ComponentKind.NAMESPACE:
         // Handle nested namespaces with recursion.
         filePart.parts.forEach((fileSubPart: any) => {
-          CodeUtils.getMethods(fileSubPart, methodsOut, namespaces.concat([filePart.name]));
+          Code.getMethods(fileSubPart, methodsOut, namespaces.concat([filePart.name]));
         });
         break;
       case ComponentKind.CLASS:
         // Loop over the constructor and class methods and invoke recursively.
         filePart.constructorMethods.forEach((fileSubPart: any) => {
-          CodeUtils.getMethods(fileSubPart, methodsOut, namespaces, filePart.name);
+          Code.getMethods(fileSubPart, methodsOut, namespaces, filePart.name);
         });
         filePart.members.forEach((fileSubPart: any) => {
-          CodeUtils.getMethods(fileSubPart, methodsOut, namespaces, filePart.name);
+          Code.getMethods(fileSubPart, methodsOut, namespaces, filePart.name);
         });
         break;
       case ComponentKind.METHOD:
@@ -399,7 +400,7 @@ export class CodeUtils {
       targetType.inherits.length > 0
     ) {
       targetType.inherits.forEach((inherit: [string, string]) => {
-        CodeUtils.getExtends(inherit[1], inherit[0], newType, types);
+        Code.getExtends(inherit[1], inherit[0], newType, types);
       });
     }
 
@@ -425,7 +426,7 @@ export class CodeUtils {
     code = code.replace(new RegExp(' implements ', 'gm'), ' extends ');
     code = code.replace(new RegExp(' class ', 'gm'), ' interface ');
 
-    code = CodeUtils.getEnumStatements(code);
+    code = Code.getEnumStatements(code);
     return [iFile, code];
   }
 

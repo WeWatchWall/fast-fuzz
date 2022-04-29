@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import { CodeUtils } from './utils/codeUtils';
+import { Code } from './utils/code';
 import { Globals } from './utils/globals';
 
 // import { mock } from 'intermock/build/src/lang/ts/intermock';
@@ -24,12 +24,16 @@ async function Main() {
   // });
   // console.log(result);
 
+  // Globals.codeUtil.methods["path"][1].test.isStart = true;
+  // let foo = new Globals.codeUtil.modules["path"]["Bar"]["Foo"](12, true, 'UP', 1);
+  // foo['isSame'](13, false, 1, 'UP');
+  // foo['isSame'](13, false, 1, 'UP');
+
   Globals.isTest = true;
 
-  const codeUtil = new CodeUtils();
-  await codeUtil.init(process.argv[2], process.argv[3]);
-  await codeUtil.load();
-
+  Globals.codeUtil = new Code();
+  await Globals.codeUtil.init(process.argv[2], process.argv[3]);
+  await Globals.codeUtil.load();
   debugger;
 }
 Main();

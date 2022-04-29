@@ -13,6 +13,11 @@ export class ModuleMethod {
 
   IArgs: [string, string];
 
+  test?: {
+    isStart: boolean,
+    generators: any[]// TODO
+  };
+
   constructor(init: Partial<ModuleMethod>) {
     Object.assign(this, init);
   }

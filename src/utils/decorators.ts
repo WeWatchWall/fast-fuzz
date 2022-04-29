@@ -1,129 +1,136 @@
-// import { Transform, plainToInstance } from 'class-transformer';
-
 import { Globals } from "./globals";
+import { ModuleMethod } from "./modules";
 
-export namespace Fuzz {
-  type builtIn = 'boolean' | 'integer' | 'float' | 'date' | 'string';
+export type BuiltIn = 'boolean' | 'integer' | 'float' | 'date' | 'string';
 
-  export const prop = function (type: builtIn, dimension: number = 0, min?: number, max?: number): PropertyDecorator {
-    return (
-      target: Object,
-      key: string | symbol
-    ) => {
-      // Transform(({ value }) => {
-      //   debugger;
-      //   console.log(value);
-      //   return 1;
-      // })(target, key);
+export class MethodArg {
+  index: number;
+  type: BuiltIn | string;
+  dimension: number;
+  min?: number;
+  max?: number;
+}
 
-      if (Globals.isTest) { return; }
+export class ArgsDecorator {
+  private static fileName?: string;
+  private static className?: string;
+  private static methodName?: string;
+  private static lastIndex?: number;
+  private static args: MethodArg[] = [];
 
-      console.log(`
-        type: ${type},
-        dimension: ${dimension},
-        min: ${min},
-        max: ${max}
-      `);
-
-      console.log(`
-        target: ${target},
-        key: ${String(key)}
-      `);
-    };
-  };
-    
-  export const propType = function (type: string, dimension: number = 0): PropertyDecorator {
-    return (
-      target: Object,
-      key: string | symbol
-    ) => {
-      // Transform(({ value }) => {
-      //   debugger;
-      //   console.log(value);
-      //   return 1;
-      // })(target, key);
-
-      if (Globals.isTest) { return; }
-
-      console.log(`
-        type: ${type},
-        dimension: ${dimension}
-      `);
-
-      console.log(`
-        target: ${target},
-        key: ${String(key)}
-      `);
-    };
-  };
-
-  export const arg = function (type: builtIn, dimension: number = 0, min?: number, max?: number): ParameterDecorator {
-    return (
-      target: Object,
-      key: string | symbol,
-      index: number
-    ) => {
-
-      if (Globals.isTest) { return; }
-
-      console.log(`
-        type: ${type},
-        dimension: ${dimension},
-        min: ${min},
-        max: ${max}
-      `);
-
-      console.log(`
-        target: ${target},
-        key: ${String(key)},
-        index: ${index}
-      `);
-    };
-  };
-
-  export const argType = function (type: string, dimension: number = 0): ParameterDecorator {
-    return (
-      target: Object,
-      key: string | symbol,
-      index: number
-    ) => {
-
-      if (Globals.isTest) { return; }
-
-      console.log(`
-        type: ${type},
-        dimension: ${dimension}
-      `);
-
-      console.log(`
-        target: ${target},
-        key: ${String(key)},
-        index: ${index}
-      `);
-    };
-  };
-
-  export const method: MethodDecorator =
-  (
+  static addArgument (
     target: Object,
     key: string | symbol,
-    descriptor: PropertyDescriptor
-  ) => {
+    arg: MethodArg
+  ): void {
+    if (!ArgsDecorator.checkMethod(5, target, key, arg)) {
+      ArgsDecorator.resetMethod();
+    }
 
-    if (Globals.isTest) { return descriptor; }
+    if (ArgsDecorator.args.length === 0) {
+      ArgsDecorator.fileName = ArgsDecorator.getFileName(4);
+      ArgsDecorator.className = target.constructor.name;
+      ArgsDecorator.methodName = new String(key).toString();
+      ArgsDecorator.lastIndex = arg.index;
+    }
 
-    const originalMethod = descriptor.value;
-
-    descriptor.value = function (...args) {
-      const result = originalMethod.apply(this, args);
-      return result;
-    };
-
-    console.log(`
-      target: ${target},
-      key: ${String(key)}
-    `);
-
-    return descriptor;
+    ArgsDecorator.args.push(arg);
   };
+
+  static addMethod(
+    target: Object,
+    key: string | symbol
+  ): {
+    isStart: boolean,
+    generators: any[]
+  } {
+    // Check it's the same method with a dummy arg.
+    if (!ArgsDecorator.checkMethod(8, target, key, { index: -1, dimension: 0, type: ''})) {
+      ArgsDecorator.resetMethod();
+    }
+
+    // Populate the method details.
+    const newFileName: string = ArgsDecorator.getFileName(7);
+    const newClassName: string = target.constructor.name;
+    const newMethodName: string = new String(key).toString();
+
+    // Find and populate the central method repo. 
+    const method = Globals.codeUtil.methods[newFileName].find((method: ModuleMethod) =>
+      method.name === newMethodName &&
+      method.className === newClassName
+    );
+    const result = {
+      isStart: false,
+      generators: []
+    };
+    method.test = result;
+
+    // TODO: Initialize the generators.
+    this.args.forEach((arg: MethodArg) => {
+      result.generators.push(arg);
+      
+    });
+
+    ArgsDecorator.resetMethod();
+    return result;
+  }
+
+  private static getFileName (index: number): string {
+    const stackLines = ((new Error()).stack).split('\n');
+    let file = stackLines[index];
+    file = file.replace(new RegExp('^[\\s]*at '), '');
+    file = file.replace(new RegExp(':[0-9]*:[0-9]*$'), '');
+
+    return file;
+  }
+
+  private static checkMethod(
+    stackIndex: number,
+    target: Object,
+    key: string | symbol,
+    arg: MethodArg
+  ): boolean {
+    const newFileName: string = ArgsDecorator.getFileName(stackIndex);
+    const newClassName: string = target.constructor.name;
+    const newMethodName: string = new String(key).toString();
+
+    // console.log(`
+    //   fileName: ${newFileName},
+    //   className: ${newClassName},
+    //   methodName: ${newMethodName},
+    //   arg: ${JSON.stringify(arg)}
+    // `);
+
+    if (
+      ArgsDecorator.args.length > 0 &&
+      !(
+        newFileName === ArgsDecorator.fileName &&
+        newClassName === ArgsDecorator.className &&
+        newMethodName === ArgsDecorator.methodName &&
+        (ArgsDecorator.lastIndex > arg.index)
+      )
+    ) {
+      console.warn(
+        `
+          Missing method decorator:
+          File name: ${ArgsDecorator.fileName},
+          Class name: ${ArgsDecorator.className},
+          Method name: ${ArgsDecorator.methodName},
+          Arguments: ${JSON.stringify(ArgsDecorator.args)}
+        `
+      );
+      return false;
+    }
+
+    return true;
+  };
+
+  private static resetMethod () {
+    ArgsDecorator.fileName = undefined;
+    ArgsDecorator.className = undefined;
+    ArgsDecorator.methodName = undefined;
+    ArgsDecorator.lastIndex = undefined;
+    ArgsDecorator.args = [];
+  };
+
 }
