@@ -20,7 +20,7 @@ export namespace Fuzz {
       if (!Globals.isTest) { return; }
 
       // console.log(`
-      //   typeName: ${type},
+      //   type: ${type},
       //   dimension: ${dimension},
       //   min: ${min},
       //   max: ${max}
@@ -47,7 +47,7 @@ export namespace Fuzz {
       if (!Globals.isTest) { return; }
 
       // console.log(`
-      //   typeName: ${type},
+      //   type: ${type},
       //   dimension: ${dimension}
       // `);
 
@@ -69,7 +69,7 @@ export namespace Fuzz {
 
       ArgsDecorator.addArgument(target, key, {
         index: index,
-        typeName: type,
+        type: type,
         dimension: dimension,
         min: min,
         max: max
@@ -88,7 +88,7 @@ export namespace Fuzz {
       
       ArgsDecorator.addArgument(target, key, {
         index: index,
-        typeName: type,
+        type: type,
         dimension: dimension
       });
     };
@@ -118,14 +118,11 @@ export namespace Fuzz {
       }
 
       // TODO: Run the arguments' generators.
-      testArgs.generators.forEach((arg: any) => {
+      testArgs.generators.forEach((generator: any) => {
         console.log(JSON.stringify({
-          index: arg.index,
-          typeName: arg.typeName,
-          type: arg.type?.name,
-          dimension: arg.dimension,
-          min: arg.min,
-          max: arg.max
+          arg: generator.arg,
+          method: generator.method.name,
+          type: generator.type?.name
         }));
 
       });
