@@ -1,11 +1,12 @@
 import { Globals } from "./globals";
-import { ModuleMethod } from "./modules";
+import { ModuleMethod, ModuleType } from "./modules";
 
 export type BuiltIn = 'boolean' | 'integer' | 'float' | 'date' | 'string';
 
 export class MethodArg {
   index: number;
-  type: BuiltIn | string;
+  typeName: BuiltIn | string;
+  type?: ModuleType;
   dimension: number;
   min?: number;
   max?: number;
@@ -45,7 +46,7 @@ export class ArgsDecorator {
     generators: any[]
   } {
     // Check it's the same method with a dummy arg.
-    if (!ArgsDecorator.checkMethod(8, target, key, { index: -1, dimension: 0, type: ''})) {
+    if (!ArgsDecorator.checkMethod(8, target, key, { index: -1, dimension: 0, typeName: ''})) {
       ArgsDecorator.resetMethod();
     }
 
@@ -67,8 +68,38 @@ export class ArgsDecorator {
 
     // TODO: Initialize the generators.
     this.args.forEach((arg: MethodArg) => {
+      let isBuiltIn = false;
+      switch (arg.typeName) {
+        case 'boolean':
+        case 'integer':
+        case 'float':
+        case 'string':
+          isBuiltIn = true;
+          break;
+        default:
+          break;
+      }
+
+      if (isBuiltIn) {
+        result.generators.push(arg);
+        // TODO: generate built-in type.
+        return;
+      }
+
+      let type = Globals.codeUtil.types[newFileName]
+        .find((localType: ModuleType) => localType.name === arg.typeName);
+      arg.type = type;
+
+      // Get the type from the central repo if it's not local.
+      // Don't create a generator if it's not found.
+      if (type === undefined) {
+        type = Globals.codeUtil.findType(arg.typeName, method.IArgs, newFileName);
+      }
+      if (type === undefined) { return; }
+
+      arg.type = type;
       result.generators.push(arg);
-      
+      // TODO: generate the referenced type.
     });
 
     ArgsDecorator.resetMethod();
