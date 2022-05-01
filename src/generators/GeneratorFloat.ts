@@ -3,12 +3,12 @@ import { Generator } from "./Generator";
 import { Mode } from "./Mode";
 
 export class GeneratorFloat extends Generator {
-  constructor(index: number, dimension: number = 0, literals: string[], min?: number, max?: number) {
+  constructor(dimension: number = 0, literals: string[], min?: number, max?: number, index?: number) {
     super(
-      index,
       dimension,
       new Limits({ float: { min, max } }),
-      Generator.getLiterals('float', literals)
+      Generator.getLiterals('float', literals),
+      index
     );
     this.falsyLiterals = this.falsyLiterals.concat([0, -0, Number.MIN_VALUE, -1 * Number.MIN_VALUE, NaN]);
     this.literals = this.literals.concat(this.falsyLiterals);

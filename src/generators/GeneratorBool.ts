@@ -3,8 +3,8 @@ import { Generator } from "./Generator";
 import { Mode } from "./Mode";
 
 export class GeneratorBool extends Generator {
-  constructor(index: number, dimension: number = 0) {
-    super(index, dimension, new Limits({}), []);
+  constructor(dimension: number = 0, index?: number) {
+    super(dimension, new Limits({}), [], index);
     this.falsyLiterals = this.falsyLiterals.concat([false]);
     this.literals = this.literals.concat(this.falsyLiterals);
   }

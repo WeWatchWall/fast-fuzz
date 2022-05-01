@@ -1,11 +1,17 @@
 import makeMatrix from "make-matrix";
 import { BuiltIn } from "../utils/decorators";
 import { Limits } from "../utils/limits";
+import { GeneratorBool } from "./GeneratorBool";
+import { GeneratorDate } from "./GeneratorDate";
+import { GeneratorFloat } from "./GeneratorFloat";
+import { GeneratorInt } from "./GeneratorInt";
+import { GeneratorString } from "./GeneratorString";
+import { GeneratorType } from "./GeneratorType";
 import { IGenerator } from "./IGenerator";
 import { Mode } from "./Mode";
 
 export abstract class Generator implements IGenerator {
-  /* #region  Public properties. */
+  /* #region  Properties. */
   static mode: Mode = Mode.Falsy;
   static P_STUFF_FALSY: number = 0.8;
 
@@ -18,23 +24,73 @@ export abstract class Generator implements IGenerator {
   batchSize: number;
   values: any[];
   count: number;
-  /* #endregion */
 
   protected falsyLiterals: any[];
+  /* #endregion */
+
+  /**
+   * Factory method for generators for the built-in types.
+   * @param type 
+   * @param [dimension] 
+   * @param [literals] 
+   * @param [index] 
+   * @param [min] 
+   * @param [max] 
+   * @returns init 
+   */
+  static init(
+    type: BuiltIn,
+    dimension: number = 0,
+    literals: string[],
+    index?: number,
+    min?: number,
+    max?: number
+  ): IGenerator {
+    switch (type) {
+      case 'boolean':
+        return new GeneratorBool(dimension, index);
+      case 'integer':
+        return new GeneratorInt(dimension, literals, index, min, max);
+      case 'float':
+        return new GeneratorFloat(dimension, literals, index, min, max);
+      case 'date':
+        return new GeneratorDate(dimension, literals, index, min, max);
+      case 'string':
+        return new GeneratorString(dimension, literals, index, min, max);
+      default:
+        break;
+    }
+
+    return null;
+  }
+
+  /**
+   * Factory method for generators for custom types.
+   * @param index 
+   * @param type 
+   * @param [dimension]
+   */
+  static initType(
+    index: number,
+    type: string,
+    dimension: number = 0
+  ): IGenerator {
+    return new GeneratorType(index, type, dimension);
+  }
 
   /**
    * Creates an instance of generator.
-   * @param index 
    * @param [dimension] Default = `0`.
    * @param limits 
    * @param [literals] 
+   * @param [index] 
    */
   constructor(
-    index: number,
     dimension: number = 0,
 
     limits: Limits,
-    literals?: (number | Date | string)[]
+    literals?: (number | Date | string)[],
+    index?: number
   ) {
     this.index = index;
     this.dimension = Math.max(dimension, 0);

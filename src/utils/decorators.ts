@@ -1,3 +1,5 @@
+import { Generator } from "../generators/Generator";
+import { IGenerator } from "../generators/IGenerator";
 import { Globals } from "./globals";
 import { ModuleMethod, ModuleType } from "./modules";
 
@@ -42,7 +44,7 @@ export class ArgsDecorator {
     key: string | symbol
   ): {
     isStart: boolean,
-    generators: any[]
+    generators: IGenerator[]
   } {
     // Check it's the same method with a dummy arg.
     if (!ArgsDecorator.checkMethod(8, target, key, { index: -1, dimension: 0, type: ''})) {
@@ -59,7 +61,10 @@ export class ArgsDecorator {
       method.name === newMethodName &&
       method.className === newClassName
     );
-    const result = {
+    const result: {
+      isStart: boolean,
+      generators: IGenerator[]
+    } = {
       isStart: false,
       generators: []
     };
@@ -89,15 +94,37 @@ export class ArgsDecorator {
         if (type === undefined) {
           type = Globals.codeUtil.findType(arg.type, method.IArgs, newFileName);
         }
-        if (type === undefined) { return; }
+        if (type === undefined) {
+          console.warn(
+            `
+              Missing type on decorated method:
+              File name: ${newFileName},
+              Class name: ${newClassName},
+              Method name: ${newMethodName},
+              Argument: ${JSON.stringify(arg)}
+            `
+          );
+
+          return;
+        }
       }
 
-      result.generators.push({
-        arg: arg,
-        method: method,
-        type: type
-      });
-      // TODO: generate the referenced type.
+      if (isBuiltIn) {
+        result.generators.push(Generator.init(
+          <BuiltIn>arg.type,
+          arg.dimension,
+          method.literals,
+          arg.min,
+          arg.max,
+          arg.index
+        ));
+      } else {
+        result.generators.push(Generator.initType(
+          arg.index,
+          arg.type,
+          arg.dimension
+        ));
+      }
     });
 
     ArgsDecorator.resetMethod();

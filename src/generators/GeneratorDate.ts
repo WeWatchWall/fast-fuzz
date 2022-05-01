@@ -3,12 +3,12 @@ import { Generator } from "./Generator";
 import { Mode } from "./Mode";
 
 export class GeneratorDate extends Generator {
-  constructor(index: number, dimension: number = 0, literals: string[], min?: number, max?: number) {
+  constructor(dimension: number = 0, literals: string[], min?: number, max?: number, index?: number) {
     super(
-      index,
       dimension,
       new Limits({ date: { min, max } }),
-      Generator.getLiterals('date', literals)
+      Generator.getLiterals('date', literals),
+      index
     );
     this.falsyLiterals = this.falsyLiterals.concat([new Date(0), new Date(Date.parse('0'))]);
     this.literals = this.literals.concat(this.falsyLiterals);

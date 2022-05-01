@@ -1,35 +1,35 @@
-// import { Transform, plainToInstance } from 'class-transformer';
+import { Transform } from 'class-transformer';
+import { Generator } from './generators/Generator';
 
+import { IGenerator } from "./generators/IGenerator";
 import { BuiltIn, ArgsDecorator } from "./utils/decorators";
 import { Globals } from "./utils/globals";
 
 export namespace Fuzz {
-  
 
-  export const prop = function (_type: BuiltIn, _dimension: number = 0, _min?: number, _max?: number): PropertyDecorator {
+  export const prop = function (type: BuiltIn, dimension: number = 0, min?: number, max?: number): PropertyDecorator {
     return (
-      _target: Object,
-      _key: string | symbol
+      target: Object,
+      key: string | symbol
     ) => {
-      // Transform(({ value }) => {
-      //   debugger;
-      //   console.log(value);
-      //   return 1;
-      // })(target, key);
-
       if (!Globals.isTest) { return; }
 
-      // console.log(`
-      //   type: ${type},
-      //   dimension: ${dimension},
-      //   min: ${min},
-      //   max: ${max}
-      // `);
+      var isInit: number = 0;
+      var generator: IGenerator;
 
-      // console.log(`
-      //   target: ${target},
-      //   key: ${String(key)}
-      // `);
+      Transform(({ }) => {
+        if (isInit !== Globals.methodCount) {
+          generator = Generator.init(
+            type,
+            dimension,
+            Globals.literals,
+            min,
+            max
+          );
+          isInit = Globals.methodCount;
+        }
+        return generator.next();
+      })(target, key);
     };
   };
     
@@ -106,7 +106,7 @@ export namespace Fuzz {
     // Initialize the method's generators.
     const testArgs: {
       isStart: boolean,
-      generators: any[]
+      generators: IGenerator[]
     } = ArgsDecorator.addMethod(target, key);
     
     const originalMethod = descriptor.value;
@@ -117,14 +117,9 @@ export namespace Fuzz {
         return originalMethod.apply(this, args);
       }
 
-      // TODO: Run the arguments' generators.
-      testArgs.generators.forEach((generator: any) => {
-        console.log(JSON.stringify({
-          arg: generator.arg,
-          method: generator.method.name,
-          type: generator.type?.name
-        }));
-
+      // Run the arguments' generators.
+      testArgs.generators.forEach((generator: IGenerator) => {
+        args[generator.index] = generator.next();
       });
 
       // Reset the mock flag in case of recursion or subsequent calls.

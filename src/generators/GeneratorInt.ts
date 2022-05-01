@@ -3,12 +3,12 @@ import { Generator } from "./Generator";
 import { Mode } from "./Mode";
 
 export class GeneratorInt extends Generator {
-  constructor(index: number, dimension: number = 0, literals: string[], min?: number, max?: number) {
+  constructor(dimension: number = 0, literals: string[], min?: number, max?: number, index?: number) {
     super(
-      index,
       dimension,
       new Limits({ int: { min, max } }),
-      Generator.getLiterals('integer', literals)
+      Generator.getLiterals('integer', literals),
+      index
     );
     this.falsyLiterals = this.falsyLiterals.concat([0, -0, NaN]);
     this.literals = this.literals.concat(this.falsyLiterals);

@@ -7,12 +7,12 @@ import { Mode } from "./Mode";
  * Not usually used in logic because of their combinatorial explosion.
  */
 export class GeneratorString extends Generator {
-  constructor(index: number, dimension: number = 0, literals: string[], min?: number, max?: number) {
+  constructor(dimension: number = 0, literals: string[], min?: number, max?: number, index?: number) {
     super(
-      index,
       dimension,
       new Limits({ string: { min, max } }),
-      Generator.getLiterals('string', literals)
+      Generator.getLiterals('string', literals),
+      index
     );
     this.falsyLiterals = this.falsyLiterals.concat(['']);
     this.literals = this.literals.concat(this.falsyLiterals);
