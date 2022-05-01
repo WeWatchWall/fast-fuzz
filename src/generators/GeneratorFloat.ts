@@ -45,8 +45,8 @@ export class GeneratorFloat extends Generator {
     return result;
   }
 
-  next() {
-    throw new Error("Method not implemented.");
+  next(): any {
+    return Generator.next(this);
   }
 
   /**

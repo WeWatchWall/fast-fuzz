@@ -8,6 +8,6 @@ export interface IGenerator {
   batchSize: number;
   values: any[];
 
-  next(): any;
   generate(count: number): any[];
+  next(): any;
 }
