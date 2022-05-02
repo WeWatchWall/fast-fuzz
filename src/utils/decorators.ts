@@ -13,7 +13,7 @@ export class MethodArg {
   max?: number;
 }
 
-export class ArgsDecorator {
+export class Decorators {
   private static fileName?: string;
   private static className?: string;
   private static methodName?: string;
@@ -25,18 +25,18 @@ export class ArgsDecorator {
     key: string | symbol,
     arg: MethodArg
   ): void {
-    if (!ArgsDecorator.checkMethod(5, target, key, arg)) {
-      ArgsDecorator.resetMethod();
+    if (!Decorators.checkMethod(5, target, key, arg)) {
+      Decorators.resetMethod();
     }
 
-    if (ArgsDecorator.args.length === 0) {
-      ArgsDecorator.fileName = ArgsDecorator.getFileName(4);
-      ArgsDecorator.className = target.constructor.name;
-      ArgsDecorator.methodName = new String(key).toString();
-      ArgsDecorator.lastIndex = arg.index;
+    if (Decorators.args.length === 0) {
+      Decorators.fileName = Decorators.getFileName(4);
+      Decorators.className = target.constructor.name;
+      Decorators.methodName = new String(key).toString();
+      Decorators.lastIndex = arg.index;
     }
 
-    ArgsDecorator.args.push(arg);
+    Decorators.args.push(arg);
   };
 
   static addMethod(
@@ -47,12 +47,12 @@ export class ArgsDecorator {
     generators: IGenerator[]
   } {
     // Check it's the same method with a dummy arg.
-    if (!ArgsDecorator.checkMethod(8, target, key, { index: -1, dimension: 0, type: ''})) {
-      ArgsDecorator.resetMethod();
+    if (!Decorators.checkMethod(8, target, key, { index: -1, dimension: 0, type: ''})) {
+      Decorators.resetMethod();
     }
 
     // Populate the method details.
-    const newFileName: string = ArgsDecorator.getFileName(7);
+    const newFileName: string = Decorators.getFileName(7);
     const newClassName: string = target.constructor.name;
     const newMethodName: string = new String(key).toString();
 
@@ -120,15 +120,32 @@ export class ArgsDecorator {
         ));
       } else {
         result.generators.push(Generator.initType(
-          arg.index,
-          arg.type,
-          arg.dimension
+          type,
+          arg.dimension,
+          arg.index
         ));
       }
     });
 
-    ArgsDecorator.resetMethod();
+    Decorators.resetMethod();
     return result;
+  }
+
+  static getPropType(typeName: string): ModuleType {
+    const fileName: string = Decorators.getFileName(7);
+    let type: ModuleType;
+
+    debugger;
+    type = Globals.codeUtil.types[fileName]
+      .find((localType: ModuleType) => localType.name === typeName);
+
+    // Get the type from the central repo if it's not local.
+    // Don't create a generator if it's not found.
+    if (type === undefined) {
+      type = Globals.codeUtil.findType(typeName, Globals.codeUtil.interfaces[fileName], fileName);
+    }
+
+    return type;
   }
 
   private static getFileName (index: number): string {
@@ -146,7 +163,7 @@ export class ArgsDecorator {
     key: string | symbol,
     arg: MethodArg
   ): boolean {
-    const newFileName: string = ArgsDecorator.getFileName(stackIndex);
+    const newFileName: string = Decorators.getFileName(stackIndex);
     const newClassName: string = target.constructor.name;
     const newMethodName: string = new String(key).toString();
 
@@ -158,21 +175,21 @@ export class ArgsDecorator {
     // `);
 
     if (
-      ArgsDecorator.args.length > 0 &&
+      Decorators.args.length > 0 &&
       !(
-        newFileName === ArgsDecorator.fileName &&
-        newClassName === ArgsDecorator.className &&
-        newMethodName === ArgsDecorator.methodName &&
-        (ArgsDecorator.lastIndex > arg.index)
+        newFileName === Decorators.fileName &&
+        newClassName === Decorators.className &&
+        newMethodName === Decorators.methodName &&
+        (Decorators.lastIndex > arg.index)
       )
     ) {
       console.warn(
         `
           Missing method decorator:
-          File name: ${ArgsDecorator.fileName},
-          Class name: ${ArgsDecorator.className},
-          Method name: ${ArgsDecorator.methodName},
-          Arguments: ${JSON.stringify(ArgsDecorator.args)}
+          File name: ${Decorators.fileName},
+          Class name: ${Decorators.className},
+          Method name: ${Decorators.methodName},
+          Arguments: ${JSON.stringify(Decorators.args)}
         `
       );
       return false;
@@ -182,11 +199,11 @@ export class ArgsDecorator {
   };
 
   private static resetMethod () {
-    ArgsDecorator.fileName = undefined;
-    ArgsDecorator.className = undefined;
-    ArgsDecorator.methodName = undefined;
-    ArgsDecorator.lastIndex = undefined;
-    ArgsDecorator.args = [];
+    Decorators.fileName = undefined;
+    Decorators.className = undefined;
+    Decorators.methodName = undefined;
+    Decorators.lastIndex = undefined;
+    Decorators.args = [];
   };
 
 }

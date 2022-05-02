@@ -136,16 +136,16 @@ export class Code {
   /**
    * Finds type from name and interface string.
    * @param typeName Type name.
-   * @param IArgs Interface string.
+   * @param ICode Interface string.
    */
-  findType(typeName: string, IArgs: [string, string], file: string): ModuleType {
+  findType(typeName: string, ICode: [string, string], file: string): ModuleType {
     // Check that the type is imported.
-    const startI = IArgs[1].indexOf(typeName);
+    const startI = ICode[1].indexOf(typeName);
     if (startI === -1) { return undefined; }
   
     // Find the end of the import and get the string.
-    const endI = IArgs[1].indexOf(';') + 1;
-    let statement = IArgs[1].substring(startI, endI);
+    const endI = ICode[1].indexOf(';') + 1;
+    let statement = ICode[1].substring(startI, endI);
 
     const fromI = statement.indexOf(' from ');
     statement = statement.substring(fromI + 7, statement.length - 2);

@@ -1,9 +1,10 @@
 import { Limits } from "../utils/limits";
+import { ModuleType } from "../utils/modules";
 import { Generator } from "./Generator";
 import { Mode } from "./Mode";
 
 export class GeneratorType extends Generator {
-  constructor(index: number, _type: string, dimension: number = 0) {
+  constructor(_type: ModuleType, dimension: number = 0, index?: number) {
     super(dimension, new Limits({}), [], index);
     this.falsyLiterals = this.falsyLiterals.concat([{}]);
   }

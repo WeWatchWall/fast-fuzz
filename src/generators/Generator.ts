@@ -1,6 +1,7 @@
 import makeMatrix from "make-matrix";
 import { BuiltIn } from "../utils/decorators";
 import { Limits } from "../utils/limits";
+import { ModuleType } from "../utils/modules";
 import { GeneratorBool } from "./GeneratorBool";
 import { GeneratorDate } from "./GeneratorDate";
 import { GeneratorFloat } from "./GeneratorFloat";
@@ -66,16 +67,16 @@ export abstract class Generator implements IGenerator {
 
   /**
    * Factory method for generators for custom types.
-   * @param index 
    * @param type 
    * @param [dimension]
+   * @param [index] 
    */
   static initType(
-    index: number,
-    type: string,
-    dimension: number = 0
+    type: ModuleType,
+    dimension: number = 0,
+    index?: number
   ): IGenerator {
-    return new GeneratorType(index, type, dimension);
+    return new GeneratorType(type, dimension, index);
   }
 
   /**
@@ -92,13 +93,14 @@ export abstract class Generator implements IGenerator {
     literals?: (number | Date | string)[],
     index?: number
   ) {
-    this.index = index;
+    
     this.dimension = Math.max(dimension, 0);
-
     this.limits = limits;
-    this.literals = literals;
 
+    this.literals = literals;
     this.falsyLiterals = [undefined, null];
+
+    this.index = index;
 
     Generator.reset(this);
   }

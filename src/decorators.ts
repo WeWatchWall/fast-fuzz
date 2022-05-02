@@ -2,16 +2,32 @@ import { Transform } from 'class-transformer';
 import { Generator } from './generators/Generator';
 
 import { IGenerator } from "./generators/IGenerator";
-import { BuiltIn, ArgsDecorator } from "./utils/decorators";
+import { BuiltIn, Decorators } from "./utils/decorators";
 import { Globals } from "./utils/globals";
 
 export namespace Fuzz {
 
-  export const prop = function (type: BuiltIn, dimension: number = 0, min?: number, max?: number): PropertyDecorator {
+  /**
+   * Decorator for properties with built-in types.
+   * i.e.: boolean, integer, float, date, string.
+   * @param type 
+   * @param [dimension] Default = `0`.
+   * @param [min] 
+   * @param [max] 
+   * @returns prop Type = `PropertyDecorator`.
+   */
+  export const prop = function (
+    type: BuiltIn,
+    dimension: number = 0,
+    min?: number,
+    max?: number
+  ): PropertyDecorator {
+
     return (
       target: Object,
       key: string | symbol
     ) => {
+
       if (!Globals.isTest) { return; }
 
       var isInit: number = 0;
@@ -32,33 +48,64 @@ export namespace Fuzz {
       })(target, key);
     };
   };
-    
-  export const propType = function (_type: string, _dimension: number = 0): PropertyDecorator {
+
+  /**
+   * Decorator for properties with imported types.
+   * @param typeName 
+   * @param [dimension] Default = `0`.
+   */
+  export const propType = function (
+    typeName: string,
+    dimension: number = 0
+  ): PropertyDecorator {
+
     return (
-      _target: Object,
-      _key: string | symbol
+      target: Object,
+      key: string | symbol
     ) => {
-      // Transform(({ value }) => {
-      //   debugger;
-      //   console.log(value);
-      //   return 1;
-      // })(target, key);
 
       if (!Globals.isTest) { return; }
 
-      // console.log(`
-      //   type: ${type},
-      //   dimension: ${dimension}
-      // `);
+      const type = Decorators.getPropType(typeName);
+      if (type === undefined) {
+        console.warn(
+          `
+            Missing type on decorated property:
+            File name: TODO: add this info,
+            Class name: ${target.constructor?.name},
+            Property name: ${new String(key).toString()},
+            Argument: ${JSON.stringify(arg)}
+          `
+        );
+        return;
+      }
 
-      // console.log(`
-      //   target: ${target},
-      //   key: ${String(key)}
-      // `);
+      var generator: IGenerator =
+        Generator.initType(type, dimension);
+
+      Transform(({ }) => {
+        return generator.next();
+      })(target, key);
     };
   };
 
-  export const arg = function (type: BuiltIn, dimension: number = 0, min?: number, max?: number): ParameterDecorator {
+  
+  /**
+   * Decorator for method arguments with built-in types.
+   * i.e.: boolean, integer, float, date, string.
+   * @param type 
+   * @param [dimension] Default = `0`.
+   * @param [min] 
+   * @param [max] 
+   * @returns arg Type = `ParameterDecorator`.
+   */
+  export const arg = function (
+    type: BuiltIn,
+    dimension: number = 0,
+    min?: number,
+    max?: number
+  ): ParameterDecorator {
+
     return (
       target: Object,
       key: string | symbol,
@@ -67,17 +114,24 @@ export namespace Fuzz {
 
       if (!Globals.isTest) { return; }
 
-      ArgsDecorator.addArgument(target, key, {
-        index: index,
-        type: type,
-        dimension: dimension,
-        min: min,
-        max: max
-      });
+      Decorators.addArgument(
+        target,
+        key,
+        { index, type, dimension, min, max }
+      );
     };
   };
 
-  export const argType = function (type: string, dimension: number = 0): ParameterDecorator {
+  /**
+   * Decorator for method arguments with imported types.
+   * @param type 
+   * @param [dimension] Default = `0`.
+   */
+  export const argType = function (
+    type: string,
+    dimension: number = 0
+  ): ParameterDecorator {
+
     return (
       target: Object,
       key: string | symbol,
@@ -86,14 +140,18 @@ export namespace Fuzz {
 
       if (!Globals.isTest) { return; }
       
-      ArgsDecorator.addArgument(target, key, {
-        index: index,
-        type: type,
-        dimension: dimension
-      });
+      Decorators.addArgument(
+        target,
+        key,
+        {index, type, dimension}
+      );
     };
   };
 
+  /**
+   * Decorator for methods.
+   * @returns method Type = `MethodDecorator`.
+   */
   export const method: MethodDecorator =
   (
     target: Object,
@@ -107,7 +165,7 @@ export namespace Fuzz {
     const testArgs: {
       isStart: boolean,
       generators: IGenerator[]
-    } = ArgsDecorator.addMethod(target, key);
+    } = Decorators.addMethod(target, key);
     
     const originalMethod = descriptor.value;
 

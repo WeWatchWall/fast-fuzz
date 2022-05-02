@@ -1,3 +1,5 @@
+import { IGenerator } from "../generators/IGenerator";
+
 export class ModuleMethod {
   name: string;
   className?: string;
@@ -15,7 +17,7 @@ export class ModuleMethod {
 
   test?: {
     isStart: boolean,
-    generators: any[]// TODO
+    generators: IGenerator[]
   };
 
   constructor(init: Partial<ModuleMethod>) {
