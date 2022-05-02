@@ -1,10 +1,4 @@
-import path from 'path';
 import 'reflect-metadata';
-import { Code } from './utils/code';
-import { Globals } from './utils/globals';
-
-// import { mock } from 'intermock/build/src/lang/ts/intermock';
-// import { plainToInstance } from 'class-transformer';
 
 async function Main() {
 
@@ -30,11 +24,7 @@ async function Main() {
   // foo['isSame'](13, false, 1, 'UP');
   // foo['isSame'](13, false, 1, 'UP');
 
-  Globals.isTest = true;
-
-  Globals.codeUtil = new Code();
-  await Globals.codeUtil.init(path.join(process.argv[2],'src/'), path.join(process.argv[2],'dist/'));
-  await Globals.codeUtil.load();
+  
   debugger;
 }
 Main();
