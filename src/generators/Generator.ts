@@ -1,9 +1,11 @@
 import makeMatrix from "make-matrix";
 import { BuiltIn } from "../utils/decorators";
+import { Globals } from "../utils/globals";
 import { Limits } from "../utils/limits";
 import { ModuleType } from "../utils/modules";
 import { GeneratorBool } from "./GeneratorBool";
 import { GeneratorDate } from "./GeneratorDate";
+import { GeneratorEnum } from "./GeneratorEnum";
 import { GeneratorFloat } from "./GeneratorFloat";
 import { GeneratorInt } from "./GeneratorInt";
 import { GeneratorString } from "./GeneratorString";
@@ -76,7 +78,11 @@ export abstract class Generator implements IGenerator {
     dimension: number = 0,
     index?: number
   ): IGenerator {
-    return new GeneratorType(type, dimension, index);
+    if (type.kind === 'enum') {
+      return new GeneratorEnum(type, dimension, index); 
+    } else {
+      return new GeneratorType(type, dimension, index); 
+    }
   }
 
   /**
@@ -223,7 +229,7 @@ export abstract class Generator implements IGenerator {
    * lower than max if max isn't an integer).
    * Using Math.round() will give you a non-uniform distribution!
    */
-  protected static getRandomIndex(max: number) {
+  static getRandomIndex(max: number) {
     return Math.floor(Math.random() * max);
   }
 
@@ -234,10 +240,19 @@ export abstract class Generator implements IGenerator {
     * lower than max if max isn't an integer).
     * Using Math.round() will give you a non-uniform distribution!
     */
-  protected static getRandomInt(min: number, max: number) {
+  static getRandomInt(min: number, max: number) {
     min = Math.ceil(min);
     max = Math.floor(max);
     return Math.floor(Math.random() * (max - min + 1)) + min;
+  }
+
+  protected static getType(type: ModuleType): any {
+    let constructor: any = Globals.codeUtil.modules[type.file];
+    type.namespaces.forEach((namespace: string) => {
+      constructor = constructor[namespace];
+    });
+
+    constructor = constructor[type.name];
   }
 
   /**
