@@ -2,6 +2,7 @@ import { Transform } from 'class-transformer';
 import { Generator } from './generators/Generator';
 
 import { IGenerator } from "./generators/IGenerator";
+import { Mode } from './generators/Mode';
 import { BuiltIn, Decorators } from "./utils/decorators";
 import { Globals } from "./utils/globals";
 
@@ -30,11 +31,15 @@ export namespace Fuzz {
 
       if (!Globals.isTest) { return; }
 
-      var isInit: number = 0;
+      var methodId: number = 0;
+      var methodMode: Mode = Mode.Falsy;
       var generator: IGenerator;
 
       Transform(({ }) => {
-        if (isInit !== Globals.methodCount) {
+        if (
+          methodId !== Globals.methodCount ||
+          methodMode !== Globals.mode
+        ) {
           generator = Generator.init(
             type,
             dimension,
@@ -42,7 +47,8 @@ export namespace Fuzz {
             min,
             max
           );
-          isInit = Globals.methodCount;
+          methodId = Globals.methodCount;
+          methodMode = Globals.mode;
         }
         return generator.next();
       })(target, key);

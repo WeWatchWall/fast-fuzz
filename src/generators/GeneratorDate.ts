@@ -3,6 +3,8 @@ import { Generator } from "./Generator";
 import { Mode } from "./Mode";
 
 export class GeneratorDate extends Generator {
+  private static MODE_SCALE = 5;
+
   constructor(dimension: number = 0, literals: string[], min?: number, max?: number, index?: number) {
     super(
       dimension,
@@ -29,8 +31,12 @@ export class GeneratorDate extends Generator {
         }
         break;
       default:
-        const min = this.limits.date.min;
-        const max = this.limits.date.max;
+        const [min, max]: [number, number] = GeneratorDate.getLimits(
+          Generator.mode,
+          this.limits.int.min,
+          this.limits.int.max
+        );
+
         for (let index = 0; index < count; index++) {
           if (Math.random() > Generator.P_STUFF_FALSY) { 
             result.push(this.literals[Generator.getRandomIndex(this.literals.length)]);
@@ -47,5 +53,33 @@ export class GeneratorDate extends Generator {
 
   next(): any {
     return Generator.next(this);
+  }
+
+  /**
+   * Gets limits based on mode.
+   * @param mode 
+   * @param min 
+   * @param max 
+   * @returns limits 
+   */
+   private static getLimits(mode: Mode, min: number, max: number): [number, number] {
+    const diff = max - min;
+
+    switch (mode) {
+      case Mode.Falsy:
+      case Mode.Stuff:
+      case Mode.Low:
+        return [min, max];
+      case Mode.Medium:
+        return [
+          min - diff * GeneratorDate.MODE_SCALE,
+          max + diff * GeneratorDate.MODE_SCALE
+        ];
+      case Mode.High:
+        return [
+          8640e12,
+          -8640e12
+        ];
+    }
   }
 }

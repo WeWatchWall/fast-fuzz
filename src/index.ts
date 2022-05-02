@@ -1,3 +1,4 @@
+import path from 'path';
 import 'reflect-metadata';
 import { Code } from './utils/code';
 import { Globals } from './utils/globals';
@@ -32,7 +33,7 @@ async function Main() {
   Globals.isTest = true;
 
   Globals.codeUtil = new Code();
-  await Globals.codeUtil.init(process.argv[2], process.argv[3]);
+  await Globals.codeUtil.init(path.join(process.argv[2],'src/'), path.join(process.argv[2],'dist/'));
   await Globals.codeUtil.load();
   debugger;
 }
