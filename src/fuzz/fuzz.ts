@@ -8,11 +8,12 @@ import { Code } from '../utils/code';
 
 import { fuzzSync } from './fuzzSync';
 import { ModuleMethod, ModuleType } from '../utils/modules';
-import { Result } from './results';
+import { Result, Results } from './result';
 import { mock } from 'intermock';
 import { IGenerator } from '../generators/IGenerator';
 import { GeneratorFactory } from '../generators/GeneratorFactory';
 import { Mode } from '../generators/Mode';
+import { fuzzAsync } from './fuzzAsync';
 
 /* #region  Instrumenter hook. */
 let instrumenter: any;
@@ -29,66 +30,47 @@ hookRequire((_filePath) => true, (code, { filename }) => {
 
 var interfaces: [string, string][];
 
-export async function fuzz(): Promise<{
-  name: string,
-  className?: string,
-  namespaces: string[],
-  file: string,
-  results: Result[]
-}[]> {
+export async function fuzz(): Promise<Results[]> {
   if (instrumenter === undefined) {
     await init();
   }
 
   interfaces = Object.values(Globals.codeUtil.interfaces);
 
-  const results: {
-    name: string,
-    className?: string,
-    namespaces: string[],
-    file: string,
-    results: Result[]
-  }[] = [];
+  const results: Results[] = [];
 
-  Object.entries(Globals.codeUtil.methods).forEach(
-    ([file, methods]: [string, ModuleMethod[]]) => {
-      methods.forEach((method: ModuleMethod) => {
-        if (method.name === '__constructor') { return; }
+  for (const [file, methods] of Object.entries(Globals.codeUtil.methods)) {
+    for (const method of methods) {
+      if (method.name === '__constructor') { continue; }
 
         // Set the generators to reset with the new literals.
         Globals.methodCount++;
         Globals.literals = method.literals;
 
-        let result: {
-          name: string,
-          className?: string,
-          namespaces: string[],
-          file: string,
-          results: Result[]
-        };
-
+        let fuzzResults: Result[];
         if (method.isStatic || method.className === undefined) {
-          result = {
-            name: method.name,
-            className: method.className,
-            namespaces: method.namespaces,
-            file,
-            results: fuzzStatic(file, method, 1e4, 1e5)
-          };
+          if (method.isAsync) {
+            fuzzResults = await fuzzStaticAsync(file, method, 1e4, 1e5);
+          } else {
+            fuzzResults = fuzzStatic(file, method, 1e4, 1e5);
+          }
         } else {
-          result = {
-            name: method.name,
-            className: method.className,
-            namespaces: method.namespaces,
-            file,
-            results: fuzzMethod(file, method, 1e4, 1e5)
-          };
+          if (method.isAsync) {
+            fuzzResults = await fuzzMethodAsync(file, method, 1e4, 1e5);
+          } else {
+            fuzzResults = fuzzMethod(file, method, 1e4, 1e5);
+          }
         }
 
-        results.push(result);
-      });
+        results.push({
+          name: method.name,
+          className: method.className,
+          namespaces: method.namespaces,
+          file,
+          results: fuzzResults
+        });
     }
-  );
+  }
 
   return results;
 }
@@ -162,6 +144,37 @@ function fuzzStatic(
   return results;
 }
 
+async function fuzzStaticAsync(
+  filePath: string,
+  method: ModuleMethod,
+  maxTime: number = 1e4,
+  maxRuns: number = 1e5
+): Promise<Result[]> {
+  interfaces.push(method.IArgs);
+
+  let func: any = Globals.codeUtil.modules[filePath];
+  func.namespaces.forEach((namespace: string) => {
+    func = func[namespace];
+  });
+  if (method.className !== undefined) {
+    func = func[method.className];
+  }
+  func = func[method.name];
+
+  const results = await fuzzAsync(
+    method,
+    () => getArgs(method),
+    async (args: any[]) => await func(...args),
+    filePath,
+    maxTime,
+    maxRuns
+  );
+
+  interfaces.pop();
+
+  return results;
+}
+
 function fuzzMethod(
   filePath: string,
   method: ModuleMethod,
@@ -191,6 +204,46 @@ function fuzzMethod(
       // const result = func(...args);
       method.test.instance = generator.next();
       return method.test.instance[method.name](...args);
+    },
+    filePath,
+    maxTime,
+    maxRuns
+  );
+
+  interfaces.pop();
+
+  return results;
+}
+
+async function fuzzMethodAsync(
+  filePath: string,
+  method: ModuleMethod,
+  maxTime: number = 1e4,
+  maxRuns: number = 1e5
+): Promise<Result[]> {
+  interfaces.push(method.IArgs);
+
+  let type: ModuleType =
+    Globals
+      .codeUtil
+      .types[filePath]
+      .find((moduleType: ModuleType) =>
+        moduleType.name === method.className
+      );
+
+  const generator: IGenerator =
+    GeneratorFactory.initType(type, 0, 0, Mode.Stuff);
+
+  const results = await fuzzAsync(
+    method,
+    () => getArgs(method),
+    async (args: any[]) => {
+      // debugger;
+      // const instance = generator.next();
+      // const func = instance[method.name];
+      // const result = func(...args);
+      method.test.instance = generator.next();
+      return await method.test.instance[method.name](...args);
     },
     filePath,
     maxTime,

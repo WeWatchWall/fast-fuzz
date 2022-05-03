@@ -10,7 +10,7 @@ import { Generator } from "../generators/Generator";
 import { ModuleMethod } from "../utils/modules";
 
 // Main fuzzing function that runs the tests and reports the results. 
-export function fuzzSync(
+export async function fuzzAsync(
   method: ModuleMethod,
   getArgs: Function,
   testFunc: Function,
@@ -75,7 +75,7 @@ export function fuzzSync(
 
       // Run the function and report the error 
       try {
-        result = testFunc(args);
+        result = await testFunc(args);
       } catch (error: any) {
         result = error;
       }

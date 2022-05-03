@@ -16,3 +16,11 @@ export class Result {
     Object.assign(this, init);
   }
 }
+
+export class Results {
+  name: string;
+  className?: string;
+  namespaces: string[];
+  file: string;
+  results: Result[];
+}
