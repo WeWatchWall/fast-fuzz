@@ -1,5 +1,6 @@
 import { Transform } from 'class-transformer';
 import { GeneratorFactory } from './generators/GeneratorFactory';
+import { GeneratorFalsy } from './generators/GeneratorFalsy';
 
 import { IGenerator } from "./generators/IGenerator";
 import { Mode } from './generators/Mode';
@@ -95,7 +96,28 @@ export namespace Fuzz {
     };
   };
 
-  
+  /**
+   * Decorator to set properties to falsy values.
+   * @returns prop Type = `PropertyDecorator`.
+   */
+   export const skipProp: PropertyDecorator = (
+    target: Object,
+    key: string | symbol
+  ) => {
+
+    if (!Globals.isTest) { return; }
+    
+    var generator: IGenerator;
+
+    Transform(({ }) => {
+      if (generator === undefined) {
+        generator = new GeneratorFalsy();
+      }
+
+      return generator.next();
+    })(target, key);
+  };
+
   /**
    * Decorator for method arguments with built-in types.
    * i.e.: boolean, integer, float, date, string.
@@ -123,7 +145,7 @@ export namespace Fuzz {
       Decorators.addArgument(
         target,
         key,
-        { index, type, dimension, min, max }
+        { index, type, dimension, min, max, isSkip: false }
       );
     };
   };
@@ -149,9 +171,27 @@ export namespace Fuzz {
       Decorators.addArgument(
         target,
         key,
-        {index, type, dimension}
+        {index, type, dimension, isSkip: false}
       );
     };
+  };
+
+  /**
+   * Decorator for skipping method arguments.
+   * @returns arg Type = `ParameterDecorator`.
+   */
+   export const skipArg: ParameterDecorator = (
+    target: Object,
+    key: string | symbol,
+    index: number
+  ) => {
+    if (!Globals.isTest) { return; }
+
+    Decorators.addArgument(
+      target,
+      key,
+      { index, dimension: 0, type: '', isSkip: true }
+    );
   };
 
   /**

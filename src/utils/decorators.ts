@@ -1,4 +1,5 @@
 import { GeneratorFactory } from "../generators/GeneratorFactory";
+import { GeneratorFalsy } from "../generators/GeneratorFalsy";
 import { IGenerator } from "../generators/IGenerator";
 import { Globals } from "./globals";
 import { ModuleMethod, ModuleType } from "./modules";
@@ -9,6 +10,7 @@ export class MethodArg {
   index: number;
   type: BuiltIn | string;
   dimension: number;
+  isSkip: boolean;
   min?: number;
   max?: number;
 }
@@ -18,14 +20,14 @@ export class Decorators {
   private static className?: string;
   private static methodName?: string;
   private static lastIndex?: number;
-  private static args: MethodArg[] = [];
+  private static args: (MethodArg)[] = [];
 
   static addArgument (
     target: Object,
     key: string | symbol,
     arg: MethodArg
   ): void {
-    if (!Decorators.checkMethod(5, target, key, arg)) {
+    if (!Decorators.checkMethod(5, target, key, arg.index)) {
       Decorators.resetMethod();
     }
 
@@ -47,7 +49,7 @@ export class Decorators {
     generators: IGenerator[]
   } {
     // Check it's the same method with a dummy arg.
-    if (!Decorators.checkMethod(8, target, key, { index: -1, dimension: 0, type: ''})) {
+    if (!Decorators.checkMethod(8, target, key, -1)) {
       Decorators.resetMethod();
     }
 
@@ -70,8 +72,13 @@ export class Decorators {
     };
     method.test = result;
 
-    // TODO: Initialize the generators.
+    // Initialize the generators.
     this.args.forEach((arg: MethodArg) => {
+      if (arg.isSkip) {
+        result.generators.push(new GeneratorFalsy(0, arg.index));
+        return;
+      }
+
       let isBuiltIn = false;
       switch (arg.type) {
         case 'boolean':
@@ -187,7 +194,7 @@ export class Decorators {
     stackIndex: number,
     target: Object,
     key: string | symbol,
-    arg: MethodArg
+    index: number
   ): boolean {
     const newFileName: string = Decorators.getFileName(stackIndex);
     const newClassName: string = target.constructor.name;
@@ -206,7 +213,7 @@ export class Decorators {
         newFileName === Decorators.fileName &&
         newClassName === Decorators.className &&
         newMethodName === Decorators.methodName &&
-        (Decorators.lastIndex > arg.index)
+        (Decorators.lastIndex > index)
       )
     ) {
       console.warn(
