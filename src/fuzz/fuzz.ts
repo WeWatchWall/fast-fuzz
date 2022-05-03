@@ -30,9 +30,15 @@ hookRequire((_filePath) => true, (code, { filename }) => {
 
 var interfaces: [string, string][];
 
-export async function fuzz(): Promise<Results[]> {
+export async function fastFuzz(
+  folder: string,
+  maxTime: number = 1e4,
+  maxRuns: number = 1e5,
+  src?: string,
+  dist?: string,
+): Promise<Results[]> {
   if (instrumenter === undefined) {
-    await init();
+    await init(folder, src, dist);
   }
 
   interfaces = Object.values(Globals.codeUtil.interfaces);
@@ -50,15 +56,15 @@ export async function fuzz(): Promise<Results[]> {
         let fuzzResults: Result[];
         if (method.isStatic || method.className === undefined) {
           if (method.isAsync) {
-            fuzzResults = await fuzzStaticAsync(file, method, 1e4, 1e5);
+            fuzzResults = await fuzzStaticAsync(file, method, maxTime, maxRuns);
           } else {
-            fuzzResults = fuzzStatic(file, method, 1e4, 1e5);
+            fuzzResults = fuzzStatic(file, method, maxTime, maxRuns);
           }
         } else {
           if (method.isAsync) {
-            fuzzResults = await fuzzMethodAsync(file, method, 1e4, 1e5);
+            fuzzResults = await fuzzMethodAsync(file, method, maxTime, maxRuns);
           } else {
-            fuzzResults = fuzzMethod(file, method, 1e4, 1e5);
+            fuzzResults = fuzzMethod(file, method, maxTime, maxRuns);
           }
         }
 
@@ -75,17 +81,21 @@ export async function fuzz(): Promise<Results[]> {
   return results;
 }
 
-async function init() {
+async function init(
+  folder: string,
+  src: string = 'src/',
+  dist: string = 'dist/',
+) {
   Globals.isTest = true;
 
   Globals.codeUtil = new Code();
   await Globals.codeUtil.init(
     path
-      .join(process.argv[2], 'src/')
+      .join(folder, src)
       .replace(new RegExp('\\\\', 'g'), '/')
       .replace(new RegExp('\\\\\\\\', 'g'), '/'),
     path
-      .join(process.argv[2], 'dist/')
+      .join(folder, dist)
       .replace(new RegExp('\\\\', 'g'), '/')
       .replace(new RegExp('\\\\\\\\', 'g'), '/')
   );
