@@ -79,7 +79,7 @@ export class GeneratorEnum extends Generator {
           return numValue;
         }
 
-        return value;
+        return enumObject[value];
       });
       this.renderer = new DictionaryEnumRender(values);
     }

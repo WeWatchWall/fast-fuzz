@@ -6,9 +6,12 @@ import { simpleHash, isCovered } from './util';
 import { Mode } from "../generators/Mode";
 import { Result } from "./results";
 import { Globals } from "../utils/globals";
+import { Generator } from "../generators/Generator";
+import { ModuleMethod } from "../utils/modules";
 
 // Main fuzzing function that runs the tests and reports the results. 
-export function fastFuzz(
+export function fuzzSync(
+  method: ModuleMethod,
   getArgs: Function,
   testFunc: Function,
   filePath: string,
@@ -28,7 +31,8 @@ export function fastFuzz(
   let resultCount = 1;
   for (let mode = 0; mode <= maxMode; mode++) {
   
-    // Set the generators to reset with the new mode.
+    // Set the generators to the new mode.
+    Generator.mode = mode;
     Globals.mode = mode;
 
     // Vary the number of runs based on target area.
@@ -72,9 +76,8 @@ export function fastFuzz(
       // Run the function and report the error 
       try {
         result = testFunc(args);
-      } catch (e: any) { 
-        results.push(new Result({ args, mode, runCount, error: e.message }));
-        continue;
+      } catch (error: any) {
+        result = error;
       }
 
       // Hash difference between coverage.
@@ -95,15 +98,15 @@ export function fastFuzz(
       
       // Track coverage history.
       if (covResults.has(coverageHash)) {
-        runCount++;
         continue;
       }
-
       covResults.add(coverageHash);
 
       results.push(new Result({
         id: resultCount++,
-        args, result, mode, coverageHash, runCount,
+        instance: method.test.instance,
+        args: method.test.callArgs,
+        result, mode, coverageHash, runCount,
         speed: Number.parseFloat(
           (runCount / (Date.now() - start)).toPrecision(4)
         ),

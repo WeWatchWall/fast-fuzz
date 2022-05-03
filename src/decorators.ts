@@ -6,6 +6,7 @@ import { IGenerator } from "./generators/IGenerator";
 import { Mode } from './generators/Mode';
 import { BuiltIn, Decorators } from "./utils/decorators";
 import { Globals } from "./utils/globals";
+import { ModuleMethod, TestMethod } from './utils/modules';
 
 export namespace Fuzz {
 
@@ -207,18 +208,41 @@ export namespace Fuzz {
 
     if (!Globals.isTest) { return descriptor; }
 
+    // Populate the method details.
+    const fileName: string = Decorators.getFileName(6);
+    const className: string = target.constructor.name;
+    const methodName: string = new String(key).toString();
+
+    // Find and populate the central method repo. 
+    const method = Globals
+      .codeUtil
+      .methods[fileName]
+      .find((method: ModuleMethod) =>
+        method.name === methodName &&
+        method.className === className
+      );
+
     // Initialize the method's generators.
-    const testArgs: {
-      isStart: boolean,
-      generators: IGenerator[]
-    } = Decorators.addMethod(target, key);
+    const testArgs: TestMethod = Decorators.addMethod(target, key, fileName, method);
     
     const originalMethod = descriptor.value;
+
+    var methodId: number = 0;
+    var methodMode: Mode = Mode.Falsy;
 
     // Replace the method with its hook.
     descriptor.value = function (...args: any[]) {
       if (!testArgs.isStart) {
         return originalMethod.apply(descriptor, args);
+      }
+
+      // Check if the mode is changed.
+      if (
+        // TODO: remove method count.
+        methodId !== Globals.methodCount ||
+        methodMode !== Globals.mode
+      ) {
+        testArgs.generators = Decorators.addMethodArgs(testArgs.args, fileName, method);
       }
 
       // Run the arguments' generators.
@@ -228,6 +252,9 @@ export namespace Fuzz {
 
       // Reset the mock flag in case of recursion or subsequent calls.
       testArgs.isStart = false;
+      
+      // Report the args.
+      testArgs.callArgs = args;
 
       // Run the method.
       return originalMethod.apply(descriptor, args);;

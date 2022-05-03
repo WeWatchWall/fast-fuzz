@@ -283,10 +283,12 @@ export class Code {
         break;
       case ComponentKind.METHOD:
         // Sanity check for public non-abstract methods.
-        // TODO: refactor with detect method type from typescript
+        // TODO: refactor with detect function type from typescript
         if (
           filePart.modifier !== 'public' ||
-          filePart.isAbstract
+          filePart.isAbstract ||
+          // TODO: might need an option for module functions?
+          className === undefined
         ) {
           return;
         }

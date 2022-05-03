@@ -2,6 +2,7 @@ import { Mode } from "../generators/Mode";
 
 export class Result {
   id: number;
+  instance?: any;
   args: any[];
   result?: any;
   mode: Mode;

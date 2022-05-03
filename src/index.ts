@@ -25,7 +25,7 @@ async function Main() {
   // foo['isSame'](13, false, 1, 'UP');
   // foo['isSame'](13, false, 1, 'UP');
 
-  await fuzz();
+  console.log(JSON.stringify(await fuzz()));
   debugger;
 }
 Main();

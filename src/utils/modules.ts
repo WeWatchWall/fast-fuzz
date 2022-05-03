@@ -1,4 +1,5 @@
 import { IGenerator } from "../generators/IGenerator";
+import { MethodArg } from "./decorators";
 
 export class ModuleMethod {
   name: string;
@@ -15,14 +16,19 @@ export class ModuleMethod {
 
   IArgs: [string, string];
 
-  test?: {
-    isStart: boolean,
-    generators: IGenerator[]
-  };
+  test?: TestMethod;
 
   constructor(init: Partial<ModuleMethod>) {
     Object.assign(this, init);
   }
+}
+
+export class TestMethod {
+  args: MethodArg[];
+  isStart: boolean;
+  generators: IGenerator[];
+  callArgs?: any[];
+  instance?: any;
 }
 
 export class ModuleType {

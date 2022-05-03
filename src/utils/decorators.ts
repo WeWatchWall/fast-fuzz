@@ -2,7 +2,7 @@ import { GeneratorFactory } from "../generators/GeneratorFactory";
 import { GeneratorFalsy } from "../generators/GeneratorFalsy";
 import { IGenerator } from "../generators/IGenerator";
 import { Globals } from "./globals";
-import { ModuleMethod, ModuleType } from "./modules";
+import { ModuleMethod, ModuleType, TestMethod } from "./modules";
 
 export type BuiltIn = 'boolean' | 'integer' | 'float' | 'date' | 'string';
 
@@ -43,39 +43,37 @@ export class Decorators {
 
   static addMethod(
     target: Object,
-    key: string | symbol
-  ): {
-    isStart: boolean,
-    generators: IGenerator[]
-  } {
+    key: string | symbol,
+    file: string,
+    method: ModuleMethod
+  ): TestMethod {
     // Check it's the same method with a dummy arg.
     if (!Decorators.checkMethod(8, target, key, -1)) {
       Decorators.resetMethod();
     }
 
-    // Populate the method details.
-    const newFileName: string = Decorators.getFileName(7);
-    const newClassName: string = target.constructor.name;
-    const newMethodName: string = new String(key).toString();
-
-    // Find and populate the central method repo. 
-    const method = Globals.codeUtil.methods[newFileName].find((method: ModuleMethod) =>
-      method.name === newMethodName &&
-      method.className === newClassName
-    );
-    const result: {
-      isStart: boolean,
-      generators: IGenerator[]
-    } = {
+    const result: TestMethod = {
+      args: this.args,
       isStart: false,
-      generators: []
+      generators: Decorators.addMethodArgs(
+        this.args,
+        file,
+        method
+      )
     };
     method.test = result;
 
+    Decorators.resetMethod();
+    return result;
+  }
+
+  static addMethodArgs(args: MethodArg[], file: string, method: ModuleMethod): IGenerator[] {
+    const result: IGenerator[] = [];
+
     // Initialize the generators.
-    this.args.forEach((arg: MethodArg) => {
+    args.forEach((arg: MethodArg) => {
       if (arg.isSkip) {
-        result.generators.push(new GeneratorFalsy(0, arg.index));
+        result.push(new GeneratorFalsy(0, arg.index));
         return;
       }
 
@@ -93,21 +91,21 @@ export class Decorators {
 
       let type: ModuleType;
       if (!isBuiltIn) {
-        type = Globals.codeUtil.types[newFileName]
+        type = Globals.codeUtil.types[file]
           .find((localType: ModuleType) => localType.name === arg.type);
 
         // Get the type from the central repo if it's not local.
         // Don't create a generator if it's not found.
         if (type === undefined) {
-          type = Globals.codeUtil.findType(arg.type, method.IArgs, newFileName);
+          type = Globals.codeUtil.findType(arg.type, method.IArgs, file);
         }
         if (type === undefined) {
           console.warn(
             `
               Missing type on decorated method:
-              File name: ${newFileName},
-              Class name: ${newClassName},
-              Method name: ${newMethodName},
+              File name: ${file},
+              Class name: ${method.className},
+              Method name: ${method.name},
               Argument: ${JSON.stringify(arg)}
             `
           );
@@ -117,7 +115,7 @@ export class Decorators {
       }
 
       if (isBuiltIn) {
-        result.generators.push(GeneratorFactory.init(
+        result.push(GeneratorFactory.init(
           <BuiltIn>arg.type,
           arg.dimension,
           method.literals,
@@ -126,7 +124,7 @@ export class Decorators {
           arg.index
         ));
       } else {
-        result.generators.push(GeneratorFactory.initType(
+        result.push(GeneratorFactory.initType(
           type,
           arg.dimension,
           arg.index
@@ -134,10 +132,8 @@ export class Decorators {
       }
     });
 
-    Decorators.resetMethod();
     return result;
   }
-
   
   static skipMethod(
     target: Object,
@@ -181,7 +177,7 @@ export class Decorators {
     return type;
   }
 
-  private static getFileName (index: number): string {
+  static getFileName (index: number): string {
     const stackLines = ((new Error()).stack).split('\n');
     let file = stackLines[index];
     file = file.replace(new RegExp('^[\\s]*at '), '');

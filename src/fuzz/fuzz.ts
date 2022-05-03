@@ -6,7 +6,7 @@ import path from 'path';
 import { Globals } from '../utils/globals';
 import { Code } from '../utils/code';
 
-import { fastFuzz } from './fuzzSync';
+import { fuzzSync } from './fuzzSync';
 import { ModuleMethod, ModuleType } from '../utils/modules';
 import { Result } from './results';
 import { mock } from 'intermock';
@@ -53,7 +53,6 @@ export async function fuzz(): Promise<{
   Object.entries(Globals.codeUtil.methods).forEach(
     ([file, methods]: [string, ModuleMethod[]]) => {
       methods.forEach((method: ModuleMethod) => {
-        debugger;
         if (method.name === '__constructor') { return; }
 
         // Set the generators to reset with the new literals.
@@ -82,7 +81,7 @@ export async function fuzz(): Promise<{
             className: method.className,
             namespaces: method.namespaces,
             file,
-            results: fuzzClass(file, method, 1e4, 1e5)
+            results: fuzzMethod(file, method, 1e4, 1e5)
           };
         }
 
@@ -149,7 +148,8 @@ function fuzzStatic(
   }
   func = func[method.name];
 
-  const results = fastFuzz(
+  const results = fuzzSync(
+    method,
     () => getArgs(method),
     (args: any[]) => func(...args),
     filePath,
@@ -162,7 +162,7 @@ function fuzzStatic(
   return results;
 }
 
-function fuzzClass(
+function fuzzMethod(
   filePath: string,
   method: ModuleMethod,
   maxTime: number = 1e4,
@@ -181,14 +181,16 @@ function fuzzClass(
   const generator: IGenerator =
     GeneratorFactory.initType(type, 0, 0, Mode.Stuff);
 
-  const results = fastFuzz(
+  const results = fuzzSync(
+    method,
     () => getArgs(method),
     (args: any[]) => {
       // debugger;
       // const instance = generator.next();
       // const func = instance[method.name];
       // const result = func(...args);
-      return generator.next()[method.name](...args);
+      method.test.instance = generator.next();
+      return method.test.instance[method.name](...args);
     },
     filePath,
     maxTime,
