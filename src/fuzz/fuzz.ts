@@ -184,11 +184,11 @@ function fuzzClass(
   const results = fastFuzz(
     () => getArgs(method),
     (args: any[]) => {
-      debugger;
-      const instance = generator.next();
-      const func = instance[method.name];
-      const result = func(...args);
-      return result;
+      // debugger;
+      // const instance = generator.next();
+      // const func = instance[method.name];
+      // const result = func(...args);
+      return generator.next()[method.name](...args);
     },
     filePath,
     maxTime,
