@@ -1,4 +1,4 @@
-import { Generator } from "../generators/Generator";
+import { GeneratorFactory } from "../generators/GeneratorFactory";
 import { IGenerator } from "../generators/IGenerator";
 import { Globals } from "./globals";
 import { ModuleMethod, ModuleType } from "./modules";
@@ -110,7 +110,7 @@ export class Decorators {
       }
 
       if (isBuiltIn) {
-        result.generators.push(Generator.init(
+        result.generators.push(GeneratorFactory.init(
           <BuiltIn>arg.type,
           arg.dimension,
           method.literals,
@@ -119,7 +119,7 @@ export class Decorators {
           arg.index
         ));
       } else {
-        result.generators.push(Generator.initType(
+        result.generators.push(GeneratorFactory.initType(
           type,
           arg.dimension,
           arg.index
@@ -131,11 +131,37 @@ export class Decorators {
     return result;
   }
 
+  
+  static skipMethod(
+    target: Object,
+    key: string | symbol
+  ): void {
+    Decorators.resetMethod();
+
+    // Populate the method details.
+    const newFileName: string = Decorators.getFileName(7);
+    const newClassName: string = target.constructor.name;
+    const newMethodName: string = new String(key).toString();
+
+    // Find and populate the central method repo.
+    const index: number = Globals
+      .codeUtil
+      .methods[newFileName]
+      .findIndex((method: ModuleMethod) => 
+        method.name === newMethodName &&
+        method.className === newClassName
+      );
+
+    Globals
+      .codeUtil
+      .methods[newFileName]
+      .splice(index, 1);
+  }
+
   static getPropType(typeName: string): ModuleType {
     const fileName: string = Decorators.getFileName(7);
     let type: ModuleType;
 
-    debugger;
     type = Globals.codeUtil.types[fileName]
       .find((localType: ModuleType) => localType.name === typeName);
 

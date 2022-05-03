@@ -11,9 +11,11 @@ export class GeneratorType extends Generator {
 
   private typeArgs: ModuleType[];
   private types: any[];
-  private numTypes: number;
+  private numTypes?: number;
 
-  constructor(type: ModuleType, dimension: number = 0, index?: number) {
+  private mode: Mode;
+
+  constructor(type: ModuleType, dimension: number = 0, index?: number, mode?: Mode) {
     // Create the interfaces for each type, excluding IFuzzArgs(TODO?).
     if (GeneratorType.interfaces === undefined) {
       GeneratorType.interfaces = Object.values(Globals.codeUtil.interfaces);
@@ -24,16 +26,16 @@ export class GeneratorType extends Generator {
     
     this.typeArgs = type.extends;
     this.types = [];
-    this.typeArgs.forEach((typeArg: ModuleType) => {
-      this.types.push(Generator.getType(typeArg));
-    });
-    this.numTypes = this.typeArgs.length;
+
+    this.mode = mode === undefined ? Generator.mode : mode;
   }
 
   generate(count: number): any[] {
     let result: any[] = [];
 
-    switch (Generator.mode) {
+    this.init();
+  
+    switch (this.mode) {
       case Mode.Falsy:
         for (let index = 0; index < count; index++) {
           result.push(this.falsyLiterals[Generator.getRandomIndex(this.falsyLiterals.length)]);
@@ -59,8 +61,16 @@ export class GeneratorType extends Generator {
     return Generator.next(this);
   }
 
+  private init(): void {
+    if (this.types.length > 0) { return; }
+
+    this.typeArgs.forEach((typeArg: ModuleType) => {
+      this.types.push(Generator.getType(typeArg));
+    });
+    this.numTypes = this.typeArgs.length;
+  }
+
   private generateSingle(typeArg: ModuleType, type: any): any {
-    debugger;
     let result: any = mock({
       files: GeneratorType.interfaces,
       interfaces: [typeArg.name],

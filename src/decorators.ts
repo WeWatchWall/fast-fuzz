@@ -1,5 +1,5 @@
 import { Transform } from 'class-transformer';
-import { Generator } from './generators/Generator';
+import { GeneratorFactory } from './generators/GeneratorFactory';
 
 import { IGenerator } from "./generators/IGenerator";
 import { Mode } from './generators/Mode';
@@ -40,7 +40,7 @@ export namespace Fuzz {
           methodId !== Globals.methodCount ||
           methodMode !== Globals.mode
         ) {
-          generator = Generator.init(
+          generator = GeneratorFactory.init(
             type,
             dimension,
             Globals.literals,
@@ -87,7 +87,7 @@ export namespace Fuzz {
       }
 
       var generator: IGenerator =
-        Generator.initType(type, dimension);
+        GeneratorFactory.initType(type, dimension);
 
       Transform(({ }) => {
         return generator.next();
@@ -178,7 +178,7 @@ export namespace Fuzz {
     // Replace the method with its hook.
     descriptor.value = function (...args: any[]) {
       if (!testArgs.isStart) {
-        return originalMethod.apply(this, args);
+        return originalMethod.apply(descriptor, args);
       }
 
       // Run the arguments' generators.
@@ -190,9 +190,28 @@ export namespace Fuzz {
       testArgs.isStart = false;
 
       // Run the method.
-      return originalMethod.apply(this, args);
+      return originalMethod.apply(descriptor, args);;
     };
 
     return descriptor;
   };
+
+  /**
+   * Decorator for skipping methods in tests.
+   * @returns method Type = `MethodDecorator`.
+   */
+   export const skipMethod: MethodDecorator =
+   (
+     target: Object,
+     key: string | symbol,
+     descriptor: PropertyDescriptor
+   ) => {
+ 
+     if (!Globals.isTest) { return descriptor; }
+ 
+     // Delete the method from the central repo.
+     Decorators.skipMethod(target, key);
+ 
+     return descriptor;
+   };
 }

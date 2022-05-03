@@ -4,16 +4,45 @@ import { Generator } from "./Generator";
 import { Mode } from "./Mode";
 
 export class GeneratorEnum extends Generator {
-
+  private type: ModuleType;
   private renderer: IntEnumRender | DictionaryEnumRender;
+  private isInit: boolean;
 
   constructor(type: ModuleType, dimension: number = 0, index?: number) {
     super(dimension, new Limits({}), [], index);
     this.falsyLiterals = this.falsyLiterals.concat(['', 0, -0, Number.MIN_VALUE, -1 * Number.MIN_VALUE, NaN]);
+    this.type = type;
+    this.isInit = false;
+  }
 
-    /* #region  Create generator based on Enum value types. */
+  generate(count: number): any[] {
+    let result: any[] = [];
+
+    this.init();
+
+    switch (Generator.mode) {
+      case Mode.Falsy:
+        for (let index = 0; index < count; index++) {
+          result.push(this.falsyLiterals[Generator.getRandomIndex(this.falsyLiterals.length)]);
+        }
+        break;
+      default:
+        result = this.renderer.render(count);
+        break;
+    }
+
+    return result;
+  }
+
+  next(): any {
+    return Generator.next(this);
+  }
+
+  private init(): void {
+    if (this.isInit) { return; }
+    
     // Full integer enums are faster than lookup enums.
-    const enumObject: any = Generator.getType(type);
+    const enumObject: any = Generator.getType(this.type);
 
     const numbers: number[] = [];
     const strings: string[] = [];
@@ -54,30 +83,9 @@ export class GeneratorEnum extends Generator {
       });
       this.renderer = new DictionaryEnumRender(values);
     }
-    /* #endregion */
+
+    this.isInit = true;
   }
-
-  generate(count: number): any[] {
-    let result: any[] = [];
-
-    switch (Generator.mode) {
-      case Mode.Falsy:
-        for (let index = 0; index < count; index++) {
-          result.push(this.falsyLiterals[Generator.getRandomIndex(this.falsyLiterals.length)]);
-        }
-        break;
-      default:
-        result = this.renderer.render(count);
-        break;
-    }
-
-    return result;
-  }
-
-  next(): any {
-    return Generator.next(this);
-  }
-
 }
 
 /**

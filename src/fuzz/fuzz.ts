@@ -2,17 +2,20 @@ import { createInstrumenter } from 'istanbul-lib-instrument';
 import { hookRequire } from 'istanbul-lib-hook';
 
 import path from 'path';
+
 import { Globals } from '../utils/globals';
 import { Code } from '../utils/code';
-
-let instrumenter: any;
 
 import { fastFuzz } from './fuzzSync';
 import { ModuleMethod, ModuleType } from '../utils/modules';
 import { Result } from './results';
 import { mock } from 'intermock';
 import { IGenerator } from '../generators/IGenerator';
-import { Generator } from '../generators/Generator';
+import { GeneratorFactory } from '../generators/GeneratorFactory';
+import { Mode } from '../generators/Mode';
+
+/* #region  Instrumenter hook. */
+let instrumenter: any;
 
 hookRequire((_filePath) => true, (code, { filename }) => {
   if (filename.includes('node_modules')) {
@@ -22,6 +25,7 @@ hookRequire((_filePath) => true, (code, { filename }) => {
   const newCode = instrumenter.instrumentSync(code, filename);
   return newCode;
 });
+/* #endregion */
 
 var interfaces: [string, string][];
 
@@ -49,8 +53,10 @@ export async function fuzz(): Promise<{
   Object.entries(Globals.codeUtil.methods).forEach(
     ([file, methods]: [string, ModuleMethod[]]) => {
       methods.forEach((method: ModuleMethod) => {
+        debugger;
         if (method.name === '__constructor') { return; }
 
+        // Set the generators to reset with the new literals.
         Globals.methodCount++;
         Globals.literals = method.literals;
 
@@ -84,7 +90,7 @@ export async function fuzz(): Promise<{
       });
     }
   );
-  
+
   return results;
 }
 
@@ -92,12 +98,25 @@ async function init() {
   Globals.isTest = true;
 
   Globals.codeUtil = new Code();
-  await Globals.codeUtil.init(path.join(process.argv[2], 'src/'), path.join(process.argv[2], 'dist/'));
+  await Globals.codeUtil.init(
+    path
+      .join(process.argv[2], 'src/')
+      .replace(new RegExp('\\\\', 'g'), '/')
+      .replace(new RegExp('\\\\\\\\', 'g'), '/'),
+    path
+      .join(process.argv[2], 'dist/')
+      .replace(new RegExp('\\\\', 'g'), '/')
+      .replace(new RegExp('\\\\\\\\', 'g'), '/')
+  );
+
   instrumenter = createInstrumenter({ compact: true, reportLogic: true })
   await Globals.codeUtil.load();
 }
 
 function getArgs(method: ModuleMethod): any[] {
+  // Set the method to generate new arguments.
+  method.test.isStart = true;
+
   const resultObject: any = mock({
     files: interfaces,
     interfaces: ['IFuzzArgs'],
@@ -153,18 +172,23 @@ function fuzzClass(
 
   let type: ModuleType =
     Globals
-    .codeUtil
-    .types[filePath]
-    .find((moduleType: ModuleType) => {
-      moduleType.name === method.className
-    });
+      .codeUtil
+      .types[filePath]
+      .find((moduleType: ModuleType) =>
+        moduleType.name === method.className
+      );
 
-  const generator: IGenerator = Generator.initType(type);
+  const generator: IGenerator =
+    GeneratorFactory.initType(type, 0, 0, Mode.Stuff);
 
   const results = fastFuzz(
     () => getArgs(method),
     (args: any[]) => {
-      return generator.next()[method.name](...args);
+      debugger;
+      const instance = generator.next();
+      const func = instance[method.name];
+      const result = func(...args);
+      return result;
     },
     filePath,
     maxTime,

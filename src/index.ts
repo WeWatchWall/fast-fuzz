@@ -1,4 +1,5 @@
 import 'reflect-metadata';
+import { fuzz } from './fuzz/fuzz';
 
 async function Main() {
 
@@ -24,7 +25,7 @@ async function Main() {
   // foo['isSame'](13, false, 1, 'UP');
   // foo['isSame'](13, false, 1, 'UP');
 
-  
+  await fuzz();
   debugger;
 }
 Main();

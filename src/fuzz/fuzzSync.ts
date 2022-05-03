@@ -27,7 +27,8 @@ export function fastFuzz(
   const maxMode: number = Mode.High;
   let resultCount = 1;
   for (let mode = 0; mode <= maxMode; mode++) {
-    // Update the Globals.
+  
+    // Set the generators to reset with the new mode.
     Globals.mode = mode;
 
     // Vary the number of runs based on target area.

@@ -144,7 +144,7 @@ export class Code {
     if (startI === -1) { return undefined; }
   
     // Find the end of the import and get the string.
-    const endI = ICode[1].indexOf(';') + 1;
+    const endI = ICode[1].indexOf(';', startI) + 1;
     let statement = ICode[1].substring(startI, endI);
 
     const fromI = statement.indexOf(' from ');
