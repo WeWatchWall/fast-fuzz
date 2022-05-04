@@ -2,10 +2,10 @@
   "name": "fast-fuzz",
   "version": "4.0.0",
   "description": "Test case generator based on branch coverage and fast-check.",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "dist/src/index.js",
+  "types": "dist/src/index.d.ts",
   "bin": {
-    "fast-fuzz": "dist/bin.js"
+    "fast-fuzz": "dist/src/bin.js"
   },
   "scripts": {
     "clean": "node clean.js dist build package",

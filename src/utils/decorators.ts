@@ -181,8 +181,12 @@ export class Decorators {
     const stackLines = ((new Error()).stack).split('\n');
     let file = stackLines[index];
     file = file.replace(new RegExp('^[\\s]*at '), '');
+    const fileBrackets = file.match(new RegExp('\\(\\S*\\)'));
+    if (fileBrackets?.length > 0) {
+      file = fileBrackets[0].substring(1, fileBrackets[0].length - 1);
+    }
     file = file.replace(new RegExp(':[0-9]*:[0-9]*$'), '');
-
+    debugger;
     return file;
   }
 

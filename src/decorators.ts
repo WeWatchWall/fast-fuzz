@@ -205,12 +205,17 @@ export namespace Fuzz {
     key: string | symbol,
     descriptor: PropertyDescriptor
   ) => {
-
+    debugger;
     if (!Globals.isTest) { return descriptor; }
 
     // Populate the method details.
     const fileName: string = Decorators.getFileName(6);
-    const className: string = target.constructor.name;
+    let className: string = target.constructor.name;
+
+    // For static where the constructor is already given.
+    if (className === 'Function') {
+      className = (<any>target).name;
+    }
     const methodName: string = new String(key).toString();
 
     // Find and populate the central method repo. 

@@ -167,14 +167,24 @@ function fuzzStatic(
 ): Result[] {
   interfaces.push(method.IArgs);
 
+  /* #region  Get the static method. */
+  let type: ModuleType =
+    Globals
+      .codeUtil
+      .types[filePath]
+      .find((moduleType: ModuleType) =>
+        moduleType.name === method.className
+      );
+
   let func: any = Globals.codeUtil.modules[filePath];
-  func.namespaces.forEach((namespace: string) => {
+  type.namespaces.forEach((namespace: string) => {
     func = func[namespace];
   });
   if (method.className !== undefined) {
     func = func[method.className];
   }
   func = func[method.name];
+  /* #endregion */
 
   const results = fuzzSync(
     method,
@@ -198,14 +208,24 @@ async function fuzzStaticAsync(
 ): Promise<Result[]> {
   interfaces.push(method.IArgs);
 
+  /* #region  Get the static method. */
+  let type: ModuleType =
+    Globals
+      .codeUtil
+      .types[filePath]
+      .find((moduleType: ModuleType) =>
+        moduleType.name === method.className
+      );
+
   let func: any = Globals.codeUtil.modules[filePath];
-  func.namespaces.forEach((namespace: string) => {
+  type.namespaces.forEach((namespace: string) => {
     func = func[namespace];
   });
   if (method.className !== undefined) {
     func = func[method.className];
   }
   func = func[method.name];
+  /* #endregion */
 
   const results = await fuzzAsync(
     method,

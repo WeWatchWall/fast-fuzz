@@ -79,6 +79,7 @@ fast-fuzz
   -c, --classes <RegExp>        A Regex expression to filter the classes to test.
   -s, --source <path>           Path of the source folder relative to the project.
   -d, --dist <path>             Path of the binary folder relative to the project.
+  -q, --quiet <true>           Only output the results JSON
   -h, --help                    display help for command
 ```
 
@@ -127,8 +128,8 @@ Methods can be skipped from testing using the ```@Fuzz.skipMethod``` decorator.
 
 Arguments can be set to ```undefined``` or ```null``` using the ```@Fuzz.skipArg``` decorator.
 
-Without decoration, it is still able to fuzz any types with methods that have only built-in types and methods with built-in arguments.
-However, they do not have limits and thus will take much longer to test.
+Without decoration, it is still able to fuzz any types that have only built-in types and methods with built-in arguments.
+However, the values do not have limits so they will take much longer to test.
 
 ## Code Style Tips
 
@@ -138,6 +139,7 @@ However, they do not have limits and thus will take much longer to test.
 - Function types for arguments and properties not yet tested, e.g. ```function Foo(arg: () => Type) {}```.
 - Export types for testing.
 - Types in different files should not be named the same. This might be fixed soon.
+- Type declarations with similar names should be ordered alphabetically, especially for similar names.
 - Imported types should be ordered alphabetically, especially for similar names.
 - Use static classes instead of namespaces to include their methods in the fuzzing.
 
@@ -147,6 +149,7 @@ However, they do not have limits and thus will take much longer to test.
 - Order methods with similar names alphabetically.
 - Return types should not contain brackets ```( or )``` because they are used to detect method signatures.
 - Async methods are generally slower to fuzz than synchronous ones, and drastically slower if there is any sort of waiting, even 1ms.
+- Constructors are skipped for now, and objects are constructed from their properties.
 
 ### Literals
 
@@ -157,5 +160,10 @@ However, they do not have limits and thus will take much longer to test.
 ## TODO Priorities
 
 - Add file name to prop ```type not found error```.
-- Integration testing by stuffing arguments between tests by type.
-- Get rid of Intermock and allow same type names across files.
+- Intermediate results.
+- Benchmarking of target functions to determine the best run time and number of tests.
+- Side-by-side single and multithreaded runners.
+- Integration testing by stuffing arguments between methods by type.
+- Redundant runner for results.
+- Option to run the constructors.
+- Get rid of the Intermock dependency and allow same type names across files.
