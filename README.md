@@ -124,7 +124,11 @@ export class Foo {
 
 Use the ```@Fuzz.argType(Class.name, dimension)``` decorator for custom types, abstract, and interfaces.
 Methods can be skipped from testing using the ```@Fuzz.skipMethod``` decorator.
+
 Arguments can be set to ```undefined``` or ```null``` using the ```@Fuzz.skipArg``` decorator.
+
+Without decoration, it is still able to fuzz any types with methods that have only built-in types and methods with built-in arguments.
+However, they do not have limits and thus will take much longer to test.
 
 ## Code Style Tips
 
@@ -142,6 +146,7 @@ Arguments can be set to ```undefined``` or ```null``` using the ```@Fuzz.skipArg
 - Don't name static methods the same as instance ones.
 - Order methods with similar names alphabetically.
 - Return types should not contain brackets ```( or )``` because they are used to detect method signatures.
+- Async methods are generally slower to fuzz than synchronous ones, and drastically slower if there is any sort of waiting, even 1ms.
 
 ### Literals
 
