@@ -22,8 +22,6 @@ if (!commander.input) {
 }
 
 async function Main() {
-  debugger;
-
   if (commander.maxTime !== undefined) {
     commander.maxTime = Number.parseFloat(commander.maxTime);
     if (Number.isNaN(commander.maxTime)) { delete commander.maxTime; }

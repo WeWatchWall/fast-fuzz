@@ -2,7 +2,7 @@ import path from "path";
 import copy from "fast-copy";
 import { diff } from 'deep-object-diff';
 
-import { simpleHash, isCovered } from './util';
+import { simpleHash, resetCoverage } from './util';
 import { Mode } from "../generators/Mode";
 import { Result } from "./result";
 import { Globals } from "../utils/globals";
@@ -109,12 +109,13 @@ export async function fuzzAsync(
         result, mode, coverageHash, runCount,
         speed: Number.parseFloat(
           (runCount / (Date.now() - start)).toPrecision(4)
-        ),
-        isCovered: isCovered(filePath)
+        )
       }));
       runCount = 0;
     }
   }
+
+  resetCoverage(filePath);
 
   // Report the generated tests.
   return results;
