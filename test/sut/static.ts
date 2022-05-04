@@ -64,7 +64,7 @@ export class Test_Static {
     @Fuzz.arg("integer") age: number,
     @Fuzz.arg("integer") code: number
   ): Promise<boolean> {
-    var flatPromise = new FlatPromise();
+    const flatPromise = new FlatPromise();
 
     setTimeout(() => {
       if (code == 7) {

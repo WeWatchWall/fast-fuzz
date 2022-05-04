@@ -9,7 +9,7 @@ import { Mode } from "./Mode";
 export class GeneratorString extends Generator {
   private static MODE_SCALE = 1;
 
-  constructor(dimension: number = 0, literals: string[], min?: number, max?: number, index?: number) {
+  constructor(dimension = 0, literals: string[], min?: number, max?: number, index?: number) {
     super(
       dimension,
       new Limits({ string: { min, max } }),
@@ -21,7 +21,7 @@ export class GeneratorString extends Generator {
   }
 
   generate(count: number): string[] {
-    let result: any[] = [];
+    const result: any[] = [];
 
     switch (Generator.mode) {
       case Mode.Falsy:

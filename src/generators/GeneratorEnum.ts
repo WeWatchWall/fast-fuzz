@@ -8,7 +8,7 @@ export class GeneratorEnum extends Generator {
   private renderer: IntEnumRender | DictionaryEnumRender;
   private isInit: boolean;
 
-  constructor(type: ModuleType, dimension: number = 0, index?: number) {
+  constructor(type: ModuleType, dimension = 0, index?: number) {
     super(dimension, new Limits({}), [], index);
     this.falsyLiterals = this.falsyLiterals.concat(['', 0, -0, Number.MIN_VALUE, -1 * Number.MIN_VALUE, NaN]);
     this.type = type;
@@ -48,7 +48,7 @@ export class GeneratorEnum extends Generator {
     const strings: string[] = [];
 
     Object.keys(enumObject).forEach((key: string) => {
-      let numericKey = Number.parseInt(key);
+      const numericKey = Number.parseInt(key);
       if (Number.isInteger(numericKey)) {
         numbers.push(numericKey);
       } else {

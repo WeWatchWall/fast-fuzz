@@ -9,7 +9,7 @@ import { Mode } from "./Mode";
 export abstract class Generator implements IGenerator {
   /* #region  Properties. */
   static mode: Mode = Mode.Falsy;
-  static P_STUFF_FALSY: number = 0.8;
+  static P_STUFF_FALSY = 0.8;
 
   index: number;
   dimension: number;
@@ -32,7 +32,7 @@ export abstract class Generator implements IGenerator {
    * @param [index] 
    */
   constructor(
-    dimension: number = 0,
+    dimension = 0,
 
     limits: Limits,
     literals?: (number | Date | string)[],

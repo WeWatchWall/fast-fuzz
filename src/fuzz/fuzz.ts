@@ -28,17 +28,17 @@ hookRequire((_filePath) => true, (code, { filename }) => {
 });
 /* #endregion */
 
-var interfaces: [string, string][];
+let interfaces: [string, string][];
 
 export async function fastFuzz(
   folder: string,
-  maxTime: number = 1e4,
-  maxRuns: number = 1e5,
+  maxTime = 1e4,
+  maxRuns = 1e5,
   methodPattern?: string,
   classPattern?: string,
   src?: string,
   dist?: string,
-  verbose: boolean = false
+  verbose = false
 ): Promise<Results[]> {
   if (instrumenter === undefined) {
     await init(folder, src, dist);
@@ -50,7 +50,7 @@ export async function fastFuzz(
 
   /* #region  Output verbose info. */
   if (verbose) {
-    let methodCount: number = 0;
+    let methodCount = 0;
     for (const [, methods] of Object.entries(Globals.codeUtil.methods)) {
       for (const method of methods) {
         if (classPattern !== undefined && !(new RegExp(classPattern)).test(method.className)) {
@@ -119,8 +119,8 @@ export async function fastFuzz(
 
 async function init(
   folder: string,
-  src: string = 'src/',
-  dist: string = 'dist/',
+  src = 'src/',
+  dist = 'dist/',
 ) {
   Globals.isTest = true;
 
@@ -162,13 +162,13 @@ function getArgs(method: ModuleMethod): any[] {
 function fuzzStatic(
   filePath: string,
   method: ModuleMethod,
-  maxTime: number = 1e4,
-  maxRuns: number = 1e5
+  maxTime = 1e4,
+  maxRuns = 1e5
 ): Result[] {
   interfaces.push(method.IArgs);
 
   /* #region  Get the static method. */
-  let type: ModuleType =
+  const type: ModuleType =
     Globals
       .codeUtil
       .types[filePath]
@@ -203,13 +203,13 @@ function fuzzStatic(
 async function fuzzStaticAsync(
   filePath: string,
   method: ModuleMethod,
-  maxTime: number = 1e4,
-  maxRuns: number = 1e5
+  maxTime = 1e4,
+  maxRuns = 1e5
 ): Promise<Result[]> {
   interfaces.push(method.IArgs);
 
   /* #region  Get the static method. */
-  let type: ModuleType =
+  const type: ModuleType =
     Globals
       .codeUtil
       .types[filePath]
@@ -244,12 +244,12 @@ async function fuzzStaticAsync(
 function fuzzMethod(
   filePath: string,
   method: ModuleMethod,
-  maxTime: number = 1e4,
-  maxRuns: number = 1e5
+  maxTime = 1e4,
+  maxRuns = 1e5
 ): Result[] {
   interfaces.push(method.IArgs);
 
-  let type: ModuleType =
+  const type: ModuleType =
     Globals
       .codeUtil
       .types[filePath]
@@ -284,12 +284,12 @@ function fuzzMethod(
 async function fuzzMethodAsync(
   filePath: string,
   method: ModuleMethod,
-  maxTime: number = 1e4,
-  maxRuns: number = 1e5
+  maxTime = 1e4,
+  maxRuns = 1e5
 ): Promise<Result[]> {
   interfaces.push(method.IArgs);
 
-  let type: ModuleType =
+  const type: ModuleType =
     Globals
       .codeUtil
       .types[filePath]

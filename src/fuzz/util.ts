@@ -18,7 +18,7 @@ export function resetCoverage (fileName: string) {
 
 // Fastest known hash method for a string.
 export function simpleHash (str: string) {
-  let hash: number = 0;
+  let hash = 0;
   for (let i = 0; i < str.length; i++) {
     const char: number = str.charCodeAt(i);
     hash = (hash << 5) - hash + char;

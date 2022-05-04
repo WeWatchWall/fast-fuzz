@@ -3,13 +3,13 @@ import { Generator } from "./Generator";
 import { Mode } from "./Mode";
 
 export class GeneratorFalsy extends Generator {
-  constructor(dimension: number = 0, index?: number) {
+  constructor(dimension = 0, index?: number) {
     super(dimension, new Limits({}), [], index);
     this.literals = this.literals.concat(this.falsyLiterals);
   }
 
   generate(count: number): boolean[] {
-    let result: any[] = [];
+    const result: any[] = [];
 
     switch (Generator.mode) {
       case Mode.Falsy:

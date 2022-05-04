@@ -5,7 +5,7 @@ import { Mode } from "./Mode";
 export class GeneratorFloat extends Generator {
   private static MODE_SCALE = 0.5;
 
-  constructor(dimension: number = 0, literals: string[], min?: number, max?: number, index?: number) {
+  constructor(dimension = 0, literals: string[], min?: number, max?: number, index?: number) {
     super(
       dimension,
       new Limits({ float: { min, max } }),
@@ -17,7 +17,7 @@ export class GeneratorFloat extends Generator {
   }
 
   generate(count: number): number[] {
-    let result: any[] = [];
+    const result: any[] = [];
 
     switch (Generator.mode) {
       case Mode.Falsy:

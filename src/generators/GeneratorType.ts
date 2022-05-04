@@ -15,7 +15,7 @@ export class GeneratorType extends Generator {
 
   private mode: Mode;
 
-  constructor(type: ModuleType, dimension: number = 0, index?: number, mode?: Mode) {
+  constructor(type: ModuleType, dimension = 0, index?: number, mode?: Mode) {
     // Create the interfaces for each type, excluding IFuzzArgs(TODO?).
     if (GeneratorType.interfaces === undefined) {
       GeneratorType.interfaces = Object.values(Globals.codeUtil.interfaces);
@@ -31,7 +31,7 @@ export class GeneratorType extends Generator {
   }
 
   generate(count: number): any[] {
-    let result: any[] = [];
+    const result: any[] = [];
 
     this.init();
   
@@ -90,7 +90,7 @@ export class GeneratorType extends Generator {
   }
 
   private generateMany(): any {
-    let typeIndex = Generator.getRandomIndex(this.numTypes);
+    const typeIndex = Generator.getRandomIndex(this.numTypes);
     return this.generateSingle(this.typeArgs[typeIndex], this.types[typeIndex])
   }
 }

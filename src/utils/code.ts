@@ -194,7 +194,7 @@ export class Code {
 
   static getLiterals(fileName: any, moduleMethods: ModuleMethod[]) {
     const file: string = readFileSync(path.resolve(fileName), 'utf8');
-    var currentIndex: number = -1;
+    let currentIndex = -1;
 
     function findLiterals(node: ts.Node) {
       let isNew = false;
@@ -234,7 +234,7 @@ export class Code {
         case ts.SyntaxKind.BigIntLiteral:
         case ts.SyntaxKind.StringLiteral:
           // Check if this literal is in a decorator.
-          let isDecorator: boolean = false;
+          let isDecorator = false;
           let parentNode = node;
           while (parentNode.parent !== undefined) {
             isDecorator = isDecorator || parentNode.kind === ts.SyntaxKind.Decorator;

@@ -39,7 +39,7 @@ export class Decorators {
     }
 
     Decorators.args.push(arg);
-  };
+  }
 
   static addMethod(
     target: Object,
@@ -228,7 +228,7 @@ export class Decorators {
     }
 
     return true;
-  };
+  }
 
   private static resetMethod () {
     Decorators.fileName = undefined;
@@ -236,6 +236,6 @@ export class Decorators {
     Decorators.methodName = undefined;
     Decorators.lastIndex = undefined;
     Decorators.args = [];
-  };
+  }
 
 }

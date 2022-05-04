@@ -24,7 +24,7 @@ export namespace GeneratorFactory {
    */
    export function init(
     type: BuiltIn,
-    dimension: number = 0,
+    dimension = 0,
     literals: string[],
     index?: number,
     min?: number,
@@ -56,7 +56,7 @@ export namespace GeneratorFactory {
    */
   export function initType(
     type: ModuleType,
-    dimension: number = 0,
+    dimension = 0,
     index?: number,
     mode?: Mode
   ): IGenerator {

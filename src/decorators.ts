@@ -21,7 +21,7 @@ export namespace Fuzz {
    */
   export const prop = function (
     type: BuiltIn,
-    dimension: number = 0,
+    dimension = 0,
     min?: number,
     max?: number
   ): PropertyDecorator {
@@ -33,9 +33,9 @@ export namespace Fuzz {
 
       if (!Globals.isTest) { return; }
 
-      var methodId: number = 0;
-      var methodMode: Mode = Mode.Falsy;
-      var generator: IGenerator;
+      let methodId = 0;
+      let methodMode: Mode = Mode.Falsy;
+      let generator: IGenerator;
 
       Transform(({ }) => {
         if (
@@ -64,7 +64,7 @@ export namespace Fuzz {
    */
   export const propType = function (
     typeName: string,
-    dimension: number = 0
+    dimension = 0
   ): PropertyDecorator {
 
     return (
@@ -88,7 +88,7 @@ export namespace Fuzz {
         return;
       }
 
-      var generator: IGenerator =
+      const generator: IGenerator =
         GeneratorFactory.initType(type, dimension);
 
       Transform(({ }) => {
@@ -108,7 +108,7 @@ export namespace Fuzz {
 
     if (!Globals.isTest) { return; }
     
-    var generator: IGenerator;
+    let generator: IGenerator;
 
     Transform(({ }) => {
       if (generator === undefined) {
@@ -130,7 +130,7 @@ export namespace Fuzz {
    */
   export const arg = function (
     type: BuiltIn,
-    dimension: number = 0,
+    dimension = 0,
     min?: number,
     max?: number
   ): ParameterDecorator {
@@ -158,7 +158,7 @@ export namespace Fuzz {
    */
   export const argType = function (
     type: string,
-    dimension: number = 0
+    dimension = 0
   ): ParameterDecorator {
 
     return (
@@ -231,8 +231,8 @@ export namespace Fuzz {
     
     const originalMethod = descriptor.value;
 
-    var methodId: number = 0;
-    var methodMode: Mode = Mode.Falsy;
+    const methodId = 0;
+    const methodMode: Mode = Mode.Falsy;
 
     // Replace the method with its hook.
     descriptor.value = function (...args: any[]) {
@@ -261,7 +261,7 @@ export namespace Fuzz {
       testArgs.callArgs = args;
 
       // Run the method.
-      return originalMethod.apply(descriptor, args);;
+      return originalMethod.apply(descriptor, args);
     };
 
     return descriptor;

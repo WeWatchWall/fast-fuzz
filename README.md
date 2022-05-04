@@ -1,6 +1,6 @@
 # Fast-Fuzz, the First Intelligent Fuzzing Framework for Typescript
 
-[![Build and test status](https://github.com/WeWatchWall/fast-fuzz/workflows/Lint%20and%20test/badge.svg)](https://github.com/WeWatchWall/fast-fuzz/actions?query=workflow%3A%22Lint+and+test%22)
+[![Build and test status](https://github.com/WeWatchWall/fast-fuzz/workflows/Build%20and%20test/badge.svg)](https://github.com/WeWatchWall/fast-fuzz/actions?query=workflow%3A%22Build+and+test%22)
 [![NPM version](https://img.shields.io/npm/v/fast-fuzz.svg)](https://www.npmjs.com/package/fast-fuzz)
 
 Fuzzing framework that allows for the generation of unit test argument and result pairs for a given Typescript project. Uses [IstanbulJS](https://github.com/istanbuljs/istanbuljs) for branch coverage and [class-transformer](https://github.com/typestack/class-transformer) for type instance generation.
@@ -160,6 +160,7 @@ However, the values do not have limits so they will take much longer to test.
 ## TODO Priorities
 
 - figure out the overall perf...
+- linting
 - Clean up the detected literals from falsy values.
 - Add file name to prop ```type not found error```.
 - Intermediate results.

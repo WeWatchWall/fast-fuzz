@@ -15,8 +15,8 @@ export function fuzzSync(
   getArgs: Function,
   testFunc: Function,
   filePath: string,
-  maxTime: number = 1e4,
-  maxRuns: number = 1e5
+  maxTime = 1e4,
+  maxRuns = 1e5
 ) {
   // Resolve the system under test(SUT).
   filePath = path.resolve(filePath);
@@ -54,11 +54,11 @@ export function fuzzSync(
     };
 
     // Test loop stats.
-    let runCount: number = 0;
+    let runCount = 0;
     const start: number = Date.now();
-    let isExpired: boolean = false;
+    let isExpired = false;
 
-    let isRun: boolean = true;
+    let isRun = true;
     while (isRun) {
       // Check the running stats for termination.
       runCount++;
@@ -73,7 +73,7 @@ export function fuzzSync(
         bT: any
       } = copy(fileCoverage);
 
-      let args: any[] = getArgs();
+      const args: any[] = getArgs();
       let result: any;
 
       // Run the function and report the error 
