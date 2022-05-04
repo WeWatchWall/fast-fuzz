@@ -6,6 +6,7 @@ import safeStringify from 'fast-safe-stringify';
 import { fastFuzz } from './fuzz/fuzz';
 
 commander
+  .addHelpCommand()
   .version(require('../package').version)
   .option('-i, --input <path>', 'Path of the Typescript project.')
   .option('-t, --maxTime <milliseconds>', 'The maximum time(ms) per function. Actual value is multiplied by 4. Default = 10s.')

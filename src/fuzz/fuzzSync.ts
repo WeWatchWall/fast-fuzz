@@ -108,7 +108,7 @@ export function fuzzSync(
         args: method.test.callArgs,
         result, mode, coverageHash, runCount,
         speed: Number.parseFloat(
-          (runCount / (Date.now() - start)).toPrecision(4)
+          (runCount * 1000 / (Date.now() - start)).toPrecision(4)
         )
       }));
       runCount = 0;
