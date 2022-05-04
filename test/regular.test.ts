@@ -1,77 +1,147 @@
+const execShellCommand = require("../execShellCommand.js");
 import { assert } from 'chai';
-import { fastFuzz, fastFuzzAsync } from '../index';
 
-import regular from './sut/regular.js';
+describe('Get all fuzzing results.', function () {
+  this.timeout(6 * 60 * 1e3);
 
-describe('Regular fuzzing.', function () {
-  this.timeout(3e4);
-
-  it('Finds solution in reasonable time 1.', () => {
-    const result = fastFuzz(
-      regular.regular1,
-      './test/sut/regular.js',
-      [
-        '{"type":"bool"}',
-        '{"type":"int","min":0,"max":16}',
-        '{"type":"int","min":0}',
-        '{"type":"int","min":0}',
-        '{"type":"bool"}',
-        '{"type":"int","min":0}'
-      ],
-      [69366, 42808, 5, 26],
-      1e4,
-      5e7,
-      true,
-      false
-    );
-
-    assert.ok(result);
-    assert.ok(result.tests.length == 12);
+  before(async () => {
+    global.fastFuzzResults = await execShellCommand(`node ./dist/src/bin.js -i "./test/sut" -s "./" -d "../../dist/test/sut" -c "Test" -q true -t 3e3 -n 1e5`);
   });
 
-  it('Finds solution in reasonable time 2.', () => {
-    const result = fastFuzz(
-      regular.regular2,
-      './test/sut/regular.js',
-      [
-        '{"type":"bool"}',
-        '{"type":"int","min":0,"max":16}',
-        '{"type":"int","min":0}',
-        '{"type":"int","min":0}',
-        '{"type":"bool"}',
-        '{"type":"int","min":0}'
-      ],
-      [69366, 42808, 5, 26],
-      1e4,
-      5e7,
-      true,
-      false
-    );
+  describe('Static methods.', function () {
 
-    assert.ok(result);
-    assert.ok(result.tests.length == 8);
+    it('Fuzz simple method', async () => {
+      let results: any[];
+      let error: any;
+
+      try {
+        results = JSON.parse(global.fastFuzzResults);
+      } catch (e: any) {
+        error = e;
+      }
+      assert.ok(error === undefined);
+
+      const method = results.find((result: any) => result.name === 'static_simple');
+      assert.ok(method !== undefined);
+      assert.ok(method.results.length === 3);
+    });
+
+    it('Fuzz regular method', async () => {
+      let results: any[];
+      let error: any;
+
+      try {
+        results = JSON.parse(global.fastFuzzResults);
+      } catch (e: any) {
+        error = e;
+      }
+      assert.ok(error === undefined);
+
+      const method = results.find((result: any) => result.name === 'static_regular');
+      assert.ok(method !== undefined);
+      assert.ok(method.results.length === 4);
+    });
+
+    it('Fuzz async interface', async () => {
+      let results: any[];
+      let error: any;
+
+      try {
+        results = JSON.parse(global.fastFuzzResults);
+      } catch (e: any) {
+        error = e;
+      }
+      assert.ok(error === undefined);
+
+      const method = results.find((result: any) => result.name === 'static_IAsync');
+      assert.ok(method !== undefined);
+      assert.ok(method.results.length === 4);
+    });
+
+    
+    it('Fuzz async method', async () => {
+      let results: any[];
+      let error: any;
+
+      try {
+        results = JSON.parse(global.fastFuzzResults);
+      } catch (e: any) {
+        error = e;
+      }
+      assert.ok(error === undefined);
+
+      const method = results.find((result: any) => result.name === 'static_async');
+      assert.ok(method !== undefined);
+      assert.ok(method.results.length === 4);
+    });
   });
 
-  it('Finds solution in reasonable time 3 - async interface.', async () => {
-    const result = await fastFuzzAsync(
-      regular.regular3,
-      './test/sut/regular.js',
-      [
-        '{"type":"bool"}',
-        '{"type":"int","min":0,"max":16}',
-        '{"type":"int","min":0}',
-        '{"type":"int","min":0}',
-        '{"type":"bool"}',
-        '{"type":"int","min":0}'
-      ],
-      [69366, 42808, 5, 26],
-      1e4,
-      5e7,
-      true,
-      false
-    );
+  
+  describe('Instance methods.', function () {
 
-    assert.ok(result);
-    assert.ok(result.tests.length == 9);
+    it('Fuzz simple method', async () => {
+      let results: any[];
+      let error: any;
+
+      try {
+        results = JSON.parse(global.fastFuzzResults);
+      } catch (e: any) {
+        error = e;
+      }
+      assert.ok(error === undefined);
+
+      const method = results.find((result: any) => result.name === 'instance_simple');
+      assert.ok(method !== undefined);
+      assert.ok(method.results.length === 1);
+    });
+
+    it('Fuzz regular method', async () => {
+      let results: any[];
+      let error: any;
+
+      try {
+        results = JSON.parse(global.fastFuzzResults);
+      } catch (e: any) {
+        error = e;
+      }
+      assert.ok(error === undefined);
+
+      const method = results.find((result: any) => result.name === 'instance_regular');
+      assert.ok(method !== undefined);
+      assert.ok(method.results.length === 2);
+    });
+
+    it('Fuzz async interface', async () => {
+      let results: any[];
+      let error: any;
+
+      try {
+        results = JSON.parse(global.fastFuzzResults);
+      } catch (e: any) {
+        error = e;
+      }
+      assert.ok(error === undefined);
+
+      const method = results.find((result: any) => result.name === 'instance_IAsync');
+      assert.ok(method !== undefined);
+      assert.ok(method.results.length === 2);
+    });
+
+    
+    it('Fuzz async method', async () => {
+      let results: any[];
+      let error: any;
+
+      try {
+        results = JSON.parse(global.fastFuzzResults);
+      } catch (e: any) {
+        error = e;
+      }
+      assert.ok(error === undefined);
+
+      const method = results.find((result: any) => result.name === 'instance_async');
+      assert.ok(method !== undefined);
+      assert.ok(method.results.length === 2);
+    });
   });
-})
+});

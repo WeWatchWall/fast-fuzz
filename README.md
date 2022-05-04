@@ -1,9 +1,9 @@
-# Test Case Generator Based on Branch Coverage and Fuzzing
+# Fast-Fuzz, the First Intelligent Fuzzing Framework for Typescript
 
-[![Build and test status](https://github.com/WeWatchWall/fast-fuzz/workflows/Lint%20and%20test/badge.svg)](https://github.com/WeWatchWall/fast-fuzz/actions?query=workflow%3A%22Lint+and+test%22)
+[![Build and test status](https://github.com/WeWatchWall/fast-fuzz/workflows/Build%20and%20test/badge.svg)](https://github.com/WeWatchWall/fast-fuzz/actions?query=workflow%3A%22Build+and+test%22)
 [![NPM version](https://img.shields.io/npm/v/fast-fuzz.svg)](https://www.npmjs.com/package/fast-fuzz)
 
-Library that allows for the generation of unit test argument and result pairs for a given JavaScript function. Uses [IstanbulJS](https://github.com/istanbuljs/istanbuljs) for branch coverage and [Fast-Check](https://github.com/dubzzz/fast-check) for fuzzing.
+Fuzzing framework that allows for the generation of unit test argument and result pairs for a given Typescript project. Uses [IstanbulJS](https://github.com/istanbuljs/istanbuljs) for branch coverage and [class-transformer](https://github.com/typestack/class-transformer) for type instance generation.
 
 The [Mocha](https://mochajs.org/) testing framework is recommended. You can use [TS-Mocha](https://www.npmjs.com/package/ts-mocha) (along with the "@types/mocha" and "@types/chai" typings) for tests that are written in TypeScript.
 The [Jest](https://jestjs.io/) framework is clobbering the global variable ```global.__coverage__``` and, in general, has trouble in dealing with ESM modules and Typescript.
@@ -11,156 +11,162 @@ The [Jest](https://jestjs.io/) framework is clobbering the global variable ```gl
 ## Getting Started
 
 ```bash
-npm i -D fast-fuzz
+npm i -D reflect-metadata fast-fuzz
 ```
 
-## Usage and Options
+The project requires ```reflect-metadata``` in the fuzzed project. Further, the target also needs:
 
-Tips:
-
-- The SUT function can be async when called like `await fastFuzzAsync(...args)`. Waiting for any amount of time is very slow overall. Any async code inside the tested logic will need to be awaited until the result is returned; this is for the coverage to be agregated.
-
-- Performance depends on the run time of the tested function(SUT); check that its performance is optimized.
-
-- Coverage is detected only for the file in the arguments. Thus, edge cases will only be detected there. See the [Factory Pattern](https://en.wikipedia.org/wiki/Factory_method_pattern), [SOLID](https://en.wikipedia.org/wiki/SOLID), and [Holywood](https://en.wiktionary.org/wiki/Hollywood_principle) Principles.
-
-- For an easier experience, put all the subject under test literals/constants in an array. The test's literals argument can be updated with any interesting arguments that are detected through the generation process.
-
-- The argument-result pairs can be saved and later compared to pragmatically demonstrate the effects of code changes. Functionality related to this will be added later.
-
-- Coverage results can be visualized by running the [nyc library](https://github.com/istanbuljs/nyc) over the results generated side by side with fast-fuzz.
-
-Example:
-
-```typescript
-import { fastFuzz, fastFuzzAsync } from "fast-fuzz";
-import { func } from './test/sut/regular.js';
-
-// Faster, meaning it needs less limits, but it only handles sync code across SUT.
-let result = fastFuzz(
-
-// OR
-
-// Able to handle async SUT but is slower, meaning it needs more min and/or max limits.
-let result = await fastFuzzAsync(
-    () => {
-      // SUT Function
-      return func();
-    },
-    './test/sut/regular.js',              // SUT File
-    [                                     // Argument Structure
-      '{"type":"bool"}',
-      '{"type":"int","min":0,"max":16}',
-      '{"type":"int","min":0}',
-      '{"type":"int","min":0}',
-      '{"type":"bool"}',
-      '{"type":"int","min":0}'
-    ],
-    [69366, 42808, 5, 26, new Date()],    // Literals/Constants for Stuffing Arguments [Optional]
-    1e4,                                  // Time Limit [Optional]
-    5e7,                                  // Iterations Limit [Optional]
-    true,                                 // Reset Coverage [Optional]
-    false                                 // Debug Output to Stdout [Optional]
-  );
-```
-
-Parameters:
-
-- {function}  method  SUT method calling into the file.
-
-- {relative/absolute path}  filePath Path for the file to be covered. Can provide a default export function.
-
-- {object | array}  parameterSchema Object or Array of parameters to be passed into the SUT function.
-  
-  - Object options property [Optional]:
+- To be a Typescript project with a ```src``` and ```dist``` folder. These can be set through options.
+- ```tsconfig.json``` enables decorators:
   
   ```typescript
-    {
-      object_options: {
-        object_required: ["Key0", 1, "2"], // Overwrites object_partial to mark non-optional properties
-        object_partial: true        // All properties are optionally included in the end value.
-      },
-      ... other object properties here
-    }  
+  {
+    "compilerOptions": {
+      ...
+      "experimentalDecorators": true,
+      "emitDecoratorMetadata": true,
+      ...
+    }
+  }
   ```
 
-  - Array options object at index 0 [Optional]. If you need a partial, non-shuffled alternative, consider an object with numeric properties { 0: ..., 1: ..., 2: ... }
-
-  ```typescript
-    [
-      {
-        array_partial: true,  // Assumes array_shuffled=true. Returns a possibly shorter combination of elements.
-        array_shuffled: true  // Can be used alone to generate shuffled, same-length arrays.
-      },
-      ... other array elements here
-    ]  
-  ```
-
-  - Built-in types. The easiest way to generate is to create an example parameter and replace each built-in type with a JSON string according to the following API:
-    - ```'{"type":"bool | boolean"}'``` Generates a random boolean.
-    - ```'{"type":"int | integer", "min":0, "max":16}'``` Generates a random integer. Min and max are optional.
-    - ```'{"type":"float | number", "min":0, "max":1.6}'``` Generates a random floating point number. Min and max are optional.
-    - ```'{"type":"date", "min":1633103400000, "max":1633103446168}'``` Generates a random date. Min and max are optional, expressed in milliseconds.
-    - ```'{"type":"string", "min":0, "max":16}'``` Generates a random string. Min and max are optional, represents the length.
-    - ```null```  Generates a random falsy value.
-    - Any other value that is not one of the above, object, or array, will be treated as a constant object.
-    - All values are generated acording to the [IstanbulJS Arbitraries API](https://github.com/dubzzz/fast-check/blob/main/documentation/Arbitraries.md).
-
-- {array[built-in types]} literals  [Optional]  Literals or constants of various types. Will be organized by their type and stuffed in the apropiate places. For example, one needs both 1.0 for integers and 1.0001 for float stuffing. Default = []
-
-- {number}  maxTime [Optional]  Maximum run time in ms for each round of fuzzing, of which there are 4. Default = 1e4(10s)
-
-- {number}  maxRuns [Optional]  Maximum iterations for each round of fuzzing, of which there are 4. Default = 10,000
-
-- {boolean} reset  [Optional]  Reset the coverage aggregates in ```global.__coverage__[fileName]```. Default = true
-
-- {boolean} verbose  [Optional]  Output debug info about generation to stderr. Default = false
-
-## Results
-
-```typescript
-result = {
-  coverage: global.__coverage__,          // Deep copy of the global IstanbulJS coverage object.
-  tests: [
-    {
-      arg: ...,                           // Generated conforming to Argument Structure parameter.
-      result: ...                         // Generated by Running the SUT function. Can be an Exception.
-    },
-    ...
-  ]
-};
-```
-
-The verbose mode outputs this:
+- Typings ```.d.ts``` files are generated in the ```dist``` folder by adding the following to ```tsconfig.json```:
 
 ```typescript
 {
-  "id": 1                 // New test entry index
-  "mode": 0,              // Mode [0]: stuffing & falsy, [1-3]: small potatoes, 4: full
-  "numRuns": 1,           // Iterations counter
-  "speed": 4,             // Iterations / Mode Time
-  "isLinesCovered": false // All branches and conditions return true after this test.,
-  "argResult": {
-    "arg": ...,           // Test args object / array
-    "result": ...         // Test result / exception
-  },
-  "covDiff": {            // Branches satisfied by this test.
-    "b": {
-      "0": {
-          "1": 1
-      },
-      "5": {
-          "0": 1
-      },
-      "6": {
-          "0": 1
-      }
-    },
-    "bT": {               // Logical conditions satisfied by this test.
-      "6": {              // (Ammended IstanbulJS with logical evaluation.)
-          "0": 1
-      }
-    }
+  "compilerOptions": {
+    ...
+    "declaration": true, 
+    ...
   }
 }
 ```
+
+- The code analyzer expects several code idiosyncrasies that are described below.
+
+## Usage and Options
+
+There are two ways to invoke the fast-fuzz package:
+
+- Through code:
+
+```typescript
+import { fastFuzz } from 'fast-fuzz';
+
+async Main () {
+  await fastFuzz(
+    projectFolder,
+    maxTime, maxRuns,
+    methods, classes,
+    source, dist,
+    verbose
+  );
+}
+Main();
+```
+
+- Command line:
+
+```bash
+fast-fuzz
+  -i, --input <path>            Path of the Typescript project.
+
+  Optional:
+  -V, --version                 output the version number
+  -t, --maxTime <milliseconds>  The maximum time(ms) per function. Actual value is multiplied by 4. Default = 10s.
+  -n, --maxRuns <milliseconds>  The maximum count of runs per function. Default = 100e3.
+  -m, --methods <RegExp>        A Regex expression to filter the methods to test.
+  -c, --classes <RegExp>        A Regex expression to filter the classes to test.
+  -s, --source <path>           Path of the source folder relative to the project.
+  -d, --dist <path>             Path of the binary folder relative to the project.
+  -q, --quiet <true>           Only output the results JSON
+  -h, --help                    display help for command
+```
+
+The target code usually needs to be decorated with:
+
+- Property decorators. This is how objects are created!
+
+```typescript
+import { Fuzz } from 'fast-fuzz';
+
+export class Foo {
+  
+  @Fuzz.prop(
+    'boolean' | 'integer' | 'float' | 'date' | 'string'
+    dimension, // Dimension of array. For single value (default) = 0.
+    
+    // Only for built-in types.
+    min,
+    max
+  )
+  bar: Bar;
+}
+```
+
+Use the ```@Fuzz.propType(Class.name, dimension)``` decorator for custom types, abstract, and interfaces.
+Properties can be set to ```undefined``` or ```null``` using the ```@Fuzz.skipProp``` decorator.
+
+- Method and argument decorators :
+
+```typescript
+import { Fuzz } from 'fast-fuzz';
+
+export class Foo {
+  
+  @Fuzz.method  // Always necessary to pick up the method, logs an error if it's missing.
+  bar (
+    @Fuzz.arg('built-in') arg // Same API as the property.
+  ) {
+    return arg;
+  }
+}
+```
+
+Use the ```@Fuzz.argType(Class.name, dimension)``` decorator for custom types, abstract, and interfaces.
+Methods can be skipped from testing using the ```@Fuzz.skipMethod``` decorator.
+
+Arguments can be set to ```undefined``` or ```null``` using the ```@Fuzz.skipArg``` decorator.
+
+Without decoration, it is still able to fuzz any types that have only built-in types and methods with built-in arguments.
+However, the values do not have limits so they will take much longer to test.
+
+## Code Style Tips
+
+### Types
+
+- Type arguments for arguments and properties not yet tested, e.g. ```function Foo(arg: Bar<Type>) {}```.
+- Function types for arguments and properties not yet tested, e.g. ```function Foo(arg: () => Type) {}```.
+- Export types for testing.
+- Types in different files should not be named the same. This might be fixed soon.
+- Type declarations with similar names should be ordered alphabetically, especially for similar names.
+- Imported types should be ordered alphabetically, especially for similar names.
+- Use static classes instead of namespaces to include their methods in the fuzzing.
+
+### Methods
+
+- Don't name static methods the same as instance ones.
+- Order methods with similar names alphabetically.
+- Return types should not contain brackets ```( or )``` because they are used to detect method signatures.
+- Async methods are generally slower to fuzz than synchronous ones, and drastically slower if there is any sort of waiting, even 1ms.
+- Constructors are skipped for now, and objects are constructed from their properties.
+
+### Literals
+
+- Literals that are used for comparison to arguments should be left in the method. These are used by the fuzzer to stuff the arguments' values.
+- All unrelated literals should be put at the beginning of the file.
+- Any methods that are not exported or within a class should not contain literals as these will be picked up by the earlier fuzzed method in the file. Another option is to put ineligible methods before the fuzzed ones.
+
+## TODO Priorities
+
+- figure out the overall perf...
+- linting
+- Clean up the detected literals from falsy values.
+- Add file name to prop ```type not found error```.
+- Intermediate results.
+- Benchmarking of target functions to determine the best run time and number of tests.
+- Side-by-side single and multithreaded runners.
+- Integration testing by stuffing arguments between methods by type.
+- Redundant runner for results.
+- Option to run the constructors.
+- Get rid of the Intermock dependency and allow same type names across files.
