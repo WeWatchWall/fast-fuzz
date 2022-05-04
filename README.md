@@ -30,7 +30,7 @@ The project requires ```reflect-metadata``` in the fuzzed project. Further, the 
   }
   ```
 
-- Typings are generated in the ```dist``` folder by adding the following to ```tsconfig.json```:
+- Typings ```.d.ts``` files are generated in the ```dist``` folder by adding the following to ```tsconfig.json```:
 
 ```typescript
 {

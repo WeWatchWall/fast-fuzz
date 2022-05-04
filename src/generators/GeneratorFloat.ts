@@ -3,7 +3,7 @@ import { Generator } from "./Generator";
 import { Mode } from "./Mode";
 
 export class GeneratorFloat extends Generator {
-  private static MODE_SCALE = 5;
+  private static MODE_SCALE = 0.5;
 
   constructor(dimension: number = 0, literals: string[], min?: number, max?: number, index?: number) {
     super(
@@ -76,12 +76,12 @@ export class GeneratorFloat extends Generator {
       case Mode.Falsy:
       case Mode.Stuff:
       case Mode.Low:
-        return [min, max];
-      case Mode.Medium:
         return [
-          min - diff * GeneratorFloat.MODE_SCALE,
-          max + diff * GeneratorFloat.MODE_SCALE
+          min + diff * GeneratorFloat.MODE_SCALE,
+          max - diff * GeneratorFloat.MODE_SCALE
         ];
+      case Mode.Medium:
+        return [min, max];
       case Mode.High:
         return [
           Number.MIN_SAFE_INTEGER,

@@ -3,7 +3,7 @@ import { Generator } from "./Generator";
 import { Mode } from "./Mode";
 
 export class GeneratorDate extends Generator {
-  private static MODE_SCALE = 5;
+  private static MODE_SCALE = 0.5;
 
   constructor(dimension: number = 0, literals: string[], min?: number, max?: number, index?: number) {
     super(
@@ -69,12 +69,12 @@ export class GeneratorDate extends Generator {
       case Mode.Falsy:
       case Mode.Stuff:
       case Mode.Low:
-        return [min, max];
-      case Mode.Medium:
         return [
-          min - diff * GeneratorDate.MODE_SCALE,
-          max + diff * GeneratorDate.MODE_SCALE
+          min + diff * GeneratorDate.MODE_SCALE,
+          max - diff * GeneratorDate.MODE_SCALE
         ];
+      case Mode.Medium:
+        return [min, max];
       case Mode.High:
         return [
           8640e12,

@@ -78,16 +78,16 @@ export class GeneratorString extends Generator {
       case Mode.Falsy:
       case Mode.Stuff:
       case Mode.Low:
-        return [min, max];
-      case Mode.Medium:
         return [
-          Math.max(0, min - GeneratorString.MODE_SCALE),
-          max + GeneratorString.MODE_SCALE
+          Math.max(1, min + GeneratorString.MODE_SCALE),
+          Math.max(2, max - GeneratorString.MODE_SCALE),
         ];
+      case Mode.Medium:
+        return [min, max];
       case Mode.High:
         return [
-          Math.max(0, min - GeneratorString.MODE_SCALE * 2),
-          max + GeneratorString.MODE_SCALE * 2
+          Math.max(1, min - GeneratorString.MODE_SCALE),
+          Math.max(2, max + GeneratorString.MODE_SCALE),
         ];
     }
   }
