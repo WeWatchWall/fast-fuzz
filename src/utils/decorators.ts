@@ -186,7 +186,6 @@ export class Decorators {
       file = fileBrackets[0].substring(1, fileBrackets[0].length - 1);
     }
     file = file.replace(new RegExp(':[0-9]*:[0-9]*$'), '');
-    debugger;
     return file;
   }
 

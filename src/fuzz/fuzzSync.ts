@@ -22,6 +22,8 @@ export function fuzzSync(
   filePath = path.resolve(filePath);
   if (!global.__coverage__[filePath]) { throw new Error(`File not found: ${filePath}`); }
 
+  resetCoverage(filePath);
+
   // Track progress.
   const covResults: Set<string> = new Set();
   const results: Result[] = [];
@@ -59,10 +61,11 @@ export function fuzzSync(
     let isRun: boolean = true;
     while (isRun) {
       // Check the running stats for termination.
-      if (runCount % 1e3 == 0) { isExpired = Date.now() - start > maxTime; }
-      if (isExpired || runCount++ > maxRunsLocal) {
+      runCount++;
+      if (runCount % 1e3 == 0) { isExpired = (Date.now() - start) > maxTime; }
+      if (isExpired || runCount > maxRunsLocal) {
         isRun = false;
-        continue;
+        break;
       }
 
       const covBefore: {
@@ -111,7 +114,6 @@ export function fuzzSync(
           (runCount * 1000 / (Date.now() - start)).toPrecision(4)
         )
       }));
-      runCount = 0;
     }
   }
 

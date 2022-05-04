@@ -10,7 +10,7 @@ commander
   .version(require('../../package').version)
   .option('-i, --input <path>', 'Path of the Typescript project.')
   .option('-t, --maxTime <milliseconds>', 'The maximum time(ms) per function. Actual value is multiplied by 4. Default = 10s.')
-  .option('-n, --maxRuns <milliseconds>', 'The maximum count of runs per function. Default = 100e3.')
+  .option('-n, --maxRuns <count>', 'The maximum count of runs per function. Default = 100e3.')
   .option('-m, --methods <RegExp>', 'A Regex expression to filter the methods to test.')
   .option('-c, --classes <RegExp>', 'A Regex expression to filter the classes to test.')
   .option('-s, --source <path>', 'Path of the source folder relative to the project.')

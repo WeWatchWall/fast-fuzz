@@ -205,7 +205,6 @@ export namespace Fuzz {
     key: string | symbol,
     descriptor: PropertyDescriptor
   ) => {
-    debugger;
     if (!Globals.isTest) { return descriptor; }
 
     // Populate the method details.
