@@ -34,8 +34,11 @@ export async function fastFuzz(
   folder: string,
   maxTime: number = 1e4,
   maxRuns: number = 1e5,
+  methodPattern?: string,
+  classPattern?: string,
   src?: string,
   dist?: string,
+  verbose: boolean = false
 ): Promise<Results[]> {
   if (instrumenter === undefined) {
     await init(folder, src, dist);
@@ -45,36 +48,69 @@ export async function fastFuzz(
 
   const results: Results[] = [];
 
+  /* #region  Output verbose info. */
+  if (verbose) {
+    let methodCount: number = 0;
+    for (const [, methods] of Object.entries(Globals.codeUtil.methods)) {
+      for (const method of methods) {
+        if (classPattern !== undefined && !(new RegExp(classPattern)).test(method.className)) {
+          continue;
+        }
+        if (methodPattern !== undefined && !(new RegExp(methodPattern)).test(method.name)) {
+          continue;
+        }
+        if (method.name === '__constructor') { continue; }
+
+        methodCount++;
+      }
+    }
+
+    console.log(`
+      Method count: ${methodCount},
+      Estimated time (s): ${methodCount * maxTime * 4 / 1000}
+    `);
+  }
+  /* #endregion */
+
   for (const [file, methods] of Object.entries(Globals.codeUtil.methods)) {
     for (const method of methods) {
+      /* #region  Method filtering. */
+      if (classPattern !== undefined && !(new RegExp(classPattern)).test(method.className)) {
+        continue;
+      }
+
+      if (methodPattern !== undefined && !(new RegExp(methodPattern)).test(method.name)) {
+        continue;
+      }
       if (method.name === '__constructor') { continue; }
+      /* #endregion */
 
-        // Set the generators to reset with the new literals.
-        Globals.methodCount++;
-        Globals.literals = method.literals;
+      // Set the generators to reset with the new literals.
+      Globals.methodCount++;
+      Globals.literals = method.literals;
 
-        let fuzzResults: Result[];
-        if (method.isStatic || method.className === undefined) {
-          if (method.isAsync) {
-            fuzzResults = await fuzzStaticAsync(file, method, maxTime, maxRuns);
-          } else {
-            fuzzResults = fuzzStatic(file, method, maxTime, maxRuns);
-          }
+      let fuzzResults: Result[];
+      if (method.isStatic || method.className === undefined) {
+        if (method.isAsync) {
+          fuzzResults = await fuzzStaticAsync(file, method, maxTime, maxRuns);
         } else {
-          if (method.isAsync) {
-            fuzzResults = await fuzzMethodAsync(file, method, maxTime, maxRuns);
-          } else {
-            fuzzResults = fuzzMethod(file, method, maxTime, maxRuns);
-          }
+          fuzzResults = fuzzStatic(file, method, maxTime, maxRuns);
         }
+      } else {
+        if (method.isAsync) {
+          fuzzResults = await fuzzMethodAsync(file, method, maxTime, maxRuns);
+        } else {
+          fuzzResults = fuzzMethod(file, method, maxTime, maxRuns);
+        }
+      }
 
-        results.push({
-          name: method.name,
-          className: method.className,
-          namespaces: method.namespaces,
-          file,
-          results: fuzzResults
-        });
+      results.push({
+        name: method.name,
+        className: method.className,
+        namespaces: method.namespaces,
+        file,
+        results: fuzzResults
+      });
     }
   }
 

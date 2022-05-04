@@ -63,6 +63,7 @@
     "tplant": "github:WeWatchWall/tplant"
   },
   "peerDependencies": {
-    "typescript": "^4.X.X"
+    "typescript": "^4.X.X",
+    "reflect-metadata": "^0.1.X"
   }
 }
