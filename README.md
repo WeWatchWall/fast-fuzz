@@ -6,7 +6,6 @@
 Fuzzing framework that allows for the generation of unit test argument and result pairs for a given Typescript project. Uses [IstanbulJS](https://github.com/istanbuljs/istanbuljs) for branch coverage and [class-transformer](https://github.com/typestack/class-transformer) for type instance generation.
 
 The [Mocha](https://mochajs.org/) testing framework is recommended. You can use [TS-Mocha](https://www.npmjs.com/package/ts-mocha) (along with the "@types/mocha" and "@types/chai" typings) for tests that are written in TypeScript.
-The [Jest](https://jestjs.io/) framework is clobbering the global variable ```global.__coverage__``` and, in general, has trouble in dealing with ESM modules and Typescript.
 
 ## Getting Started
 
@@ -82,7 +81,7 @@ fast-fuzz
   -c, --classes <RegExp>        A Regex expression to filter the classes to test.
   -s, --source <path>           Path of the source folder relative to the project.
   -d, --dist <path>             Path of the binary folder relative to the project.
-  -q, --quiet <true>           Only output the results JSON
+  -q, --quiet <true>            Only output the results JSON
   -h, --help                    display help for command
 ```
 
