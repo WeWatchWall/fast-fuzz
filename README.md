@@ -11,8 +11,11 @@ The [Jest](https://jestjs.io/) framework is clobbering the global variable ```gl
 ## Getting Started
 
 ```bash
-npm i -D reflect-metadata fast-fuzz
+npm install fast-fuzz
+npm install --save-dev reflect-metadata
 ```
+
+Fast-Fuzz installs in the ```dependencies``` and not ```devDependencies``` because it relies on decorators.
 
 The project requires ```reflect-metadata``` in the fuzzed project. Further, the target also needs:
 
