@@ -9,6 +9,8 @@ import { Globals } from "../utils/globals";
 import { Generator } from "../generators/Generator";
 import { ModuleMethod } from "../utils/modules";
 
+const MODE_SCALE = 1.5;
+
 // Main fuzzing function that runs the tests and reports the results. 
 export function fuzzSync(
   method: ModuleMethod,
@@ -24,28 +26,35 @@ export function fuzzSync(
 
   resetCoverage(filePath);
 
+  // Scale the number of runs per mode.
+  const maxRunsModes: number[] = [];
+  const maxMode: number = Mode.High;
+  let runsDiff = maxRuns;
+
+  for (let index = maxMode + 1; index > 0; index--) {
+    const runsPerMode = runsDiff / index;
+    const scaleRuns = Math.floor(runsPerMode * MODE_SCALE);
+    maxRunsModes.push(scaleRuns);
+
+    runsDiff -= scaleRuns;
+  }
+
   // Track progress.
   const covResults: Set<string> = new Set();
   const results: Result[] = [];
+  const start: number = Date.now();
 
-  // Expand and repeat the fuzz area.
-  const maxMode: number = Mode.High;
+  // Loop through the modes and fuzz domain.
   let resultCount = 1;
   for (let mode = 0; mode <= maxMode; mode++) {
-  
     // Set the generators to the new mode.
     Generator.mode = mode;
     Globals.mode = mode;
 
     // Vary the number of runs based on target area.
-    let maxRunsLocal: number;
-    if (mode == 0) {
-      maxRunsLocal = 1000;
-    } else if (mode == maxMode) {
-      maxRunsLocal = maxRuns;
-    } else {
-      maxRunsLocal = 300 * 10 ** mode; // maxRuns / (10 ** (maxMode - mode));
-    }
+    let runCount: number = 0;
+    const maxRunsMode: number = maxRunsModes.pop();
+    const maxRunsCheck: number = Math.pow(10, Math.max(1, Math.floor(Math.log10(maxRunsMode)) - 1));
 
     // Store coverage pointer for the sake of performance.
     const fileCoverage = {
@@ -54,17 +63,13 @@ export function fuzzSync(
     };
 
     // Test loop stats.
-    let runCount = 0;
-    const start: number = Date.now();
     let isExpired = false;
 
-    let isRun = true;
-    while (isRun) {
+    while (true) {
       // Check the running stats for termination.
       runCount++;
-      if (runCount % 1e3 == 0) { isExpired = (Date.now() - start) > maxTime; }
-      if (isExpired || runCount > maxRunsLocal) {
-        isRun = false;
+      if (runCount % maxRunsCheck == 0) { isExpired = (Date.now() - start) > maxTime; }
+      if (isExpired || runCount > maxRunsMode) {
         break;
       }
 

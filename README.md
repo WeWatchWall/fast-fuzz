@@ -75,7 +75,7 @@ fast-fuzz
 
   Optional:
   -V, --version                 output the version number
-  -t, --maxTime <milliseconds>  The maximum time(ms) per function. Actual value is multiplied by 4. Default = 10s.
+  -t, --maxTime <milliseconds>  The maximum time(ms) per function. Default = 10s.
   -n, --maxRuns <milliseconds>  The maximum count of runs per function. Default = 100e3.
   -m, --methods <RegExp>        A Regex expression to filter the methods to test.
   -c, --classes <RegExp>        A Regex expression to filter the classes to test.

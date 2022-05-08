@@ -8,7 +8,7 @@ describe('Instance methods.', function () {
     global.fastFuzzResults = await init();
   });
 
-  it('Fuzz simple method', async () => {
+  it('Fuzz simple method instance', async () => {
     let results: any[] = global.fastFuzzResults;
 
     const method = results.find((result: any) => result.name === 'instance_simple');
@@ -16,7 +16,7 @@ describe('Instance methods.', function () {
     assert.ok(method.results.length === 1);
   });
 
-  it('Fuzz regular method', async () => {
+  it('Fuzz regular method instance', async () => {
     let results: any[] = global.fastFuzzResults;
 
     const method = results.find((result: any) => result.name === 'instance_regular');
@@ -24,7 +24,7 @@ describe('Instance methods.', function () {
     assert.ok(method.results.length === 2);
   });
 
-  it('Fuzz async interface', async () => {
+  it('Fuzz async interface instance', async () => {
     let results: any[] = global.fastFuzzResults;
 
     const method = results.find((result: any) => result.name === 'instance_IAsync');
@@ -33,7 +33,7 @@ describe('Instance methods.', function () {
   });
 
   
-  it('Fuzz async method', async () => {
+  it('Fuzz async method instance', async () => {
     let results: any[] = global.fastFuzzResults;
 
     const method = results.find((result: any) => result.name === 'instance_async');
