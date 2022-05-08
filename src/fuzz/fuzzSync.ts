@@ -42,7 +42,6 @@ export function fuzzSync(
   // Track progress.
   const covResults: Set<string> = new Set();
   const results: Result[] = [];
-  const start: number = Date.now();
 
   // Loop through the modes and fuzz domain.
   let resultCount = 1;
@@ -55,6 +54,8 @@ export function fuzzSync(
     let runCount: number = 0;
     const maxRunsMode: number = maxRunsModes.pop();
     const maxRunsCheck: number = Math.pow(10, Math.max(1, Math.floor(Math.log10(maxRunsMode)) - 1));
+    const start: number = Date.now();
+    const runTime: number = maxTime * maxRunsMode / (MODE_SCALE * maxRuns);
 
     // Store coverage pointer for the sake of performance.
     const fileCoverage = {
@@ -68,7 +69,7 @@ export function fuzzSync(
     while (true) {
       // Check the running stats for termination.
       if (runCount % maxRunsCheck == 0) {
-        isExpired = (Date.now() - start) > maxTime;
+        isExpired = (Date.now() - start) > runTime;
       }
       if (isExpired || runCount > maxRunsMode) {
         break;
