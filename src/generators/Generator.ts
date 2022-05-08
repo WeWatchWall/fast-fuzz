@@ -98,10 +98,9 @@ export abstract class Generator implements IGenerator {
    * @param generator
    */
   protected static generate(generator: Generator, count: number): void {
-    const originalBatchSize = generator.batchSize;
-    if (Math.max(count, generator.count) / originalBatchSize > 10) {
+    if (Math.max(count, generator.count) / generator.batchSize > 10) {
       Generator.reset(generator);
-      generator.batchSize = Math.max(count, originalBatchSize * 10);
+      generator.batchSize = Math.max(count, generator.batchSize * 2);
     }
 
     const newBatch = generator.generate(Math.max(count, generator.batchSize));
