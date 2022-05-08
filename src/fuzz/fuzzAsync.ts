@@ -67,11 +67,11 @@ export async function fuzzAsync(
 
     while (true) {
       // Check the running stats for termination.
-      runCount++;
       if (runCount % maxRunsCheck == 0) { isExpired = (Date.now() - start) > maxTime; }
       if (isExpired || runCount > maxRunsMode) {
         break;
       }
+      runCount++;
 
       const covBefore: {
         b: any,
