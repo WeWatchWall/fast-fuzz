@@ -67,7 +67,7 @@ export async function fastFuzz(
 
     console.log(`
       Method count: ${methodCount},
-      Estimated time (s): ${methodCount * maxTime * 4 / 1000}
+      Estimated time (s): ${methodCount * maxTime / 1000}
     `);
   }
   /* #endregion */
