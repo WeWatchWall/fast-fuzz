@@ -84,8 +84,8 @@ export class GeneratorFloat extends Generator {
         return [min, max];
       case Mode.High:
         return [
-          Number.MIN_SAFE_INTEGER,
-          Number.MAX_SAFE_INTEGER
+          min - diff * GeneratorFloat.MODE_SCALE * 4,
+          max + diff * GeneratorFloat.MODE_SCALE * 4
         ];
     }
   }

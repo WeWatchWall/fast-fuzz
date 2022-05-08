@@ -81,7 +81,7 @@ export abstract class Generator implements IGenerator {
       } else if (!Number.isNaN(Date.parse(literal))) {
         byType.date.push(new Date(Date.parse(literal)));
       } else {
-        byType.string.push(literal);
+        byType.string.push(literal.substring(1, literal.length - 1));
       }
     });
 

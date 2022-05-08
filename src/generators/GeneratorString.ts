@@ -87,7 +87,7 @@ export class GeneratorString extends Generator {
       case Mode.High:
         return [
           Math.max(1, min - GeneratorString.MODE_SCALE),
-          Math.max(2, max + GeneratorString.MODE_SCALE),
+          Math.max(2, max + GeneratorString.MODE_SCALE)
         ];
     }
   }

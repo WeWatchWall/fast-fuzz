@@ -77,8 +77,8 @@ export class GeneratorDate extends Generator {
         return [min, max];
       case Mode.High:
         return [
-          8640e12,
-          -8640e12
+          min - diff * GeneratorDate.MODE_SCALE * 4,
+          max + diff * GeneratorDate.MODE_SCALE * 4
         ];
     }
   }
