@@ -38,6 +38,6 @@ describe('Static methods.', function () {
 
     const method = results.find((result: any) => result.name === 'static_async');
     assert.ok(method !== undefined);
-    assert.ok(method.results.length === 4);
+    assert.ok(method.results.length === 1);
   });
 });
