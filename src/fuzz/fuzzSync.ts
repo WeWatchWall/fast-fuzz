@@ -28,7 +28,7 @@ export function fuzzSync(
 
   // Scale the number of runs per mode.
   const maxRunsModes: number[] = [];
-  const maxMode: number = Mode.High;
+  const maxMode: number = Mode.High_2;
   let runsDiff = maxRuns;
 
   for (let index = maxMode + 1; index > 0; index--) {
@@ -115,9 +115,11 @@ export function fuzzSync(
 
       results.push(new Result({
         id: resultCount++,
+        modeId: mode,
+        mode: Mode[mode],
         instance: method.test.instance,
         args: method.test.callArgs,
-        result, mode, coverageHash, runCount,
+        result, coverageHash, runCount,
         speed: Number.parseFloat(
           (runCount * 1000 / (Date.now() - start)).toPrecision(4)
         )

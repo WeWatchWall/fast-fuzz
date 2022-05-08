@@ -3,7 +3,7 @@ import { Generator } from "./Generator";
 import { Mode } from "./Mode";
 
 export class GeneratorInt extends Generator {
-  private static MODE_SCALE = 0.5;
+  private static MODE_SCALE = 0.25;
 
   constructor(dimension = 0, literals: string[], min?: number, max?: number, index?: number) {
     super(
@@ -68,17 +68,27 @@ export class GeneratorInt extends Generator {
     switch (mode) {
       case Mode.Falsy:
       case Mode.Stuff:
-      case Mode.Low:
+      case Mode.Low_1:
+        return [
+          min + diff * GeneratorInt.MODE_SCALE * 2,
+          max - diff * GeneratorInt.MODE_SCALE * 2
+        ];
+      case Mode.Low_2:
         return [
           min + diff * GeneratorInt.MODE_SCALE,
           max - diff * GeneratorInt.MODE_SCALE
         ];
       case Mode.Medium:
         return [min, max];
-      case Mode.High:
+      case Mode.High_1:
         return [
           min - diff * GeneratorInt.MODE_SCALE * 4,
           max + diff * GeneratorInt.MODE_SCALE * 4
+        ];
+      case Mode.High_2:
+        return [
+          min - diff * GeneratorInt.MODE_SCALE * 40,
+          max + diff * GeneratorInt.MODE_SCALE * 40
         ];
     }
   }

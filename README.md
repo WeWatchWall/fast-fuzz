@@ -161,8 +161,8 @@ However, the values do not have limits so they will take much longer to test.
 
 ## TODO Priorities
 
-- Clean up the detected literals from falsy values.
-- linting
+- Instance generation perf.
+- Linting.
 - Add file name to prop ```type not found error```.
 - Intermediate results.
 - Benchmarking of target functions to determine the best run time and number of tests.

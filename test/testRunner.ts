@@ -5,7 +5,7 @@ let results: any[];
 
 export async function init() {
   if (results === undefined) {
-    let cliResult: string = await execShellCommand(`node ./dist/src/bin.js -i "./test/sut" -s "./" -d "../../dist/test/sut" -c "Test" -q true -t 30e3 -n 1e5`);
+    let cliResult: string = await execShellCommand(`node ./dist/src/bin.js -i "./test/sut" -s "./" -d "../../dist/test/sut" -c "Test" -q true -t 20e3`);
     
     let error: any;
     try {

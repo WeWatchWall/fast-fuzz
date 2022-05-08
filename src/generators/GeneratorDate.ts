@@ -3,7 +3,7 @@ import { Generator } from "./Generator";
 import { Mode } from "./Mode";
 
 export class GeneratorDate extends Generator {
-  private static MODE_SCALE = 0.5;
+  private static MODE_SCALE = 0.25;
 
   constructor(dimension = 0, literals: string[], min?: number, max?: number, index?: number) {
     super(
@@ -33,8 +33,8 @@ export class GeneratorDate extends Generator {
       default:
         const [min, max]: [number, number] = GeneratorDate.getLimits(
           Generator.mode,
-          this.limits.int.min,
-          this.limits.int.max
+          this.limits.date.min,
+          this.limits.date.max
         );
 
         for (let index = 0; index < count; index++) {
@@ -68,17 +68,29 @@ export class GeneratorDate extends Generator {
     switch (mode) {
       case Mode.Falsy:
       case Mode.Stuff:
-      case Mode.Low:
+      case Mode.Low_1:
+        return [
+          min + diff * GeneratorDate.MODE_SCALE * 2,
+          max - diff * GeneratorDate.MODE_SCALE * 2
+        ];
+      case Mode.Low_2:
         return [
           min + diff * GeneratorDate.MODE_SCALE,
           max - diff * GeneratorDate.MODE_SCALE
         ];
       case Mode.Medium:
         return [min, max];
-      case Mode.High:
+      case Mode.High_1:
         return [
           min - diff * GeneratorDate.MODE_SCALE * 4,
           max + diff * GeneratorDate.MODE_SCALE * 4
+        ];
+      case Mode.High_2:
+        return [
+          // 8640e12,
+          // -8640e12
+          min - diff * GeneratorDate.MODE_SCALE * 40,
+          max + diff * GeneratorDate.MODE_SCALE * 40
         ];
     }
   }

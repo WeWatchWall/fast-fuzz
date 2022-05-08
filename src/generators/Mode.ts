@@ -1,7 +1,9 @@
 export enum Mode {
   Falsy,
-  Low,
+  Low_1,
   Stuff,
-  High,
-  Medium
+  Low_2,
+  High_1,
+  Medium,
+  High_2,
 }

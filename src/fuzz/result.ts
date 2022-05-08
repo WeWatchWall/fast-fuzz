@@ -5,7 +5,8 @@ export class Result {
   instance?: any;
   args: any[];
   result?: any;
-  mode: Mode;
+  modeId: Mode;
+  mode: string;
   coverageHash: string;
   runCount: number;
   speed: number;

@@ -75,6 +75,26 @@ export abstract class Generator implements IGenerator {
       const num = Number.parseFloat(literal);
       const int = Number.parseInt(literal);
 
+      if (
+        literal === '' ||
+        literal === '""' ||
+        literal === "''" ||
+        literal === 'null' ||
+        literal === 'undefined' ||
+        literal === 'false' ||
+        literal === 'true' ||
+        literal === 'NaN'
+      ) {
+        return;
+      } else if (
+        num === -0 ||
+        num === 0 ||
+        num === Number.MIN_VALUE,
+        num === -1 * Number.MIN_VALUE
+      ) {
+        return;
+      }
+
       if (!Number.isNaN(num)) {
         if (!Number.isNaN(int)) { byType.integer.push(int); return; }
         byType.float.push(num);

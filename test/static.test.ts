@@ -21,7 +21,7 @@ describe('Static methods.', function () {
 
     const method = results.find((result: any) => result.name === 'static_regular');
     assert.ok(method !== undefined);
-    assert.ok(method.results.length === 4);
+    assert.ok(method.results.length === 6);
   });
 
   it('Fuzz async interface static', async () => {
@@ -29,7 +29,7 @@ describe('Static methods.', function () {
 
     const method = results.find((result: any) => result.name === 'static_IAsync');
     assert.ok(method !== undefined);
-    assert.ok(method.results.length === 4);
+    assert.ok(method.results.length === 6);
   });
 
   
@@ -38,6 +38,6 @@ describe('Static methods.', function () {
 
     const method = results.find((result: any) => result.name === 'static_async');
     assert.ok(method !== undefined);
-    assert.ok(method.results.length === 4);
+    assert.ok(method.results.length === 6);
   });
 });

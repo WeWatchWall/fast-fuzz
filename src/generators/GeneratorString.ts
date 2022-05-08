@@ -37,8 +37,8 @@ export class GeneratorString extends Generator {
       default:
         const [min, max]: [number, number] = GeneratorString.getLimits(
           Generator.mode,
-          this.limits.int.min,
-          this.limits.int.max
+          this.limits.string.min,
+          this.limits.string.max
         );
 
         for (let index = 0; index < count; index++) {
@@ -46,13 +46,13 @@ export class GeneratorString extends Generator {
             result.push(this.literals[Generator.getRandomIndex(this.literals.length)]);
             continue;
           }
-          
+
           result.push(
             `${Math.random().toString(36)}00000000000000000`
-              .slice(
-                2,
-                Generator.getRandomInt(min, max) + 2
-              )
+            .slice(
+              2,
+              Generator.getRandomInt(min, max) + 2
+            )
           );
         }
         break;
@@ -77,17 +77,23 @@ export class GeneratorString extends Generator {
     switch (mode) {
       case Mode.Falsy:
       case Mode.Stuff:
-      case Mode.Low:
+      case Mode.Low_1:
+      case Mode.Low_2:
         return [
           Math.max(1, min + GeneratorString.MODE_SCALE),
           Math.max(2, max - GeneratorString.MODE_SCALE),
         ];
       case Mode.Medium:
         return [min, max];
-      case Mode.High:
+      case Mode.High_1:
         return [
           Math.max(1, min - GeneratorString.MODE_SCALE),
           Math.max(2, max + GeneratorString.MODE_SCALE)
+        ];
+      case Mode.High_2:
+        return [
+          Math.max(1, min - GeneratorString.MODE_SCALE * 2),
+          Math.max(2, max + GeneratorString.MODE_SCALE * 2)
         ];
     }
   }

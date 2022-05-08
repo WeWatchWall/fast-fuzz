@@ -46,7 +46,7 @@ export class Limits {
     array: { min: number, max: number }
   } = {
     int: { min: -25, max: 25 },
-    float: { min: -10, max: 20 },
+    float: { min: -10, max: 10 },
     date: { min: Date.now() - 8.64e+7, max: Date.now() + 8.64e+7 },
     string: { min: 1, max: 4 },
     array: { min: 0, max: 3 }
