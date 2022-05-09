@@ -70,8 +70,8 @@ export class GeneratorDate extends Generator {
       case Mode.Stuff:
       case Mode.Low_1:
         return [
-          min + diff * GeneratorDate.MODE_SCALE * 2,
-          max - diff * GeneratorDate.MODE_SCALE * 2
+          min + diff * GeneratorDate.MODE_SCALE * 1.5,
+          max - diff * GeneratorDate.MODE_SCALE * 1.5
         ];
       case Mode.Low_2:
         return [

@@ -161,7 +161,6 @@ However, the values do not have limits so they will take much longer to test.
 
 ## TODO Priorities
 
-- Instance generation perf.
 - Linting.
 - Add file name to prop ```type not found error```.
 - Intermediate results.

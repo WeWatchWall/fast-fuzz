@@ -11,7 +11,6 @@ export class Test_Instance {
   public instance_simple (
     @Fuzz.arg("integer") age: number
   ): boolean {
-
     switch (this.age) {
       case 22:
         return false;
@@ -20,26 +19,25 @@ export class Test_Instance {
       default:
         break;
     }
+
     return true;
   }
 
-  
   @Fuzz.method
   public instance_regular (
     @Fuzz.arg("string") name: string,
     @Fuzz.arg("integer") age: number,
     @Fuzz.arg("integer") code: number
   ): boolean {
-    if (code == this.code) {
+    if (this.code == 7) {
       if (this.name == 'Bob') {
         return false;
       }
-    } else if (code == this.code) {
-      if (age == this.age && this.name == 'Alice') {
+    } else if (this.code == 10) {
+      if (this.age == 22 && this.name == 'Alice') {
         return false;
       }
     }
-  
     return true;
   }
 
@@ -49,16 +47,15 @@ export class Test_Instance {
     @Fuzz.arg("integer") age: number,
     @Fuzz.arg("integer") code: number
   ): Promise<boolean> {
-    if (code == this.code) {
+    if (this.code == 7) {
       if (this.name == 'Bob') {
         return false;
       }
-    } else if (code == this.code) {
-      if (age == this.age && this.name == 'Alice') {
+    } else if (this.code == 10) {
+      if (this.age == 22 && this.name == 'Alice') {
         return false;
       }
     }
-  
     return true;
   }
 
@@ -71,16 +68,15 @@ export class Test_Instance {
     const flatPromise = new FlatPromise();
 
     setTimeout(() => {
-      if (code == this.code) {
+      if (this.code == 7) {
         if (this.name == 'Bob') {
           flatPromise.resolve(false);
         }
-      } else if (code == this.code) {
-        if (age == this.age && this.name == 'Alice') {
+      } else if (this.code == 10) {
+        if (this.age == 22 && this.name == 'Alice') {
           flatPromise.resolve(false);
         }
       }
-    
       flatPromise.resolve(true);
     }, 1);
   

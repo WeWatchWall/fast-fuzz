@@ -237,7 +237,7 @@ export namespace Fuzz {
     // Replace the method with its hook.
     descriptor.value = function (...args: any[]) {
       if (!testArgs.isStart) {
-        return originalMethod.apply(descriptor, args);
+        return originalMethod.apply(this, args);
       }
 
       // Check if the mode is changed.
@@ -261,7 +261,7 @@ export namespace Fuzz {
       testArgs.callArgs = args;
 
       // Run the method.
-      return originalMethod.apply(descriptor, args);
+      return originalMethod.apply(this, args);
     };
 
     return descriptor;

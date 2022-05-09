@@ -13,7 +13,7 @@ describe('Instance methods.', function () {
 
     const method = results.find((result: any) => result.name === 'instance_simple');
     assert.ok(method !== undefined);
-    assert.ok(method.results.length === 1);
+    assert.ok(method.results.length === 3);
   });
 
   it('Fuzz regular method instance', async () => {
@@ -21,7 +21,7 @@ describe('Instance methods.', function () {
 
     const method = results.find((result: any) => result.name === 'instance_regular');
     assert.ok(method !== undefined);
-    assert.ok(method.results.length === 2);
+    assert.ok(method.results.length === 6);
   });
 
   it('Fuzz async interface instance', async () => {
@@ -29,7 +29,7 @@ describe('Instance methods.', function () {
 
     const method = results.find((result: any) => result.name === 'instance_IAsync');
     assert.ok(method !== undefined);
-    assert.ok(method.results.length === 2);
+    assert.ok(method.results.length === 6);
   });
 
   
@@ -38,6 +38,6 @@ describe('Instance methods.', function () {
 
     const method = results.find((result: any) => result.name === 'instance_async');
     assert.ok(method !== undefined);
-    assert.ok(method.results.length === 2);
+    assert.ok(method.results.length === 6);
   });
 });

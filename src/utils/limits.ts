@@ -10,7 +10,14 @@ export class Limits {
     const arg: Partial<Limits> = {};
     for (const key in init) {
       const argValue: { min?: number, max?: number } = {};
-      Object.assign(argValue, Limits.defaults[key], init[key]);
+      Object.assign(argValue, Limits.defaults[key]);
+      
+      if (init[key].min !== undefined) {
+        argValue[key].min = init[key].min;
+      }
+      if (init[key].max !== undefined) {
+        argValue[key].max = init[key].max;
+      }
 
       // Set any limits that are invalid if they are negative.
       if (
