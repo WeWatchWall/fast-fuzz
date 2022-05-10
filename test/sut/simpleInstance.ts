@@ -8,7 +8,7 @@ export class Simple_Instance {
   @Fuzz.prop("integer") code: number;
   
   @Fuzz.method
-  public instance_simple (
+  public simple_instance_simple (
     @Fuzz.arg("integer") age: number
   ): boolean {
     switch (this.age) {
@@ -24,7 +24,7 @@ export class Simple_Instance {
   }
 
   @Fuzz.method
-  public instance_regular (
+  public simple_instance_regular (
     @Fuzz.arg("string") name: string,
     @Fuzz.arg("integer") age: number,
     @Fuzz.arg("integer") code: number
@@ -42,7 +42,7 @@ export class Simple_Instance {
   }
 
   @Fuzz.method
-  public async instance_IAsync(
+  public async simple_instance_IAsync(
     @Fuzz.arg("string") name: string,
     @Fuzz.arg("integer") age: number,
     @Fuzz.arg("integer") code: number
@@ -60,7 +60,7 @@ export class Simple_Instance {
   }
 
   @Fuzz.method
-  public async instance_async(
+  public async simple_instance_async(
     @Fuzz.arg("string") name: string,
     @Fuzz.arg("integer") age: number,
     @Fuzz.arg("integer") code: number

@@ -9,7 +9,13 @@ import { Mode } from "./Mode";
 export class GeneratorString extends Generator {
   private static MODE_SCALE = 1;
 
-  constructor(dimension = 0, literals: string[], min?: number, max?: number, index?: number) {
+  constructor(
+    dimension = 0,
+    literals: string[],
+    min?: number,
+    max?: number,
+    index?: number
+  ) {
     super(
       dimension,
       new Limits({ string: { min, max } }),
@@ -36,7 +42,7 @@ export class GeneratorString extends Generator {
         for (let index = 0; index < count; index++) {
           if (
             this.literals.length === 0 ||
-            Math.random() > Generator.P_STUFF_FALSY
+            Math.random() > Generator.P_FALSY
           ) {
             result.push(
               this.falsyLiterals[
@@ -60,18 +66,17 @@ export class GeneratorString extends Generator {
 
         for (let index = 0; index < count; index++) {
           const random = Math.random(); 
-          if (
-            random > Generator.P_FALSY ||
-            (this.literals.length === 0 && random > Generator.P_STUFF)
-          ) {
+          if (random > Generator.P_FALSY) {
             result.push(
               this.falsyLiterals[
                 Generator.getRandomIndex(this.falsyLiterals.length)
               ]
             );
             continue;
-          } else if (random > Generator.P_STUFF) {
-            result.push(this.literals[Generator.getRandomIndex(this.literals.length)]);
+          } else if (random > 0.2 && this.literals.length > 0) {
+            result.push(
+              this.literals[Generator.getRandomIndex(this.literals.length)]
+            );
             continue;
           }
 
@@ -101,7 +106,11 @@ export class GeneratorString extends Generator {
    * @param max 
    * @returns limits 
    */
-   private static getLimits(mode: Mode, min: number, max: number): [number, number] {
+  private static getLimits(
+    mode: Mode,
+    min: number,
+    max: number
+  ): [number, number] {
     switch (mode) {
       case Mode.Falsy:
       case Mode.Stuff:

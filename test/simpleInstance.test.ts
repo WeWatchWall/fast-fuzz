@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import { init } from './testRunner';
 
-describe('Instance methods.', function () {
+describe('Simple instance methods.', function () {
   this.timeout(6 * 60 * 1e3);
 
   before(async () => {
@@ -11,7 +11,7 @@ describe('Instance methods.', function () {
   it('Fuzz simple method instance', async () => {
     let results: any[] = global.fastFuzzResults;
 
-    const method = results.find((result: any) => result.name === 'instance_simple');
+    const method = results.find((result: any) => result.name === 'simple_instance_simple');
     expect(method).to.not.equal(undefined);
     expect(method.results.length).to.equal(3);
   });
@@ -19,7 +19,7 @@ describe('Instance methods.', function () {
   it('Fuzz regular method instance', async () => {
     let results: any[] = global.fastFuzzResults;
 
-    const method = results.find((result: any) => result.name === 'instance_regular');
+    const method = results.find((result: any) => result.name === 'simple_instance_regular');
     expect(method).to.not.equal(undefined);
     expect(method.results.length).to.equal(6);
   });
@@ -27,7 +27,7 @@ describe('Instance methods.', function () {
   it('Fuzz async interface instance', async () => {
     let results: any[] = global.fastFuzzResults;
 
-    const method = results.find((result: any) => result.name === 'instance_IAsync');
+    const method = results.find((result: any) => result.name === 'simple_instance_IAsync');
     expect(method).to.not.equal(undefined);
     expect(method.results.length).to.equal(6);
   });
@@ -36,7 +36,7 @@ describe('Instance methods.', function () {
   it('Fuzz async method instance', async () => {
     let results: any[] = global.fastFuzzResults;
 
-    const method = results.find((result: any) => result.name === 'instance_async');
+    const method = results.find((result: any) => result.name === 'simple_instance_async');
     expect(method).to.not.equal(undefined);
     expect(method.results.length).to.equal(6);
   });

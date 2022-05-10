@@ -5,7 +5,7 @@ import { Fuzz } from '../../src';
 export class Simple_Static {
   
   @Fuzz.method
-  public static static_simple (
+  public static simple_static_simple (
     @Fuzz.arg("integer") age: number
   ): boolean {
 
@@ -20,9 +20,8 @@ export class Simple_Static {
     return true;
   }
 
-  
   @Fuzz.method
-  public static static_regular (
+  public static simple_static_regular (
     @Fuzz.arg("string") name: string,
     @Fuzz.arg("integer") age: number,
     @Fuzz.arg("integer") code: number
@@ -41,7 +40,7 @@ export class Simple_Static {
   }
 
   @Fuzz.method
-  public static async static_IAsync(
+  public static async simple_static_IAsync(
     @Fuzz.arg("string") name: string,
     @Fuzz.arg("integer") age: number,
     @Fuzz.arg("integer") code: number
@@ -59,7 +58,7 @@ export class Simple_Static {
   }
 
   @Fuzz.method
-  public static async static_async(
+  public static async simple_static_async(
     @Fuzz.arg("string") name: string,
     @Fuzz.arg("integer") age: number,
     @Fuzz.arg("integer") code: number

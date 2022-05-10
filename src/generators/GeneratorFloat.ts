@@ -43,7 +43,7 @@ export class GeneratorFloat extends Generator {
         for (let index = 0; index < count; index++) {
           if (
             this.literals.length === 0 ||
-            Math.random() > Generator.P_STUFF_FALSY
+            Math.random() > Generator.P_FALSY
           ) {
             result.push(
               this.falsyLiterals[
@@ -67,17 +67,14 @@ export class GeneratorFloat extends Generator {
 
         for (let index = 0; index < count; index++) {
           const random = Math.random(); 
-          if (
-            random > Generator.P_FALSY ||
-            (this.literals.length === 0 && random > Generator.P_STUFF)
-          ) {
+          if (random > Generator.P_FALSY) {
             result.push(
               this.falsyLiterals[
                 Generator.getRandomIndex(this.falsyLiterals.length)
               ]
             );
             continue;
-          } else if (random > Generator.P_STUFF) {
+          } else if (random > Generator.P_STUFF && this.literals.length > 0) {
             result.push(
               this.literals[Generator.getRandomIndex(this.literals.length)]
             );
