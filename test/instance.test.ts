@@ -1,35 +1,35 @@
-import { assert } from 'chai';
+import { expect } from 'chai';
 import { init } from './testRunner';
 
 describe('Instance methods.', function () {
   this.timeout(6 * 60 * 1e3);
 
   before(async () => {
-    global.fastFuzzResults = await init();
+    global.fastFuzzResults = await init('Simple');
   });
 
   it('Fuzz simple method instance', async () => {
     let results: any[] = global.fastFuzzResults;
 
     const method = results.find((result: any) => result.name === 'instance_simple');
-    assert.ok(method !== undefined);
-    assert.ok(method.results.length === 3);
+    expect(method).to.not.equal(undefined);
+    expect(method.results.length).to.equal(3);
   });
 
   it('Fuzz regular method instance', async () => {
     let results: any[] = global.fastFuzzResults;
 
     const method = results.find((result: any) => result.name === 'instance_regular');
-    assert.ok(method !== undefined);
-    assert.ok(method.results.length === 6);
+    expect(method).to.not.equal(undefined);
+    expect(method.results.length).to.equal(6);
   });
 
   it('Fuzz async interface instance', async () => {
     let results: any[] = global.fastFuzzResults;
 
     const method = results.find((result: any) => result.name === 'instance_IAsync');
-    assert.ok(method !== undefined);
-    assert.ok(method.results.length === 6);
+    expect(method).to.not.equal(undefined);
+    expect(method.results.length).to.equal(6);
   });
 
   
@@ -37,7 +37,7 @@ describe('Instance methods.', function () {
     let results: any[] = global.fastFuzzResults;
 
     const method = results.find((result: any) => result.name === 'instance_async');
-    assert.ok(method !== undefined);
-    assert.ok(method.results.length === 6);
+    expect(method).to.not.equal(undefined);
+    expect(method.results.length).to.equal(6);
   });
 });

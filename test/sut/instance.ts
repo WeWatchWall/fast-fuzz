@@ -2,7 +2,7 @@
 const FlatPromise = require("flat-promise");
 import { Fuzz } from '../../src';
 
-export class Test_Instance {
+export class Simple_Instance {
   @Fuzz.prop("string") name: string;
   @Fuzz.prop("integer") age: number;
   @Fuzz.prop("integer") code: number;

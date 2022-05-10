@@ -150,7 +150,7 @@ However, the values do not have limits so they will take much longer to test.
 - Don't name static methods the same as instance ones.
 - Order methods with similar names alphabetically.
 - Return types should not contain brackets ```( or )``` because they are used to detect method signatures.
-- Async methods are generally slower to fuzz than synchronous ones, and drastically slower if there is any sort of waiting, even 1ms.
+- Async methods are drastically slower if there is any sort of waiting.
 - Constructors are skipped for now, and objects are constructed from their properties.
 
 ### Literals

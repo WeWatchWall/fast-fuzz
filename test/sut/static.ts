@@ -2,7 +2,7 @@
 const FlatPromise = require("flat-promise");
 import { Fuzz } from '../../src';
 
-export class Test_Static {
+export class Simple_Static {
   
   @Fuzz.method
   public static static_simple (
