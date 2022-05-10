@@ -6,7 +6,6 @@ export class GeneratorBool extends Generator {
   constructor(dimension = 0, index?: number) {
     super(dimension, new Limits({}), [], index);
     this.falsyLiterals = this.falsyLiterals.concat([false]);
-    this.literals = this.literals.concat(this.falsyLiterals);
   }
 
   generate(count: number): boolean[] {
@@ -15,18 +14,22 @@ export class GeneratorBool extends Generator {
     switch (Generator.mode) {
       case Mode.Falsy:
         for (let index = 0; index < count; index++) {
-          result.push(this.falsyLiterals[Generator.getRandomIndex(this.falsyLiterals.length)]);
+          result.push(
+            this.falsyLiterals[
+              Generator.getRandomIndex(this.falsyLiterals.length)
+            ]
+          );
         }
         break;
       case Mode.Stuff:
-        for (let index = 0; index < count; index++) {
-          result.push(this.literals[Generator.getRandomIndex(this.literals.length)]);
-        }
-        break;
       default:
         for (let index = 0; index < count; index++) {
-          if (Math.random() > Generator.P_STUFF_FALSY) { 
-            result.push(this.literals[Generator.getRandomIndex(this.literals.length)]);
+          if (Math.random() > Generator.P_FALSY) { 
+            result.push(
+              this.falsyLiterals[
+                Generator.getRandomIndex(this.falsyLiterals.length)
+              ]
+            );
             continue;
           }
 

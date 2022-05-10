@@ -5,14 +5,23 @@ import { Mode } from "./Mode";
 export class GeneratorInt extends Generator {
   private static MODE_SCALE = 0.25;
 
-  constructor(dimension = 0, literals: string[], min?: number, max?: number, index?: number) {
+  constructor(
+    dimension = 0,
+    literals: string[],
+    min?: number,
+    max?: number,
+    index?: number
+  ) {
     super(
       dimension,
       new Limits({ int: { min, max } }),
       Generator.getLiterals('integer', literals),
       index
     );
-    this.falsyLiterals = this.falsyLiterals.concat([0, -0, NaN]);
+    this.falsyLiterals = this.falsyLiterals.concat([
+      NaN, 0, -0,
+      Number.MIN_SAFE_INTEGER, Number.MAX_SAFE_INTEGER
+    ]);
     this.literals = this.literals.concat(this.falsyLiterals);
   }
 
@@ -22,12 +31,28 @@ export class GeneratorInt extends Generator {
     switch (Generator.mode) {
       case Mode.Falsy:
         for (let index = 0; index < count; index++) {
-          result.push(this.falsyLiterals[Generator.getRandomIndex(this.falsyLiterals.length)]);
+          result.push(this.falsyLiterals[
+            Generator.getRandomIndex(this.falsyLiterals.length)]
+          );
         }
         break;
       case Mode.Stuff:
         for (let index = 0; index < count; index++) {
-          result.push(this.literals[Generator.getRandomIndex(this.literals.length)]);
+          if (
+            this.literals.length === 0 ||
+            Math.random() > Generator.P_STUFF_FALSY
+          ) {
+            result.push(
+              this.falsyLiterals[
+                Generator.getRandomIndex(this.falsyLiterals.length)
+              ]
+            );
+            continue;
+          }
+
+          result.push(
+            this.literals[Generator.getRandomIndex(this.literals.length)]
+          );
         }
         break;
       default:
@@ -38,8 +63,21 @@ export class GeneratorInt extends Generator {
         );
 
         for (let index = 0; index < count; index++) {
-          if (Math.random() > Generator.P_STUFF_FALSY) { 
-            result.push(this.literals[Generator.getRandomIndex(this.literals.length)]);
+          const random = Math.random(); 
+          if (
+            random > Generator.P_FALSY ||
+            (this.literals.length === 0 && random > Generator.P_STUFF)
+          ) {
+            result.push(
+              this.falsyLiterals[
+                Generator.getRandomIndex(this.falsyLiterals.length)
+              ]
+            );
+            continue;
+          } else if (random > Generator.P_STUFF) {
+            result.push(
+              this.literals[Generator.getRandomIndex(this.literals.length)]
+            );
             continue;
           }
 
@@ -62,7 +100,11 @@ export class GeneratorInt extends Generator {
    * @param max 
    * @returns limits 
    */
-  private static getLimits(mode: Mode, min: number, max: number): [number, number] {
+  private static getLimits(
+    mode: Mode,
+    min: number,
+    max: number
+  ): [number, number] {
     const diff = max - min;
 
     switch (mode) {

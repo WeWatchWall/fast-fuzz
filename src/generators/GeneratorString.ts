@@ -17,7 +17,6 @@ export class GeneratorString extends Generator {
       index
     );
     this.falsyLiterals = this.falsyLiterals.concat(['']);
-    this.literals = this.literals.concat(this.falsyLiterals);
   }
 
   generate(count: number): string[] {
@@ -26,12 +25,30 @@ export class GeneratorString extends Generator {
     switch (Generator.mode) {
       case Mode.Falsy:
         for (let index = 0; index < count; index++) {
-          result.push(this.falsyLiterals[Generator.getRandomIndex(this.falsyLiterals.length)]);
+          result.push(
+            this.falsyLiterals[
+              Generator.getRandomIndex(this.falsyLiterals.length)
+            ]
+          );
         }
         break;
       case Mode.Stuff:
         for (let index = 0; index < count; index++) {
-          result.push(this.literals[Generator.getRandomIndex(this.literals.length)]);
+          if (
+            this.literals.length === 0 ||
+            Math.random() > Generator.P_STUFF_FALSY
+          ) {
+            result.push(
+              this.falsyLiterals[
+                Generator.getRandomIndex(this.falsyLiterals.length)
+              ]
+            );
+            continue;
+          }
+
+          result.push(
+            this.literals[Generator.getRandomIndex(this.literals.length)]
+          );
         }
         break;
       default:
@@ -42,7 +59,18 @@ export class GeneratorString extends Generator {
         );
 
         for (let index = 0; index < count; index++) {
-          if (Math.random() > Generator.P_STUFF_FALSY) { 
+          const random = Math.random(); 
+          if (
+            random > Generator.P_FALSY ||
+            (this.literals.length === 0 && random > Generator.P_STUFF)
+          ) {
+            result.push(
+              this.falsyLiterals[
+                Generator.getRandomIndex(this.falsyLiterals.length)
+              ]
+            );
+            continue;
+          } else if (random > Generator.P_STUFF) {
             result.push(this.literals[Generator.getRandomIndex(this.literals.length)]);
             continue;
           }
