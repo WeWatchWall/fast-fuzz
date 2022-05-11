@@ -37,7 +37,7 @@ describe('Builtin generators with default values.', function () {
 
     const method = results.find((result: any) => result.name === 'builtin_date_default');
     expect(method).to.not.equal(undefined);
-    expect(method.results.length).to.equal(14);
+    expect(method.results.length).to.greaterThanOrEqual(13);
   });
 
   it('Generates string values.', async () => {
