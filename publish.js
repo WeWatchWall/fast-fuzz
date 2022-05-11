@@ -2,7 +2,7 @@ const execShellCommand = require("./execShellCommand.js");
 const FlatPromise = require('flat-promise');
 
 const packName = 'fast-fuzz';
-const WAIT_TIME = 2000;
+const WAIT_TIME = 10e3;
 
 async function publish() {
   const latestVersion = await import('latest-version');
