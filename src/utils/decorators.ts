@@ -82,6 +82,7 @@ export class Decorators {
         case 'boolean':
         case 'integer':
         case 'float':
+        case 'date':
         case 'string':
           isBuiltIn = true;
           break;
@@ -119,9 +120,9 @@ export class Decorators {
           <BuiltIn>arg.type,
           arg.dimension,
           method.literals,
+          arg.index,
           arg.min,
-          arg.max,
-          arg.index
+          arg.max
         ));
       } else {
         result.push(GeneratorFactory.initType(

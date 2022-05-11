@@ -161,6 +161,7 @@ However, the values do not have limits so they will take much longer to test.
 
 ## TODO Priorities
 
+- Test typing and missing decorators.
 - Linting.
 - Add file name to prop ```type not found error```.
 - Intermediate results.

@@ -124,6 +124,16 @@ export class Code {
       Code.getMethodArguments(iFile, iString, methods);
     }
 
+    // Append the date interface.
+    this.interfaces['./date.js'] = [
+      './date.d.ts',
+      `
+        export interface Date {
+          Date: number;
+        }
+      `
+    ];
+
     // TODO: Execute this lazily outside of this method(Keep last in this method).
     // Load the modules into memory by file. Skip undefined JS files.
     for (const jsFile of this.jsFiles) {

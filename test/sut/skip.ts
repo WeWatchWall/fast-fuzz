@@ -77,4 +77,22 @@ export class Skip {
     }
     return true;
   }
+
+  @Fuzz.skipMethod
+  public skip_instance_skip(
+    @Fuzz.skipArg _name: string,
+    @Fuzz.skipArg _age: number,
+    @Fuzz.skipArg _code: number
+  ): boolean {
+
+    switch (this.age) {
+      case AGE_22:
+        return false;
+      case AGE_17:
+        return false;
+      default:
+        break;
+    }
+    return true;
+  }
 }

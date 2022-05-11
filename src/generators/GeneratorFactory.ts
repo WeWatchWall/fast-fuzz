@@ -34,13 +34,13 @@ export namespace GeneratorFactory {
       case 'boolean':
         return new GeneratorBool(dimension, index);
       case 'integer':
-        return new GeneratorInt(dimension, literals, index, min, max);
+        return new GeneratorInt(dimension, literals, min, max, index);
       case 'float':
-        return new GeneratorFloat(dimension, literals, index, min, max);
+        return new GeneratorFloat(dimension, literals, min, max, index);
       case 'date':
-        return new GeneratorDate(dimension, literals, index, min, max);
+        return new GeneratorDate(dimension, literals, min, max, index);
       case 'string':
-        return new GeneratorString(dimension, literals, index, min, max);
+        return new GeneratorString(dimension, literals, min, max, index);
       default:
         break;
     }

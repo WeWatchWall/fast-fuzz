@@ -22,7 +22,9 @@ export class GeneratorString extends Generator {
       Generator.getLiterals('string', literals),
       index
     );
-    this.falsyLiterals = this.falsyLiterals.concat(['']);
+    this.falsyLiterals = this.falsyLiterals.concat([
+      '', 'RkeRxOSF4BfSpgc5Dc7hGumMO'
+    ]);
   }
 
   generate(count: number): string[] {

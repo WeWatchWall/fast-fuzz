@@ -22,7 +22,6 @@ export class GeneratorInt extends Generator {
       NaN, 0, -0,
       Number.MIN_SAFE_INTEGER, Number.MAX_SAFE_INTEGER
     ]);
-    this.literals = this.literals.concat(this.falsyLiterals);
   }
 
   generate(count: number): number[] {

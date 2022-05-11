@@ -46,6 +46,7 @@ export namespace Fuzz {
             type,
             dimension,
             Globals.literals,
+            undefined,
             min,
             max
           );
