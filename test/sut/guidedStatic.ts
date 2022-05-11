@@ -8,7 +8,7 @@ const CODE_7: number = 7;
 const CODE_10: number = 10;
 
 export class Guided_Static {
-  
+
   @Fuzz.method
   public static guided_static_simple (
     @Fuzz.arg("integer", 0, 15, 25) age: number

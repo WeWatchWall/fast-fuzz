@@ -33,7 +33,7 @@ export class Decorators {
 
     if (Decorators.args.length === 0) {
       Decorators.fileName = Decorators.getFileName(4);
-      Decorators.className = target.constructor.name;
+      Decorators.className = Decorators.getMethodName(target);
       Decorators.methodName = new String(key).toString();
       Decorators.lastIndex = arg.index;
     }
@@ -143,7 +143,7 @@ export class Decorators {
 
     // Populate the method details.
     const newFileName: string = Decorators.getFileName(7);
-    const newClassName: string = target.constructor.name;
+    const newClassName: string = Decorators.getMethodName(target);
     const newMethodName: string = new String(key).toString();
 
     // Find and populate the central method repo.
@@ -189,6 +189,14 @@ export class Decorators {
     return file;
   }
 
+  static getMethodName(target: any): string {
+    if (target.constructor.name === 'Function') {
+      return target.name;
+    }
+
+    return target.constructor.name;
+  }
+
   private static checkMethod(
     stackIndex: number,
     target: Object,
@@ -196,7 +204,7 @@ export class Decorators {
     index: number
   ): boolean {
     const newFileName: string = Decorators.getFileName(stackIndex);
-    const newClassName: string = target.constructor.name;
+    const newClassName: string = Decorators.getMethodName(target);
     const newMethodName: string = new String(key).toString();
 
     // console.log(`

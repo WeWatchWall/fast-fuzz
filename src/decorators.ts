@@ -80,7 +80,7 @@ export namespace Fuzz {
           `
             Missing type on decorated property:
             File name: TODO: add this info,
-            Class name: ${target.constructor?.name},
+            Class name: ${Decorators.getMethodName(target)},
             Property name: ${new String(key).toString()},
             Argument: ${JSON.stringify(arg)}
           `
@@ -209,12 +209,7 @@ export namespace Fuzz {
 
     // Populate the method details.
     const fileName: string = Decorators.getFileName(6);
-    let className: string = target.constructor.name;
-
-    // For static where the constructor is already given.
-    if (className === 'Function') {
-      className = (<any>target).name;
-    }
+    let className: string = Decorators.getMethodName(target);
     const methodName: string = new String(key).toString();
 
     // Find and populate the central method repo. 
