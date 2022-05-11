@@ -5,6 +5,7 @@ describe('Regular instance methods.', function () {
   this.timeout(6 * 60 * 1e3);
 
   before(async () => {
+    // Params to get all the results: 180e3, 3e6.
     global.fastFuzzResults = await init('Regular', 60e3);
   });
 
