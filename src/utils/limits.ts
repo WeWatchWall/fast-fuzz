@@ -13,10 +13,10 @@ export class Limits {
       Object.assign(argValue, Limits.defaults[key]);
       
       if (init[key].min !== undefined) {
-        argValue[key].min = init[key].min;
+        argValue.min = init[key].min;
       }
       if (init[key].max !== undefined) {
-        argValue[key].max = init[key].max;
+        argValue.max = init[key].max;
       }
 
       // Set any limits that are invalid if they are negative.
