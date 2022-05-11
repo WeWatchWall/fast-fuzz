@@ -197,32 +197,32 @@ export class Builtins {
     }
   }
 
-  // @Fuzz.method
-  // public static builtin_string_default(
-  //   @Fuzz.arg('string') arg: string
-  // ): string {
-  //   const len = arg?.length;
+  @Fuzz.method
+  public static builtin_string_default(
+    @Fuzz.arg('string') arg: string
+  ): string {
+    const len = arg?.length;
 
-  //   if (arg === undefined) {
-  //     return `Undefined: ${arg}`;
-  //   } else if (arg === null) {
-  //     return `Null: ${arg}`;
-  //   } else if (len === strings.nil) {
-  //     return `Zero: ${arg}`;
-  //   } else if (len === strings.long) {
-  //     return `Long literal(25): ${arg}`;
-  //   // Ignores this branch.
-  //   } else if (len > strings.hard) {
-  //     return `Max hard limit: ${arg}`;
-  //   } else if (len > strings.soft) {
-  //     return `Max soft limit: ${arg}`;
-  //   } else if (len > strings.max) {
-  //     return `Max limit: ${arg}`;
-  //   } else if (len > strings.nil) {
-  //     return `Positive: ${arg}`;
-  //   // Ignores this branch.
-  //   } else {
-  //     return `Unkown: ${arg}`;
-  //   }
-  // }
+    if (arg === undefined) {
+      return `Undefined: ${arg}`;
+    } else if (arg === null) {
+      return `Null: ${arg}`;
+    } else if (len === strings.nil) {
+      return `Zero: ${arg}`;
+    } else if (len === strings.long) {
+      return `Long literal(25): ${arg}`;
+    // Ignores this branch.
+    } else if (len > strings.hard) {
+      return `Max hard limit: ${arg}`;
+    } else if (len > strings.soft) {
+      return `Max soft limit: ${arg}`;
+    } else if (len > strings.max) {
+      return `Max limit: ${arg}`;
+    } else if (len > strings.nil) {
+      return `Positive: ${arg}`;
+    // Ignores this branch.
+    } else {
+      return `Unkown: ${arg}`;
+    }
+  }
 }
