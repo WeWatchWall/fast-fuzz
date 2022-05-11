@@ -5,7 +5,7 @@ describe('Guided instance methods.', function () {
   this.timeout(6 * 60 * 1e3);
 
   before(async () => {
-    global.fastFuzzResults = await init('Guided');
+    global.fastFuzzResults = await init('Guided', 10e3, 3e5);
   });
 
   it('Fuzz simple method instance', async () => {
