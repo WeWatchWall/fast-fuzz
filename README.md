@@ -139,6 +139,7 @@ However, the values do not have limits so they will take much longer to test.
 
 - Type arguments for arguments and properties not yet tested, e.g. ```function Foo(arg: Bar<Type>) {}```.
 - Function types for arguments and properties not yet tested, e.g. ```function Foo(arg: () => Type) {}```.
+- Types that are not included in the sources are probably going to cause problems.
 - Export types for testing.
 - Types in different files should not be named the same. This might be fixed soon.
 - Type declarations with similar names should be ordered alphabetically, especially for similar names.

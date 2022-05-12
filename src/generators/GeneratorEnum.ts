@@ -10,7 +10,14 @@ export class GeneratorEnum extends Generator {
 
   constructor(type: ModuleType, dimension = 0, index?: number) {
     super(dimension, new Limits({}), [], index);
-    this.falsyLiterals = this.falsyLiterals.concat(['', 0, -0, Number.MIN_VALUE, -1 * Number.MIN_VALUE, NaN]);
+    this.falsyLiterals = this.falsyLiterals.concat([
+      NaN, 0, -0,
+      Number.MIN_SAFE_INTEGER, Number.MAX_SAFE_INTEGER,
+      -1 * Number.MIN_VALUE, Number.MIN_VALUE,
+      -1 * Number.MAX_VALUE, Number.MAX_VALUE,
+      Number.NEGATIVE_INFINITY, Number.POSITIVE_INFINITY,
+      '', 'RkeRxOSF4BfSpgc5Dc7hGumMO'
+    ]);
     this.type = type;
     this.isInit = false;
   }
@@ -27,7 +34,7 @@ export class GeneratorEnum extends Generator {
         }
         break;
       default:
-        result = this.renderer.render(count);
+        result = this.renderer.render(count, this.falsyLiterals);
         break;
     }
 
@@ -100,10 +107,21 @@ class IntEnumRender {
     this.max = max;
   }
 
-  render(count: number): number[] {
+  render(count: number, falsyLiterals: any[]): number[] {
     // Array of random integers.
     const results: number[] = [];
     for (let i = 0; i < count; i++) {
+      if (
+        Math.random() > Generator.P_FALSY
+      ) {
+        results.push(
+          falsyLiterals[
+            Generator.getRandomIndex(falsyLiterals.length)
+          ]
+        );
+        continue;
+      }
+
       results.push(Generator.getRandomInt(this.min, this.max));
     }
     return results;
@@ -119,13 +137,24 @@ class DictionaryEnumRender {
 
   constructor(values: (string | number)[]) {
     this.values = values;
-    this.maxIndex = this.values.length - 1;
+    this.maxIndex = this.values.length;
   }
 
-  render(count: number): (string | number)[] {
+  render(count: number, falsyLiterals: any[]): (string | number)[] {
     // Values from an array of random indices.
     const results: (number | string)[] = [];
     for (let i = 0; i < count; i++) {
+      if (
+        Math.random() > Generator.P_FALSY
+      ) {
+        results.push(
+          falsyLiterals[
+            Generator.getRandomIndex(falsyLiterals.length)
+          ]
+        );
+        continue;
+      }
+
       results.push(this.values[Generator.getRandomIndex(this.maxIndex)]);
     }
     return results;
