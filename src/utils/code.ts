@@ -312,7 +312,11 @@ export class Code {
           isAsync: filePart.isAsync,
           isStatic: filePart.isStatic,
           literals: [],
-          
+          test: {
+            args: [],
+            isStart: false,
+            generators: []
+          },
           // TODO: filter out functions?
           args: filePart.parameters.map((arg: any) => arg.name)
         });

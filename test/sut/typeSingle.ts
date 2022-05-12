@@ -32,6 +32,33 @@ export class Type_Single {
     return `Branch 0: ${JSON.stringify(arg)}`;
   }
 
+  public static type_single_simple_naked(
+    argInstance: Reference_Derived
+  ): string {
+    if (argInstance === undefined) {
+      return `Undefined: ${argInstance}`;
+    } else if (argInstance === null) {
+      return `Null: ${argInstance}`;
+    } else if (Object.values(argInstance).length === 0) {
+      return `Empty object {}: ${JSON.stringify(argInstance)}`;
+    }
+
+    const arg = argInstance.getValue();
+    if (arg[3] !== Reference_Derived.name) {
+      return `Wrong type: ${arg[3]}`;
+    }
+
+    switch (arg[1]) {
+      case 22:
+        return `Branch 1: ${JSON.stringify(arg)}`;
+      case 17:
+        return `Branch 2: ${JSON.stringify(arg)}`;
+      default:
+        break;
+    }
+    return `Branch 0: ${JSON.stringify(arg)}`;
+  }
+
   @Fuzz.method
   public static type_single_array(
     @Fuzz.argType(Reference_Derived.name, 1)

@@ -16,7 +16,7 @@ export class ModuleMethod {
 
   IArgs: [string, string];
 
-  test?: TestMethod;
+  test: TestMethod;
 
   constructor(init: Partial<ModuleMethod>) {
     Object.assign(this, init);
