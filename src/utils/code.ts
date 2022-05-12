@@ -220,7 +220,7 @@ export class Code {
           break;
         case ts.SyntaxKind.MethodDeclaration:
           // TODO: refactor with detect method type from tplant
-          const isSkipModifier: ts.Modifier = node.modifiers.find((modifier: ts.Modifier) => 
+          const isSkipModifier: ts.Modifier = node.modifiers?.find((modifier: ts.Modifier) => 
             [
               ts.SyntaxKind.AbstractKeyword,
               ts.SyntaxKind.PrivateKeyword,
