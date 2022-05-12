@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import { init } from './testRunner';
 
-describe('Builtin generators with default values.', function () {
+describe('Builtin generators with limited values.', function () {
   this.timeout(6 * 60 * 1e3);
 
   before(async () => {
