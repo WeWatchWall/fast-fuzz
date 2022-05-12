@@ -58,12 +58,13 @@ export namespace GeneratorFactory {
     type: ModuleType,
     dimension = 0,
     index?: number,
-    mode?: Mode
+    mode?: Mode,
+    isIgnoreFalsy = false
   ): IGenerator {
     if (type.kind === 'enum') {
       return new GeneratorEnum(type, dimension, index); 
     } else {
-      return new GeneratorType(type, dimension, index, mode); 
+      return new GeneratorType(type, dimension, index, mode, isIgnoreFalsy); 
     }
   }
 

@@ -14,8 +14,9 @@ export class GeneratorType extends Generator {
   private numTypes?: number;
 
   private mode: Mode;
+  private isIgnoreFalsy: boolean;
 
-  constructor(type: ModuleType, dimension = 0, index?: number, mode?: Mode) {
+  constructor(type: ModuleType, dimension = 0, index?: number, mode?: Mode, isIgnoreFalsy = false) {
     // Create the interfaces for each type, excluding IFuzzArgs(TODO?).
     if (GeneratorType.interfaces === undefined) {
       GeneratorType.interfaces = Object.values(Globals.codeUtil.interfaces);
@@ -28,6 +29,7 @@ export class GeneratorType extends Generator {
     this.types = [];
 
     this.mode = mode === undefined ? Generator.mode : mode;
+    this.isIgnoreFalsy = isIgnoreFalsy;
   }
 
   generate(count: number): any[] {
@@ -71,7 +73,7 @@ export class GeneratorType extends Generator {
   }
 
   private generateSingle(typeArg: ModuleType, type: any): any {
-    if (Math.random() > Generator.P_FALSY) {
+    if (!this.isIgnoreFalsy && Math.random() > Generator.P_FALSY) {
       return this.falsyLiterals[Generator.getRandomIndex(this.falsyLiterals.length)];
     }
 

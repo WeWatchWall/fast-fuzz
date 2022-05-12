@@ -258,7 +258,7 @@ function fuzzMethod(
       );
 
   const generator: IGenerator =
-    GeneratorFactory.initType(type, 0, 0, Mode.Stuff);
+    GeneratorFactory.initType(type, 0, 0, Mode.Stuff, true);
 
   const results = fuzzSync(
     method,
@@ -298,7 +298,7 @@ async function fuzzMethodAsync(
       );
 
   const generator: IGenerator =
-    GeneratorFactory.initType(type, 0, 0, Mode.Stuff);
+    GeneratorFactory.initType(type, 0, 0, Mode.Stuff, true);
 
   const results = await fuzzAsync(
     method,

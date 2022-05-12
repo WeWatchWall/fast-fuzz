@@ -5,7 +5,7 @@ describe('Builtin generators with limited values.', function () {
   this.timeout(6 * 60 * 1e3);
 
   before(async () => {
-    global.fastFuzzResults = await init('Builtins');
+    global.fastFuzzResults = await init('Builtins', undefined, 3e4);
   });
 
   it('Generates integer values.', async () => {
