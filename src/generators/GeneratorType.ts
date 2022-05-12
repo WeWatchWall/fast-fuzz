@@ -71,6 +71,10 @@ export class GeneratorType extends Generator {
   }
 
   private generateSingle(typeArg: ModuleType, type: any): any {
+    if (Math.random() > Generator.P_FALSY) {
+      return this.falsyLiterals[Generator.getRandomIndex(this.falsyLiterals.length)];
+    }
+
     let result: any = mock({
       files: GeneratorType.interfaces,
       interfaces: [typeArg.name],

@@ -11,6 +11,7 @@ export abstract class Generator implements IGenerator {
   static mode: Mode = Mode.Falsy;
   static P_FALSY = 0.85;
   static P_STUFF = 0.7;
+  static DEFAULT_FALSY = [undefined, null];
 
   index: number;
   dimension: number;
@@ -144,6 +145,12 @@ export abstract class Generator implements IGenerator {
 
         return generator.values.pop();
       case 1:
+        if (Math.random() > Generator.P_FALSY) {
+          return Generator.DEFAULT_FALSY[
+            Generator.getRandomIndex(Generator.DEFAULT_FALSY.length)
+          ];
+        }
+
         const limit = generator.limits.array;
         const size = Generator.getRandomInt(
           limit.min,
@@ -160,6 +167,12 @@ export abstract class Generator implements IGenerator {
         }
         return result;
       default:
+        if (Math.random() > Generator.P_FALSY) {
+          return Generator.DEFAULT_FALSY[
+            Generator.getRandomIndex(Generator.DEFAULT_FALSY.length)
+          ];
+        }
+
         const dLimit = generator.limits.array;
         const dSizes: number[] = [];
         let totalSize = 1;
