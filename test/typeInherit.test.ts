@@ -5,7 +5,7 @@ describe('Type generators with inherited values.', function () {
   this.timeout(6 * 60 * 1e3);
 
   before(async () => {
-    global.fastFuzzResults = await init('Type', 5e3, 1e3);
+    global.fastFuzzResults = await init('Type', 5e3, 3e3);
   });
 
   it('Generates single instance of type.', async () => {
