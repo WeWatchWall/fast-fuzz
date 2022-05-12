@@ -2,16 +2,6 @@ import { Fuzz } from "../../src";
 
 const ints = {
   nil: 0,
-  nHard: -525,
-  nSoft: -75,
-  nMin: -25,
-  hard: 525,
-  soft: 75,
-  max: 25,
-};
-
-const floats = {
-  nil: 0,
   nHard: -210,
   nSoft: -30,
   nMin: -10,
@@ -20,54 +10,43 @@ const floats = {
   max: 10,
 };
 
+const floats = {
+  nil: 0,
+  nHard: -42,
+  nSoft: -6,
+  nMin: -2,
+  hard: 42,
+  soft: 6,
+  max: 2,
+};
+
 const dates = {
   nil: 0,
   now: Date.now(),
   y2K: 946677600000,
-  nHard: Date.now() - 8.64e+7 * 2 * 10,
-  nSoft: Date.now() - 8.64e+7 * 2,
-  nMin: Date.now() - 8.64e+7,
-  hard: Date.now() + 8.64e+7 * 2 * 10,
-  soft: Date.now() + 8.64e+7 * 2,
-  max: Date.now() + 8.64e+7,
+  nHard: Date.now() - 3600e3 * 2 * 10,
+  nSoft: Date.now() - 3600e3 * 2,
+  nMin: Date.now() - 3600e3,
+  hard: Date.now() + 3600e3 * 2 * 10,
+  soft: Date.now() + 3600e3 * 2,
+  max: Date.now() + 3600e3,
   dateMin: -8640e12,
   dateMax: 8640e12
 };
 
 const strings = {
   nil: 0,
-  hard: 6,
-  soft: 5,
-  max: 4,
+  hard: 4,
+  soft: 3,
+  max: 2,
   long: 25
 };
 
-export class Builtins_Default {
+export class Builtins_Limit {
 
   @Fuzz.method
-  public static builtin_bool_default(
-    @Fuzz.arg('boolean') arg: boolean
-  ): string {
-    switch (arg) {
-      case undefined:
-        // TODO: This actually records null
-        //   for the parameter prob. because of
-        //   IstanbulJS hardcoded falsy value.
-        return `Undefined: ${arg}`;
-      case null:
-        return `Null: ${arg}`;
-      case false:
-        return `False: ${arg}`;
-      case true:
-        return `True: ${arg}`;
-      default:
-        return `Unkown: ${arg}`;
-    }
-  }
-
-  @Fuzz.method
-  public static builtin_int_default(
-    @Fuzz.arg('integer') arg: number
+  public static builtin_int_limit(
+    @Fuzz.arg('integer', 0, -10, 10) arg: number
   ): string {
     if (arg === undefined) {
       return `Undefined: ${arg}`;
@@ -106,8 +85,8 @@ export class Builtins_Default {
   }
 
   @Fuzz.method
-  public static builtin_float_default(
-    @Fuzz.arg('float') arg: number
+  public static builtin_float_limit(
+    @Fuzz.arg('float', 0, -2, 2) arg: number
   ): string {
     if (arg === undefined) {
       return `Undefined: ${arg}`;
@@ -154,8 +133,14 @@ export class Builtins_Default {
   }
 
   @Fuzz.method
-  public static builtin_date_default(
-    @Fuzz.arg('date') arg1: Date
+  public static builtin_date_limit(
+    @Fuzz.arg(
+      'date',
+      0,
+      Date.now() - 3600e3,
+      Date.now() + 3600e3
+    )
+    arg1: Date
   ): string {
     const arg: number = arg1?.getTime();
 
@@ -198,8 +183,8 @@ export class Builtins_Default {
   }
 
   @Fuzz.method
-  public static builtin_string_default(
-    @Fuzz.arg('string') arg: string
+  public static builtin_string_limit(
+    @Fuzz.arg('string', 0, -1, 2) arg: string
   ): string {
     const len = arg?.length;
 

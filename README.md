@@ -1,4 +1,4 @@
-# Fast-Fuzz, the First Intelligent Fuzzing Framework for Typescript
+# Fast-Fuzz, the First Smart Fuzzing Framework for Typescript
 
 [![Build and test status](https://github.com/WeWatchWall/fast-fuzz/workflows/Build%20and%20test/badge.svg)](https://github.com/WeWatchWall/fast-fuzz/actions?query=workflow%3A%22Build+and+test%22)
 [![NPM version](https://img.shields.io/npm/v/fast-fuzz.svg)](https://www.npmjs.com/package/fast-fuzz)
