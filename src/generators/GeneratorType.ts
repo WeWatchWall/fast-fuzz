@@ -45,13 +45,9 @@ export class GeneratorType extends Generator {
         break;
       default:
         if (this.numTypes < 2) {
-          for (let index = 0; index < count; index++) {
-            result.push(this.generateSingle(this.typeArgs[0], this.types[0]));
-          }
+          this.generateSingle(this.typeArgs[0], this.types[0], count, result);
         } else {
-          for (let index = 0; index < count; index++) {
-            result.push(this.generateMany());
-          }
+          this.generateMany(count, result);
         }
         break;
     }
@@ -72,32 +68,68 @@ export class GeneratorType extends Generator {
     this.numTypes = this.typeArgs.length;
   }
 
-  private generateSingle(typeArg: ModuleType, type: any): any {
-    if (!this.isIgnoreFalsy && Math.random() > Generator.P_FALSY) {
-      return this.falsyLiterals[Generator.getRandomIndex(this.falsyLiterals.length)];
-    }
+  private generateSingle(typeArg: ModuleType, type: any, count: number, resultsOut: any[]): void {
 
-    let result: any = mock({
+    let iResults: any = mock({
       files: GeneratorType.interfaces,
       interfaces: [typeArg.name],
       isOptionalAlwaysEnabled: true,
       output: 'object',
-      count: 2
-    });
+      count
+    })[typeArg.name];
 
-    result = plainToInstance(
-      type,
-      result[typeArg.name][0],
-      {
-        enableImplicitConversion: true
+    for (let index = 0; index < count; index++) {
+      if (!this.isIgnoreFalsy && Math.random() > Generator.P_FALSY) {
+        resultsOut.push(this.falsyLiterals[Generator.getRandomIndex(this.falsyLiterals.length)]);
+        continue;
       }
-    );
-
-    return result;
+  
+      resultsOut.push(
+        plainToInstance(
+          type,
+          iResults[index],
+          {
+            enableImplicitConversion: true
+          }
+        )
+      );
+    }
   }
 
-  private generateMany(): any {
-    const typeIndex = Generator.getRandomIndex(this.numTypes);
-    return this.generateSingle(this.typeArgs[typeIndex], this.types[typeIndex])
+  private generateMany(count: number, resultsOut: any[]): void {
+    const countPerType: number = Math.floor(count / this.numTypes);
+
+    for (let index = 0; index < this.numTypes; index++) {
+      this.generateSingle(
+        this.typeArgs[index],
+        this.types[index],
+        countPerType,
+        resultsOut
+      );
+    }
+
+    GeneratorType.shuffle(resultsOut);
+  }
+
+  /**
+   * Shuffles an array in-place.
+   * @param array 
+   */
+  private static shuffle(array: any[]): void {
+    let
+      currentIndex = array.length,
+      randomIndex: number;
+  
+    // While there remain elements to shuffle.
+    while (currentIndex != 0) {
+  
+      // Pick a remaining element.
+      randomIndex = Math.floor(Math.random() * currentIndex);
+      currentIndex--;
+  
+      // And swap it with the current element.
+      [array[currentIndex], array[randomIndex]] =
+        [array[randomIndex], array[currentIndex]];
+    }
   }
 }
