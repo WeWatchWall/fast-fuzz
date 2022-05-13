@@ -47,6 +47,7 @@ export async function fastFuzz(
   interfaces = Object.values(Globals.codeUtil.interfaces);
 
   const results: Results[] = [];
+  const start: number = Date.now();
 
   /* #region  Output verbose info. */
   if (verbose) {
@@ -112,6 +113,12 @@ export async function fastFuzz(
         results: fuzzResults
       });
     }
+  }
+
+  if (verbose) {
+    console.log(`
+      Time elapsed (s): ${(Date.now() - start) / 1e3}
+    `);
   }
 
   return results;

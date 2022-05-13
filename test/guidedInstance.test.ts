@@ -2,10 +2,10 @@ import { expect } from 'chai';
 import { init } from './testRunner';
 
 describe('Guided instance methods.', function () {
-  this.timeout(10 * 60 * 1e3);
+  this.timeout(6 * 60 * 1e3);
 
   before(async () => {
-    global.fastFuzzResults = await init('Guided', 5e3, 1.5e5);
+    global.fastFuzzResults = await init('Guided', 10e3, 3e5);
   });
 
   it('Fuzz simple method instance', async () => {
