@@ -9,11 +9,11 @@ import { Code } from '../utils/code';
 import { fuzzSync } from './fuzzSync';
 import { ModuleMethod, ModuleType } from '../utils/modules';
 import { Result, Results } from './result';
-import { mock } from 'intermock';
 import { IGenerator } from '../generators/IGenerator';
 import { GeneratorFactory } from '../generators/GeneratorFactory';
 import { Mode } from '../generators/Mode';
 import { fuzzAsync } from './fuzzAsync';
+import { GeneratorArg } from '../generators/GeneratorArg';
 
 /* #region  Instrumenter hook. */
 let instrumenter: any;
@@ -140,17 +140,11 @@ async function init(
   await Globals.codeUtil.load();
 }
 
-function getArgs(method: ModuleMethod): any[] {
+function getArgs(method: ModuleMethod, generator: GeneratorArg): any[] {
   // Set the method to generate new arguments.
   method.test.isStart = true;
 
-  let resultObject: any = mock({
-    files: interfaces,
-    interfaces: ['IFuzzArgs'],
-    isOptionalAlwaysEnabled: true,
-    output: 'object',
-    count: 1
-  })['IFuzzArgs'][0];
+  let resultObject: any = generator.next();
 
   const result: any[] = [];
   method.args.forEach((arg: string) => {
@@ -166,8 +160,10 @@ function fuzzStatic(
   maxTime = 1e4,
   maxRuns = 1e5
 ): Result[] {
+  // Init the arg generator.
   interfaces.push(method.IArgs);
-
+  const argGenerator = new GeneratorArg(interfaces);
+  
   /* #region  Get the static method. */
   const type: ModuleType =
     Globals
@@ -189,7 +185,7 @@ function fuzzStatic(
 
   const results = fuzzSync(
     method,
-    () => getArgs(method),
+    () => getArgs(method, argGenerator),
     (args: any[]) => func(...args),
     filePath,
     maxTime,
@@ -207,7 +203,9 @@ async function fuzzStaticAsync(
   maxTime = 1e4,
   maxRuns = 1e5
 ): Promise<Result[]> {
+  // Init the arg generator.
   interfaces.push(method.IArgs);
+  const argGenerator = new GeneratorArg(interfaces);
 
   /* #region  Get the static method. */
   const type: ModuleType =
@@ -230,7 +228,7 @@ async function fuzzStaticAsync(
 
   const results = await fuzzAsync(
     method,
-    () => getArgs(method),
+    () => getArgs(method, argGenerator),
     async (args: any[]) => await func(...args),
     filePath,
     maxTime,
@@ -248,7 +246,9 @@ function fuzzMethod(
   maxTime = 1e4,
   maxRuns = 1e5
 ): Result[] {
+  // Init the arg generator.
   interfaces.push(method.IArgs);
+  const argGenerator = new GeneratorArg(interfaces);
 
   const type: ModuleType =
     Globals
@@ -263,7 +263,7 @@ function fuzzMethod(
 
   const results = fuzzSync(
     method,
-    () => getArgs(method),
+    () => getArgs(method, argGenerator),
     (args: any[]) => {
       // debugger;
       // const instance = generator.next();
@@ -288,7 +288,9 @@ async function fuzzMethodAsync(
   maxTime = 1e4,
   maxRuns = 1e5
 ): Promise<Result[]> {
+  // Init the arg generator.
   interfaces.push(method.IArgs);
+  const argGenerator = new GeneratorArg(interfaces);
 
   const type: ModuleType =
     Globals
@@ -303,7 +305,7 @@ async function fuzzMethodAsync(
 
   const results = await fuzzAsync(
     method,
-    () => getArgs(method),
+    () => getArgs(method, argGenerator),
     async (args: any[]) => {
       // debugger;
       // const instance = generator.next();

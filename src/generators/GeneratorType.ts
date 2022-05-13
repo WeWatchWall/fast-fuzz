@@ -7,7 +7,7 @@ import { Generator } from "./Generator";
 import { Mode } from "./Mode";
 
 export class GeneratorType extends Generator {
-  private static interfaces: [string, string][];  
+  private static interfaces: [string, string][];
 
   private typeArgs: ModuleType[];
   private types: any[];
