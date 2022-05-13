@@ -81,7 +81,8 @@ export class GeneratorType extends Generator {
       files: GeneratorType.interfaces,
       interfaces: [typeArg.name],
       isOptionalAlwaysEnabled: true,
-      output: 'object'
+      output: 'object',
+      count: 2
     });
 
     result = plainToInstance(
