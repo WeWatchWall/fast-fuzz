@@ -144,12 +144,13 @@ function getArgs(method: ModuleMethod): any[] {
   // Set the method to generate new arguments.
   method.test.isStart = true;
 
-  const resultObject: any = mock({
+  let resultObject: any = mock({
     files: interfaces,
     interfaces: ['IFuzzArgs'],
     isOptionalAlwaysEnabled: true,
-    output: 'object'
-  })['IFuzzArgs'];
+    output: 'object',
+    count: 1
+  })['IFuzzArgs'][0];
 
   const result: any[] = [];
   method.args.forEach((arg: string) => {

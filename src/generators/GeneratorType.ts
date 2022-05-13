@@ -86,7 +86,7 @@ export class GeneratorType extends Generator {
 
     result = plainToInstance(
       type,
-      result[typeArg.name],
+      result[typeArg.name][0],
       {
         enableImplicitConversion: true
       }

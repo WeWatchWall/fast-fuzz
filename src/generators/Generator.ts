@@ -9,8 +9,8 @@ import { Mode } from "./Mode";
 export abstract class Generator implements IGenerator {
   /* #region  Properties. */
   static mode: Mode = Mode.Falsy;
-  static P_FALSY = 0.9;
-  static P_STUFF = 0.8;
+  static P_FALSY = 0.85;
+  static P_STUFF = 0.7;
   static DEFAULT_FALSY = [undefined, null];
 
   index: number;
