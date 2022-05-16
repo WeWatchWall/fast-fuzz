@@ -12,7 +12,7 @@
     "lint": "eslint ./ --ext .js,.jsx,.ts,.tsx",
     "fix": "eslint ./ --ext .js,.jsx,.ts,.tsx --fix",
     "build": "tsc",
-    "prepare": "npm run clean",
+    "preinstall": "npm run clean",
     "postinstall": "patch-package && npm run build",
     "test": "ts-mocha test/**/*.test.ts",
     "updatePublish": "node publish.js"
