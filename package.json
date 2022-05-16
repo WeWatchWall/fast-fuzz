@@ -1,6 +1,6 @@
 {
   "name": "fast-fuzz",
-  "version": "4.1.3",
+  "version": "4.1.4",
   "description": "Test case fuzzer with branch coverage guidance.",
   "main": "dist/src/index.js",
   "types": "dist/src/index.d.ts",
