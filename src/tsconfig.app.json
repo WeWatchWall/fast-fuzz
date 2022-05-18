@@ -2,8 +2,9 @@
   "extends": "../tsconfig.json",
   "compilerOptions": {
       "outDir": "../dist/src",
-      "module": "es2015",
-      "baseUrl": ""
+      "baseUrl": "",
+      "types": [ "node" ],
+      "typeRoots": ["../node_modules/@types"]
   },
   "exclude": [
       "test.ts",
