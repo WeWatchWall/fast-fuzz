@@ -15,6 +15,7 @@ npm install --save-dev reflect-metadata
 ```
 
 Fast-Fuzz installs in the ```dependencies``` and not ```devDependencies``` because it relies on decorators.
+Fast-Fuzz cannot be installed globally with ```npm i -g fast-fuzz``` because it depends on shared state to track the decorators.
 
 The project requires ```reflect-metadata``` in the fuzzed project. Further, the target also needs:
 
@@ -67,7 +68,7 @@ async Main () {
 Main();
 ```
 
-- Command line:
+- Command line (from within package.json scripts):
 
 ```bash
 fast-fuzz
