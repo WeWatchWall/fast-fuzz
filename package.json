@@ -4,16 +4,14 @@
   "description": "Test case fuzzer with branch coverage guidance.",
   "main": "dist/src/index.js",
   "types": "dist/src/index.d.ts",
-  "bin": {
-    "fast-fuzz": "dist/src/bin.js"
-  },
+  "bin": "dist/src/bin.js",
   "scripts": {
     "clean": "node clean.js dist build package",
     "lint": "eslint ./ --ext .js,.jsx,.ts,.tsx",
     "fix": "eslint ./ --ext .js,.jsx,.ts,.tsx --fix",
     "build": "tsc",
     "preinstall": "npm run clean",
-    "prepare": "npm run build",
+    "postinstall": "npm run build",
     "test": "ts-mocha test/**/*.test.ts",
     "updatePublish": "node publish.js"
   },
