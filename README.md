@@ -68,7 +68,7 @@ async Main () {
 Main();
 ```
 
-- Command line (from within package.json scripts):
+- Command line (from within the package.json scripts):
 
 ```bash
 fast-fuzz
