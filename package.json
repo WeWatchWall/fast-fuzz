@@ -4,7 +4,9 @@
   "description": "Test case fuzzer with branch coverage guidance.",
   "main": "dist/src/index.js",
   "types": "dist/src/index.d.ts",
-  "bin": "dist/src/bin.js",
+  "bin": {
+    "fastFuzz": "./dist/src/bin.js"
+  },
   "scripts": {
     "clean": "node clean.js dist build package",
     "lint": "eslint ./ --ext .js,.jsx,.ts,.tsx",
