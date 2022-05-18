@@ -1,4 +1,4 @@
-import { Fuzz } from "../../src";
+import { Fuzz } from "../../src/fast-fuzz";
 
 const ints = {
   nil: 0,

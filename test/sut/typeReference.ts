@@ -1,4 +1,4 @@
-import { Fuzz } from "../../src";
+import { Fuzz } from "../../src/fast-fuzz";
 
 export interface IReference {
   name: string;

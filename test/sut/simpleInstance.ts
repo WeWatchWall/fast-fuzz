@@ -1,6 +1,6 @@
 // @ts-nocheck
 const FlatPromise = require("flat-promise");
-import { Fuzz } from '../../src';
+import { Fuzz } from '../../src/fast-fuzz';
 
 export class Simple_Instance {
   @Fuzz.prop("string") name: string;

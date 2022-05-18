@@ -1,4 +1,4 @@
-import { Fuzz } from "../../src";
+import { Fuzz } from "../../src/fast-fuzz";
 import { Reference_Derived } from "./typeReference";
 
 export class Type_Single {

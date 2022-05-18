@@ -1,4 +1,4 @@
-import { Fuzz } from '../../src';
+import { Fuzz } from '../../src/fast-fuzz';
 
 const AGE_17: number = 17;
 const AGE_22: number = 22;

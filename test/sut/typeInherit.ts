@@ -1,4 +1,4 @@
-import { Fuzz } from "../../src";
+import { Fuzz } from "../../src/fast-fuzz";
 import {
   IReference,
   Reference_Abstract,
