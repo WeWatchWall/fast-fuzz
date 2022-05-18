@@ -9,7 +9,7 @@ export async function init(
   runCount: number = 1e5
 ): Promise<any[]> {
   if (results[name] === undefined) {
-    let cliResult: string = await execShellCommand(`node ./dist/src/bin.js -i "./test/sut" -s "./" -d "../../dist/test/sut" -c "${name}" -t ${time} -n ${runCount} -q true`);
+    let cliResult: string = await execShellCommand(`node ./dist/src/index.js -i "./test/sut" -s "./" -d "../../dist/test/sut" -c "${name}" -t ${time} -n ${runCount} -q true`);
     
     let error: any;
     try {
