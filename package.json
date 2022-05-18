@@ -1,11 +1,11 @@
 {
   "name": "fast-fuzz",
-  "version": "4.2.2",
+  "version": "4.2.3",
   "description": "Test case fuzzer with branch coverage guidance.",
-  "main": "dist/src/fast-fuzz.js",
-  "types": "dist/src/fast-fuzz.d.ts",
+  "main": "./dist/src/fast-fuzz.js",
+  "types": "./dist/src/fast-fuzz.d.ts",
   "bin": {
-    "fast-fuzz": "dist/src/index.js"
+    "fast-fuzz": "./dist/src/index.js"
   },
   "scripts": {
     "clean": "node clean.js dist build package",
