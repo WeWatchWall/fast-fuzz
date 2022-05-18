@@ -1,0 +1,1 @@
+{"version":3,"file":"fake.js","sourceRoot":"","sources":["../../../src/lib/fake.ts"],"names":[],"mappings":";;;AAAA;;;;;;;;;;;;;;GAcG;AACH,0DAA0B;AAC1B,6CAAuC;AAEvC;;GAEG;AACH,SAAgB,IAAI,CAAC,QAAgB,EAAE,WAAW,GAAG,KAAK;IACxD,IAAI,WAAW,EAAE;QACf,OAAO,sBAAS,CAAC,QAAQ,CAAC,CAAC;KAC5B;IAED,OAAO,eAAK,CAAC,IAAI,CAAC,KAAK,QAAQ,IAAI,CAAC,CAAC;AACvC,CAAC;AAND,oBAMC"}

@@ -1,4 +1,4 @@
-import { mock } from "intermock";
+import { mock } from "../intermock/build/index";
 import { Limits } from "../utils/limits";
 import { Generator } from "./Generator";
 

@@ -1,5 +1,5 @@
 import { plainToInstance } from "class-transformer";
-import { mock } from "intermock";
+import { mock } from "../intermock/build/index";
 import { Globals } from "../utils/globals";
 import { Limits } from "../utils/limits";
 import { ModuleType } from "../utils/modules";
