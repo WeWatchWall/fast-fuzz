@@ -527,6 +527,15 @@ export class Code {
         methodName = 'constructor';
       }
 
+      // TODO: Assumes every file has at most a single or multiple related classes.
+      //   Look up each class and proceed to find the method from there.
+      //   Maybe don't need to assume that methods are alphabetically ordered.
+      //   It works for now because the lack of multiple inheritance so even
+      //   if it finds the wrong method, it still fits the right one.
+      //   If the methods are not alphabetically sorted, the only thing
+      //   that breaks is the first tier intermock faking but that's
+      //   probably faster without it anyway.
+
       // Get the method signature.
       currentIndex = iString.indexOf(methodName, currentIndex);
       const endSignatureIndex = iString.indexOf(';', currentIndex);
