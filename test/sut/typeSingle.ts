@@ -1,12 +1,15 @@
-import { Fuzz } from "../../src/fast-fuzz";
+import {
+  fuzzArgType,
+  fuzzMethod
+} from "../../src/fast-fuzz";
 import { Reference_Derived } from "./typeReference";
 
 export class Type_Single {
   age: number;
 
-  @Fuzz.method
+  @fuzzMethod
   public static type_single_simple(
-    @Fuzz.argType(Reference_Derived.name)
+    @fuzzArgType(Reference_Derived.name)
     argInstance: Reference_Derived
   ): string {
     if (argInstance === undefined) {
@@ -33,9 +36,9 @@ export class Type_Single {
     return `Branch 0: ${JSON.stringify(arg)}`;
   }
 
-  @Fuzz.method
+  @fuzzMethod
   public static type_single_array(
-    @Fuzz.argType(Reference_Derived.name, 1)
+    @fuzzArgType(Reference_Derived.name, 1)
     argArray: Reference_Derived[]
   ): string {
     if (argArray === undefined) {
@@ -69,9 +72,9 @@ export class Type_Single {
     return `Branch 0: ${JSON.stringify(arg)}`;
   }
 
-  @Fuzz.method
+  @fuzzMethod
   public static type_single_regular(
-    @Fuzz.argType(Reference_Derived.name)
+    @fuzzArgType(Reference_Derived.name)
     argInstance: Reference_Derived
   ): string {
     if (argInstance === undefined) {

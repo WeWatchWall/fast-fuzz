@@ -1,4 +1,7 @@
-import { Fuzz } from "../../src/fast-fuzz";
+import {
+  fuzzArg,
+  fuzzMethod
+} from "../../src/fast-fuzz";
 
 const ints = {
   nil: 0,
@@ -44,9 +47,9 @@ const strings = {
 
 export class Builtins_Limit {
 
-  @Fuzz.method
+  @fuzzMethod
   public static builtin_int_limit(
-    @Fuzz.arg('integer', 0, -10, 10) arg: number
+    @fuzzArg('integer', 0, -10, 10) arg: number
   ): string {
     if (arg === undefined) {
       return `Undefined: ${arg}`;
@@ -84,9 +87,9 @@ export class Builtins_Limit {
     }
   }
 
-  @Fuzz.method
+  @fuzzMethod
   public static builtin_float_limit(
-    @Fuzz.arg('float', 0, -2, 2) arg: number
+    @fuzzArg('float', 0, -2, 2) arg: number
   ): string {
     if (arg === undefined) {
       return `Undefined: ${arg}`;
@@ -132,9 +135,9 @@ export class Builtins_Limit {
     }
   }
 
-  @Fuzz.method
+  @fuzzMethod
   public static builtin_date_limit(
-    @Fuzz.arg(
+    @fuzzArg(
       'date',
       0,
       Date.now() - 3600e3,
@@ -182,9 +185,9 @@ export class Builtins_Limit {
     }
   }
 
-  @Fuzz.method
+  @fuzzMethod
   public static builtin_string_limit(
-    @Fuzz.arg('string', 0, -1, 2) arg: string
+    @fuzzArg('string', 0, -1, 2) arg: string
   ): string {
     const len = arg?.length;
 

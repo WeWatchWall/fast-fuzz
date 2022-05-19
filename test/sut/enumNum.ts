@@ -1,4 +1,7 @@
-import { Fuzz } from "../../src/fast-fuzz";
+import {
+  fuzzArgType,
+  fuzzMethod
+} from "../../src/fast-fuzz";
 
 const literals = {
   nil: 0,
@@ -27,9 +30,9 @@ export enum Direction_Auto {
 
 export class Enum_Num {
 
-  @Fuzz.method
+  @fuzzMethod
   public static enum_num_default(
-    @Fuzz.argType('Direction_Default')
+    @fuzzArgType('Direction_Default')
     arg: Direction_Default
   ): string {
     /* #region  Falsy values */
@@ -76,9 +79,9 @@ export class Enum_Num {
     }
   }
 
-  @Fuzz.method
+  @fuzzMethod
   public static enum_num_auto(
-    @Fuzz.argType('Direction_Auto')
+    @fuzzArgType('Direction_Auto')
     arg: Direction_Auto
   ): string {
     /* #region  Falsy values */

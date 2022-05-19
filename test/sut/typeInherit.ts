@@ -1,4 +1,8 @@
-import { Fuzz } from "../../src/fast-fuzz";
+import {
+  fuzzArgType,
+  fuzzMethod
+} from "../../src/fast-fuzz";
+
 import {
   IReference,
   Reference_Abstract,
@@ -7,9 +11,9 @@ import {
 
 export class Type_Inherit {
 
-  @Fuzz.method
+  @fuzzMethod
   public static type_inherit_simple(
-    @Fuzz.argType(Reference_Base.name)
+    @fuzzArgType(Reference_Base.name)
     argInstance: Reference_Base
   ): string {
     if (argInstance === undefined) {
@@ -33,9 +37,9 @@ export class Type_Inherit {
     return `Branch 0: ${JSON.stringify(arg)}`;
   }
 
-  @Fuzz.method
+  @fuzzMethod
   public static type_inherit_abstract(
-    @Fuzz.argType(Reference_Abstract.name)
+    @fuzzArgType(Reference_Abstract.name)
     argInstance: Reference_Abstract
   ): string {
     if (argInstance === undefined) {
@@ -59,9 +63,9 @@ export class Type_Inherit {
     return `Branch 0: ${JSON.stringify(arg)}`;
   }
 
-  @Fuzz.method
+  @fuzzMethod
   public static type_inherit_interface(
-    @Fuzz.argType('IReference')
+    @fuzzArgType('IReference')
     argInstance: IReference
   ): string {
     if (argInstance === undefined) {

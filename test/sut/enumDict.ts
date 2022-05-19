@@ -1,4 +1,7 @@
-import { Fuzz } from "../../src/fast-fuzz";
+import {
+  fuzzArgType,
+  fuzzMethod
+} from "../../src/fast-fuzz";
 
 const literals = {
   nil: 0,
@@ -42,9 +45,9 @@ export enum Direction_Mix_Auto {
 
 export class Enum_Dict {
 
-  @Fuzz.method
+  @fuzzMethod
   public static enum_dict_num(
-    @Fuzz.argType('Direction_Num')
+    @fuzzArgType('Direction_Num')
     arg: Direction_Num
   ): string {
     /* #region  Falsy values */
@@ -91,9 +94,9 @@ export class Enum_Dict {
     }
   }
 
-  @Fuzz.method
+  @fuzzMethod
   public static enum_dict_mix(
-    @Fuzz.argType('Direction_Mix')
+    @fuzzArgType('Direction_Mix')
     arg: Direction_Mix
   ): string {
     /* #region  Falsy values */
@@ -140,9 +143,9 @@ export class Enum_Dict {
     }
   }
 
-  @Fuzz.method
+  @fuzzMethod
   public static enum_dict_mix_num(
-    @Fuzz.argType('Direction_Mix_Num')
+    @fuzzArgType('Direction_Mix_Num')
     arg: Direction_Mix_Num
   ): string {
     /* #region  Falsy values */
@@ -189,9 +192,9 @@ export class Enum_Dict {
     }
   }
 
-  @Fuzz.method
+  @fuzzMethod
   public static enum_dict_mix_auto(
-    @Fuzz.argType('Direction_Mix_Auto')
+    @fuzzArgType('Direction_Mix_Auto')
     arg: Direction_Mix_Auto
   ): string {
     /* #region  Falsy values */

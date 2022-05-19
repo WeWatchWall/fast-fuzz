@@ -1,4 +1,7 @@
-import { Fuzz } from "../../src/fast-fuzz";
+import {
+  fuzzArg,
+  fuzzMethod
+} from "../../src/fast-fuzz";
 
 const ints = {
   nil: 0,
@@ -44,9 +47,9 @@ const strings = {
 
 export class Builtins_Default {
 
-  @Fuzz.method
+  @fuzzMethod
   public static builtin_bool_default(
-    @Fuzz.arg('boolean') arg: boolean
+    @fuzzArg('boolean') arg: boolean
   ): string {
     switch (arg) {
       case undefined:
@@ -65,9 +68,9 @@ export class Builtins_Default {
     }
   }
 
-  @Fuzz.method
+  @fuzzMethod
   public static builtin_int_default(
-    @Fuzz.arg('integer') arg: number
+    @fuzzArg('integer') arg: number
   ): string {
     if (arg === undefined) {
       return `Undefined: ${arg}`;
@@ -105,9 +108,9 @@ export class Builtins_Default {
     }
   }
 
-  @Fuzz.method
+  @fuzzMethod
   public static builtin_float_default(
-    @Fuzz.arg('float') arg: number
+    @fuzzArg('float') arg: number
   ): string {
     if (arg === undefined) {
       return `Undefined: ${arg}`;
@@ -153,9 +156,9 @@ export class Builtins_Default {
     }
   }
 
-  @Fuzz.method
+  @fuzzMethod
   public static builtin_date_default(
-    @Fuzz.arg('date') arg1: Date
+    @fuzzArg('date') arg1: Date
   ): string {
     const arg: number = arg1?.getTime();
 
@@ -197,9 +200,9 @@ export class Builtins_Default {
     }
   }
 
-  @Fuzz.method
+  @fuzzMethod
   public static builtin_string_default(
-    @Fuzz.arg('string') arg: string
+    @fuzzArg('string') arg: string
   ): string {
     const len = arg?.length;
 

@@ -1,8 +1,25 @@
 import 'reflect-metadata';
 import { fastFuzz } from './fuzz/fuzz';
-import { Fuzz } from './decorators';
+
+import { 
+  arg as fuzzArg,
+  argType as fuzzArgType,
+  method as fuzzMethod,
+  prop as fuzzProp,
+  propType as fuzzPropType,
+  skipArg as fuzzSkipArg,
+  skipMethod as fuzzSkipMethod,
+  skipProp as fuzzSkipProp
+} from './decorators';
 
 export { 
   fastFuzz,
-  Fuzz
+  fuzzArg,
+  fuzzArgType,
+  fuzzMethod,
+  fuzzProp,
+  fuzzPropType,
+  fuzzSkipArg,
+  fuzzSkipMethod,
+  fuzzSkipProp
 }

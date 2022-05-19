@@ -1,6 +1,9 @@
-// @ts-nocheck
-const FlatPromise = require("flat-promise");
-import { Fuzz } from '../../src/fast-fuzz';
+// const FlatPromise = require("flat-promise");
+import {
+  fuzzArg,
+  fuzzMethod,
+  fuzzProp
+} from "../../src/fast-fuzz";
 
 const AGE_17 = 17;
 const AGE_22 = 22;
@@ -8,13 +11,13 @@ const CODE_7 = 7;
 const CODE_10 = 10;
 
 export class Regular_Instance {
-  @Fuzz.prop("string") name: string;
-  @Fuzz.prop("integer") age: number;
-  @Fuzz.prop("integer") code: number;
+  @fuzzProp("string") name: string;
+  @fuzzProp("integer") age: number;
+  @fuzzProp("integer") code: number;
   
-  @Fuzz.method
+  @fuzzMethod
   public regular_instance_simple (
-    @Fuzz.arg("integer") age: number
+    @fuzzArg("integer") _age: number
   ): boolean {
     switch (this.age) {
       case AGE_22:
@@ -28,11 +31,11 @@ export class Regular_Instance {
     return true;
   }
 
-  @Fuzz.method
+  @fuzzMethod
   public regular_instance_regular (
-    @Fuzz.arg("string") name: string,
-    @Fuzz.arg("integer") age: number,
-    @Fuzz.arg("integer") code: number
+    @fuzzArg("string") _name: string,
+    @fuzzArg("integer") _age: number,
+    @fuzzArg("integer") _code: number
   ): boolean {
     if (this.code == CODE_7) {
       if (this.name == 'Bob') {
@@ -46,11 +49,11 @@ export class Regular_Instance {
     return true;
   }
 
-  @Fuzz.method
+  @fuzzMethod
   public async regular_instance_IAsync(
-    @Fuzz.arg("string") name: string,
-    @Fuzz.arg("integer") age: number,
-    @Fuzz.arg("integer") code: number
+    @fuzzArg("string") _name: string,
+    @fuzzArg("integer") _age: number,
+    @fuzzArg("integer") _code: number
   ): Promise<boolean> {
     if (this.code == CODE_7) {
       if (this.name == 'Bob') {
@@ -64,11 +67,11 @@ export class Regular_Instance {
     return true;
   }
 
-  // @Fuzz.method
+  // @fuzzMethod
   // public async regular_instance_async(
-  //   @Fuzz.arg("string") name: string,
-  //   @Fuzz.arg("integer") age: number,
-  //   @Fuzz.arg("integer") code: number
+  //   @fuzzArg("string") name: string,
+  //   @fuzzArg("integer") age: number,
+  //   @fuzzArg("integer") code: number
   // ): Promise<boolean> {
   //   const flatPromise = new FlatPromise();
 

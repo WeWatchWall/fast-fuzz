@@ -1,4 +1,7 @@
-import { Fuzz } from "../../src/fast-fuzz";
+import {
+  fuzzArgType,
+  fuzzMethod
+} from "../../src/fast-fuzz";
 
 const literals = {
   nil: 0,
@@ -20,9 +23,9 @@ export enum Direction_Array {
 
 export class Enum_Num_Array {
 
-  @Fuzz.method
+  @fuzzMethod
   public static enum_num_array(
-    @Fuzz.argType('Direction_Array', 1)
+    @fuzzArgType('Direction_Array', 1)
     argArray: Direction_Array[]
   ): string {
 

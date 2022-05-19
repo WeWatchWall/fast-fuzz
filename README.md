@@ -91,11 +91,11 @@ The target code usually needs to be decorated with:
 - Property decorators. This is how objects are created!
 
 ```typescript
-import { Fuzz } from 'fast-fuzz';
+import { fuzzProp } from 'fast-fuzz';
 
 export class Foo {
   
-  @Fuzz.prop(
+  @fuzzProp(
     'boolean' | 'integer' | 'float' | 'date' | 'string'
     dimension, // Dimension of array. For single value (default) = 0.
     
@@ -107,29 +107,29 @@ export class Foo {
 }
 ```
 
-Use the ```@Fuzz.propType(Class.name, dimension)``` decorator for custom types, abstract, and interfaces.
-Properties can be set to ```undefined``` or ```null``` using the ```@Fuzz.skipProp``` decorator.
+Use the ```@fuzzPropType(Class.name, dimension)``` decorator for custom types, abstract, and interfaces.
+Properties can be set to ```undefined``` or ```null``` using the ```@fuzzSkipProp``` decorator.
 
 - Method and argument decorators :
 
 ```typescript
-import { Fuzz } from 'fast-fuzz';
+import { fuzzMethod, fuzzArg } from 'fast-fuzz';
 
 export class Foo {
   
-  @Fuzz.method  // Always necessary to pick up the method, logs an error if it's missing.
+  @fuzzMethod  // Always necessary to pick up the method, logs an error if it's missing.
   bar (
-    @Fuzz.arg('built-in') arg // Same API as the property.
+    @fuzzArg('built-in') arg: Bar // Same API as the property.
   ) {
     return arg;
   }
 }
 ```
 
-Use the ```@Fuzz.argType(Class.name, dimension)``` decorator for custom types, abstract, and interfaces.
-Methods can be skipped from testing using the ```@Fuzz.skipMethod``` decorator.
+Use the ```@fuzzArgType(Class.name, dimension)``` decorator for custom types, abstract, and interfaces.
+Methods can be skipped from testing using the ```@fuzzSkipMethod``` decorator.
 
-Arguments can be set to ```undefined``` or ```null``` using the ```@Fuzz.skipArg``` decorator.
+Arguments can be set to ```undefined``` or ```null``` using the ```@fuzzSkipArg``` decorator.
 
 Without decoration, it is still able to fuzz any classes that have properties *and* methods
 with arguments that are restricted to only built-in types (excluding Date).

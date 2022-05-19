@@ -1,16 +1,23 @@
-import { Fuzz } from '../../src/fast-fuzz';
+import {
+  fuzzArg,
+  fuzzMethod,
+  fuzzProp,
+  fuzzSkipArg,
+  fuzzSkipProp,
+  fuzzSkipMethod
+} from "../../src/fast-fuzz";
 
 const AGE_17 = 17;
 const AGE_22 = 22;
 
 export class Skip {
-  @Fuzz.prop("string") prop_1: string;
-  @Fuzz.skipProp age: number;
-  @Fuzz.prop("integer", 0, 5, 10) code: number;
+  @fuzzProp("string") prop_1: string;
+  @fuzzSkipProp age: number;
+  @fuzzProp("integer", 0, 5, 10) code: number;
 
-  @Fuzz.method
+  @fuzzMethod
   public skip_instance_simple (
-    @Fuzz.arg("integer", 0, 15, 25) _age: number
+    @fuzzArg("integer", 0, 15, 25) _age: number
   ): boolean {
 
     switch (this.age) {
@@ -24,11 +31,11 @@ export class Skip {
     return true;
   }
 
-  @Fuzz.method
+  @fuzzMethod
   public static skip_static_simple(
-    @Fuzz.arg("string") _name: string,
-    @Fuzz.skipArg age: number,
-    @Fuzz.arg("integer", 0, 5, 10) _code: number
+    @fuzzArg("string") _name: string,
+    @fuzzSkipArg age: number,
+    @fuzzArg("integer", 0, 5, 10) _code: number
   ): boolean {
 
     switch (age) {
@@ -42,11 +49,11 @@ export class Skip {
     return true;
   }
 
-  @Fuzz.skipMethod
+  @fuzzSkipMethod
   public static skip_static_skip(
-    @Fuzz.arg("string") _name: string,
-    @Fuzz.skipArg age: number,
-    @Fuzz.arg("integer", 0, 5, 10) _code: number
+    @fuzzArg("string") _name: string,
+    @fuzzSkipArg age: number,
+    @fuzzArg("integer", 0, 5, 10) _code: number
   ): boolean {
 
     switch (age) {
@@ -60,11 +67,11 @@ export class Skip {
     return true;
   }
 
-  @Fuzz.method
+  @fuzzMethod
   public static skip_static_all(
-    @Fuzz.skipArg _name: string,
-    @Fuzz.skipArg age: number,
-    @Fuzz.skipArg _code: number
+    @fuzzSkipArg _name: string,
+    @fuzzSkipArg age: number,
+    @fuzzSkipArg _code: number
   ): boolean {
 
     switch (age) {
@@ -78,11 +85,11 @@ export class Skip {
     return true;
   }
 
-  @Fuzz.skipMethod
+  @fuzzSkipMethod
   public skip_instance_skip(
-    @Fuzz.skipArg _name: string,
-    @Fuzz.skipArg _age: number,
-    @Fuzz.skipArg _code: number
+    @fuzzSkipArg _name: string,
+    @fuzzSkipArg _age: number,
+    @fuzzSkipArg _code: number
   ): boolean {
 
     switch (this.age) {

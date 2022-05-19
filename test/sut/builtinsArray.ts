@@ -1,4 +1,7 @@
-import { Fuzz } from "../../src/fast-fuzz";
+import {
+  fuzzArg,
+  fuzzMethod
+} from "../../src/fast-fuzz";
 
 const ints = {
   nil: 0,
@@ -44,9 +47,9 @@ const strings = {
 
 export class Builtins_Array {
 
-  @Fuzz.method
+  @fuzzMethod
   public static builtin_bool_array(
-    @Fuzz.arg('boolean', 1) argArray: boolean[]
+    @fuzzArg('boolean', 1) argArray: boolean[]
   ): string {
 
     switch (argArray) {
@@ -77,9 +80,9 @@ export class Builtins_Array {
     }
   }
 
-  @Fuzz.method
+  @fuzzMethod
   public static builtin_int_array(
-    @Fuzz.arg('integer', 1) argArray: number[]
+    @fuzzArg('integer', 1) argArray: number[]
   ): string {
 
     switch (argArray) {
@@ -132,9 +135,9 @@ export class Builtins_Array {
     }
   }
 
-  @Fuzz.method
+  @fuzzMethod
   public static builtin_float_array(
-    @Fuzz.arg('float', 1) argArray: number[]
+    @fuzzArg('float', 1) argArray: number[]
   ): string {
 
     switch (argArray) {
@@ -195,9 +198,9 @@ export class Builtins_Array {
     }
   }
 
-  @Fuzz.method
+  @fuzzMethod
   public static builtin_date_array(
-    @Fuzz.arg('date', 1) argArray: Date[]
+    @fuzzArg('date', 1) argArray: Date[]
   ): string {
 
     switch (argArray) {
@@ -253,9 +256,9 @@ export class Builtins_Array {
     }
   }
 
-  @Fuzz.method
+  @fuzzMethod
   public static builtin_string_array(
-    @Fuzz.arg('string', 1) argArray: string[]
+    @fuzzArg('string', 1) argArray: string[]
   ): string {
 
     switch (argArray) {

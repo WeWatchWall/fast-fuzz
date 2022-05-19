@@ -1,12 +1,14 @@
-// @ts-nocheck
 const FlatPromise = require("flat-promise");
-import { Fuzz } from '../../src/fast-fuzz';
+import {
+  fuzzArg,
+  fuzzMethod
+} from "../../src/fast-fuzz";
 
 export class Simple_Static {
   
-  @Fuzz.method
+  @fuzzMethod
   public static simple_static_simple (
-    @Fuzz.arg("integer") age: number
+    @fuzzArg("integer") age: number
   ): boolean {
 
     switch (age) {
@@ -20,11 +22,11 @@ export class Simple_Static {
     return true;
   }
 
-  @Fuzz.method
+  @fuzzMethod
   public static simple_static_regular (
-    @Fuzz.arg("string") name: string,
-    @Fuzz.arg("integer") age: number,
-    @Fuzz.arg("integer") code: number
+    @fuzzArg("string") name: string,
+    @fuzzArg("integer") age: number,
+    @fuzzArg("integer") code: number
   ): boolean {
     if (code == 7) {
       if (name == 'Bob') {
@@ -39,11 +41,11 @@ export class Simple_Static {
     return true;
   }
 
-  @Fuzz.method
+  @fuzzMethod
   public static async simple_static_IAsync(
-    @Fuzz.arg("string") name: string,
-    @Fuzz.arg("integer") age: number,
-    @Fuzz.arg("integer") code: number
+    @fuzzArg("string") name: string,
+    @fuzzArg("integer") age: number,
+    @fuzzArg("integer") code: number
   ): Promise<boolean> {
     if (code == 7) {
       if (name == 'Bob') {
@@ -57,11 +59,11 @@ export class Simple_Static {
     return true;
   }
 
-  @Fuzz.method
+  @fuzzMethod
   public static async simple_static_async(
-    @Fuzz.arg("string") name: string,
-    @Fuzz.arg("integer") age: number,
-    @Fuzz.arg("integer") code: number
+    @fuzzArg("string") name: string,
+    @fuzzArg("integer") age: number,
+    @fuzzArg("integer") code: number
   ): Promise<boolean> {
     const flatPromise = new FlatPromise();
 

@@ -1,4 +1,6 @@
-import { Fuzz } from "../../src/fast-fuzz";
+import {
+  fuzzProp
+} from "../../src/fast-fuzz";
 
 export interface IReference {
   name: string;
@@ -9,9 +11,9 @@ export interface IReference {
 }
 
 export abstract class Reference_Abstract implements IReference {
-  @Fuzz.prop("string") name: string;
-  @Fuzz.prop("integer") age: number;
-  @Fuzz.prop("integer") code: number;
+  @fuzzProp("string") name: string;
+  @fuzzProp("integer") age: number;
+  @fuzzProp("integer") code: number;
 
   constructor(init: Partial<Reference_Base>) {
     Object.assign(this, init);
