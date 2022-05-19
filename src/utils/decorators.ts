@@ -23,7 +23,7 @@ export class Decorators {
   private static args: (MethodArg)[] = [];
 
   static addArgument (
-    target: Object,
+    target: any,
     key: string | symbol,
     arg: MethodArg
   ): void {
@@ -42,7 +42,7 @@ export class Decorators {
   }
 
   static addMethod(
-    target: Object,
+    target: any,
     key: string | symbol,
     file: string,
     method: ModuleMethod
@@ -137,7 +137,7 @@ export class Decorators {
   }
   
   static skipMethod(
-    target: Object,
+    target: any,
     key: string | symbol
   ): void {
     Decorators.resetMethod();
@@ -200,7 +200,7 @@ export class Decorators {
 
   private static checkMethod(
     stackIndex: number,
-    target: Object,
+    target: any,
     key: string | symbol,
     index: number
   ): boolean {

@@ -89,7 +89,6 @@ export abstract class Generator implements IGenerator {
       ) {
         return;
       } else if (
-        num === -0 ||
         num === 0 ||
         num === Number.MIN_VALUE,
         num === -1 * Number.MIN_VALUE
@@ -137,61 +136,62 @@ export abstract class Generator implements IGenerator {
    */
   protected static next(generator: Generator): any {
 
-    switch (generator.dimension) {
-      case 0:
-        if (generator.values.length === 0) {
-          Generator.generate(generator, 1);
-        }
+    if (generator.dimension === 0) {
+      if (generator.values.length === 0) {
+        Generator.generate(generator, 1);
+      }
 
-        return generator.values.pop();
-      case 1:
-        if (Math.random() > Generator.P_FALSY) {
-          return Generator.DEFAULT_FALSY[
-            Generator.getRandomIndex(Generator.DEFAULT_FALSY.length)
-          ];
-        }
+      return generator.values.pop();
+    } else if (generator.dimension === 1) {
+      if (Math.random() > Generator.P_FALSY) {
+        return Generator.DEFAULT_FALSY[
+          Generator.getRandomIndex(Generator.DEFAULT_FALSY.length)
+        ];
+      }
 
-        const limit = generator.limits.array;
-        const size = Generator.getRandomInt(
-          limit.min,
-          limit.max
+      const limit = generator.limits.array;
+      const size = Generator.getRandomInt(
+        limit.min,
+        limit.max
+      );
+
+      if (size > generator.values.length) {
+        Generator.generate(generator, size);
+      }
+
+      const result: any[] = [];
+      for (let index = 0; index < size; index++) {
+        result.push(generator.values.pop());
+      }
+      return result;
+    }  else {
+      if (Math.random() > Generator.P_FALSY) {
+        return Generator.DEFAULT_FALSY[
+          Generator.getRandomIndex(Generator.DEFAULT_FALSY.length)
+        ];
+      }
+
+      const dLimit = generator.limits.array;
+      const dSizes: number[] = [];
+      let totalSize = 1;
+      for (let index = 0; index < generator.dimension; index++) {
+        const dSize = Generator.getRandomInt(
+          dLimit.min + 1,
+          dLimit.max
         );
+        dSizes.push(dSize);
+        totalSize *= dSize;
+      }
 
-        if (size > generator.values.length) {
-          Generator.generate(generator, size);
-        }
+      if (totalSize > generator.values.length) {
+        Generator.generate(generator, totalSize);
+      }
 
-        const result: any[] = [];
-        for (let index = 0; index < size; index++) {
-          result.push(generator.values.pop());
-        }
-        return result;
-      default:
-        if (Math.random() > Generator.P_FALSY) {
-          return Generator.DEFAULT_FALSY[
-            Generator.getRandomIndex(Generator.DEFAULT_FALSY.length)
-          ];
-        }
-
-        const dLimit = generator.limits.array;
-        const dSizes: number[] = [];
-        let totalSize = 1;
-        for (let index = 0; index < generator.dimension; index++) {
-          const dSize = Generator.getRandomInt(
-            dLimit.min + 1,
-            dLimit.max
-          );
-          dSizes.push(dSize);
-          totalSize *= dSize;
-        }
-
-        if (totalSize > generator.values.length) {
-          Generator.generate(generator, totalSize);
-        }
-
-        // @ts-ignore — `Type instantiation is excessively deep...`
-        return makeMatrix(dSizes, () => generator.values.pop());
+      // eslint-disable-next-line
+      // @ts-ignore — `Type instantiation is excessively deep...`
+      return makeMatrix(dSizes, () => generator.values.pop());
     }
+  
   }
 
   /**

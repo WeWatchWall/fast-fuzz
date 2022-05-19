@@ -29,61 +29,57 @@ export class GeneratorDate extends Generator {
   generate(count: number): Date[] {
     const result: any[] = [];
 
-    switch (Generator.mode) {
-      case Mode.Falsy:
-        for (let index = 0; index < count; index++) {
+    if (Generator.mode === Mode.Falsy) {
+      for (let index = 0; index < count; index++) {
+        result.push(
+          this.falsyLiterals[
+            Generator.getRandomIndex(this.falsyLiterals.length)
+          ]
+        );
+      }
+    } else if (Generator.mode === Mode.Stuff) {
+      for (let index = 0; index < count; index++) {
+        if (
+          this.literals.length === 0 ||
+          Math.random() > Generator.P_FALSY
+        ) {
           result.push(
             this.falsyLiterals[
               Generator.getRandomIndex(this.falsyLiterals.length)
             ]
           );
+          continue;
         }
-        break;
-      case Mode.Stuff:
-        for (let index = 0; index < count; index++) {
-          if (
-            this.literals.length === 0 ||
-            Math.random() > Generator.P_FALSY
-          ) {
-            result.push(
-              this.falsyLiterals[
-                Generator.getRandomIndex(this.falsyLiterals.length)
-              ]
-            );
-            continue;
-          }
 
+        result.push(
+          this.literals[Generator.getRandomIndex(this.literals.length)]
+        );
+      }
+    } else {
+      const [min, max]: [number, number] = GeneratorDate.getLimits(
+        Generator.mode,
+        this.limits.date.min,
+        this.limits.date.max
+      );
+
+      for (let index = 0; index < count; index++) {
+        const random = Math.random(); 
+        if (random > Generator.P_FALSY) {
+          result.push(
+            this.falsyLiterals[
+              Generator.getRandomIndex(this.falsyLiterals.length)
+            ]
+          );
+          continue;
+        } else if (random > Generator.P_STUFF && this.literals.length > 0) {
           result.push(
             this.literals[Generator.getRandomIndex(this.literals.length)]
           );
+          continue;
         }
-        break;
-      default:
-        const [min, max]: [number, number] = GeneratorDate.getLimits(
-          Generator.mode,
-          this.limits.date.min,
-          this.limits.date.max
-        );
 
-        for (let index = 0; index < count; index++) {
-          const random = Math.random(); 
-          if (random > Generator.P_FALSY) {
-            result.push(
-              this.falsyLiterals[
-                Generator.getRandomIndex(this.falsyLiterals.length)
-              ]
-            );
-            continue;
-          } else if (random > Generator.P_STUFF && this.literals.length > 0) {
-            result.push(
-              this.literals[Generator.getRandomIndex(this.literals.length)]
-            );
-            continue;
-          }
-
-          result.push(new Date(Generator.getRandomInt(min, max)));
-        }
-        break;
+        result.push(new Date(Generator.getRandomInt(min, max)));
+      }
     }
 
     return result;

@@ -4,11 +4,11 @@ import { Code } from "./code";
 /**
  * Globals to communicate accross the test environment.
  */
-export namespace Globals {
-  export var isTest = false;
-  export var codeUtil: Code;
+export class Globals {
+  static isTest = false;
+  static codeUtil: Code;
 
-  export var literals: string[] = [];
-  export var methodCount = 0;
-  export var mode: Mode = Mode.Falsy;
+  static literals: string[] = [];
+  static methodCount = 0;
+  static mode: Mode = Mode.Falsy;
 }

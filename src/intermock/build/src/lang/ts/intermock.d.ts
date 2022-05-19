@@ -23,5 +23,5 @@ export declare type OutputType = 'object' | 'json' | 'string';
  *
  * @param options Intermock general options object
  */
-export declare function mock(options: Options): string | Record<string | number, {}>;
+export declare function mock(options: Options): string | Record<string | number, any>;
 export {};

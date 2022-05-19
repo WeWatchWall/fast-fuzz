@@ -208,29 +208,23 @@ export class Code {
 
     function findLiterals(node: ts.Node) {
       let isNew = false;
-      switch (node.kind) {
-        case ts.SyntaxKind.Constructor:
-          isNew = true;
-          break;
-        case ts.SyntaxKind.FunctionDeclaration:
-          const isSkipNested =
-            (currentIndex === moduleMethods.length - 1) ||
-            moduleMethods[currentIndex + 1].name !== (<ts.FunctionDeclaration>node).name.escapedText;
-          isNew = !isSkipNested;
-          break;
-        case ts.SyntaxKind.MethodDeclaration:
-          // TODO: refactor with detect method type from tplant
-          const isSkipModifier: ts.Modifier = node.modifiers?.find((modifier: ts.Modifier) => 
-            [
-              ts.SyntaxKind.AbstractKeyword,
-              ts.SyntaxKind.PrivateKeyword,
-              ts.SyntaxKind.ProtectedKeyword
-            ].includes(modifier.kind)
-          );
-          isNew = isSkipModifier === undefined;
-          break;
-        default:
-          break;
+      if (node.kind === ts.SyntaxKind.Constructor) {
+        isNew = true;
+      } else if (node.kind === ts.SyntaxKind.FunctionDeclaration) {
+        const isSkipNested =
+          (currentIndex === moduleMethods.length - 1) ||
+          moduleMethods[currentIndex + 1].name !== (<ts.FunctionDeclaration>node).name.escapedText;
+        isNew = !isSkipNested;
+      } else if (node.kind === ts.SyntaxKind.MethodDeclaration) {
+        // TODO: refactor with detect method type from tplant
+        const isSkipModifier: ts.Modifier = node.modifiers?.find((modifier: ts.Modifier) => 
+          [
+            ts.SyntaxKind.AbstractKeyword,
+            ts.SyntaxKind.PrivateKeyword,
+            ts.SyntaxKind.ProtectedKeyword
+          ].includes(modifier.kind)
+        );
+        isNew = isSkipModifier === undefined;
       }
 
       if (isNew) { currentIndex++; }
@@ -239,22 +233,20 @@ export class Code {
         return;
       }
 
-      switch (node.kind) {
-        case ts.SyntaxKind.NumericLiteral:
-        case ts.SyntaxKind.BigIntLiteral:
-        case ts.SyntaxKind.StringLiteral:
-          // Check if this literal is in a decorator.
-          let isDecorator = false;
-          let parentNode = node;
-          while (parentNode.parent !== undefined) {
-            isDecorator = isDecorator || parentNode.kind === ts.SyntaxKind.Decorator;
-            parentNode = parentNode.parent;
-          }
+      if (
+        node.kind === ts.SyntaxKind.NumericLiteral ||
+        node.kind === ts.SyntaxKind.BigIntLiteral ||
+        node.kind === ts.SyntaxKind.StringLiteral
+      ) {
+         // Check if this literal is in a decorator.
+         let isDecorator = false;
+         let parentNode = node;
+         while (parentNode.parent !== undefined) {
+           isDecorator = isDecorator || parentNode.kind === ts.SyntaxKind.Decorator;
+           parentNode = parentNode.parent;
+         }
 
-          if (!isDecorator) { moduleMethods[currentIndex].literals.push(node.getText()); }          
-          break;
-        default:
-          break;
+         if (!isDecorator) { moduleMethods[currentIndex].literals.push(node.getText()); }
       }
 
       ts.forEachChild(node, findLiterals);
@@ -275,56 +267,51 @@ export class Code {
    * @returns  The array of ModuleMethods in the methodsOut parameter.
    */
   private static getMethods(filePart: any, methodsOut: ModuleMethod[], namespaces: string[], className?: string): void {
-    switch (filePart.componentKind) {
-      case ComponentKind.NAMESPACE:
-        // Handle nested namespaces with recursion.
-        filePart.parts.forEach((fileSubPart: any) => {
-          Code.getMethods(fileSubPart, methodsOut, namespaces.concat([filePart.name]));
-        });
-        break;
-      case ComponentKind.CLASS:
-        // Loop over the constructor and class methods and invoke recursively.
-        filePart.constructorMethods.forEach((fileSubPart: any) => {
-          Code.getMethods(fileSubPart, methodsOut, namespaces, filePart.name);
-        });
-        filePart.members.forEach((fileSubPart: any) => {
-          Code.getMethods(fileSubPart, methodsOut, namespaces, filePart.name);
-        });
-        break;
-      case ComponentKind.METHOD:
-        // Sanity check for public non-abstract methods.
-        // TODO: refactor with detect function type from typescript
-        if (
-          filePart.modifier !== 'public' ||
-          filePart.isAbstract ||
-          // TODO: might need an option for module functions?
-          className === undefined
-        ) {
-          return;
-        }
+    if (filePart.componentKind === ComponentKind.NAMESPACE) {
+      // Handle nested namespaces with recursion.
+      filePart.parts.forEach((fileSubPart: any) => {
+        Code.getMethods(fileSubPart, methodsOut, namespaces.concat([filePart.name]));
+      });
+    } else if (filePart.componentKind === ComponentKind.CLASS) {
+      // Loop over the constructor and class methods and invoke recursively.
+      filePart.constructorMethods.forEach((fileSubPart: any) => {
+        Code.getMethods(fileSubPart, methodsOut, namespaces, filePart.name);
+      });
+      filePart.members.forEach((fileSubPart: any) => {
+        Code.getMethods(fileSubPart, methodsOut, namespaces, filePart.name);
+      });
+    } else if (filePart.componentKind === ComponentKind.METHOD) {
+      // Sanity check for public non-abstract methods.
+      // TODO: refactor with detect function type from typescript
+      if (
+        filePart.modifier !== 'public' ||
+        filePart.isAbstract ||
+        // TODO: might need an option for module functions?
+        className === undefined
+      ) {
+        return;
+      }
 
-        // Construct and output the method object.
-        const method = new ModuleMethod({
-          name: filePart.name,
-          className,
-          namespaces,
-          isAbstract: filePart.isAbstract,
-          isAsync: filePart.isAsync,
-          isStatic: filePart.isStatic,
-          literals: [],
-          test: {
-            args: [],
-            isStart: false,
-            generators: []
-          },
-          // TODO: filter out functions?
-          args: filePart.parameters.map((arg: any) => arg.name)
-        });
-        methodsOut.push(method);
-        break;
-      default:
-        break;
+      // Construct and output the method object.
+      const method = new ModuleMethod({
+        name: filePart.name,
+        className,
+        namespaces,
+        isAbstract: filePart.isAbstract,
+        isAsync: filePart.isAsync,
+        isStatic: filePart.isStatic,
+        literals: [],
+        test: {
+          args: [],
+          isStart: false,
+          generators: []
+        },
+        // TODO: filter out functions?
+        args: filePart.parameters.map((arg: any) => arg.name)
+      });
+      methodsOut.push(method);
     }
+
   }
 
   /**
@@ -337,64 +324,58 @@ export class Code {
    * @returns  The array of ModuleMethods in the methodsOut parameter.
    */
   private getTypes(file: string, filePart: any, typesOut: ModuleType[], namespaces: string[]): void {
-    switch (filePart.componentKind) {
-      case ComponentKind.NAMESPACE:
-        // Handle nested namespaces with recursion.
-        filePart.parts.forEach((fileSubPart: any) => {
-          this.getTypes(file, fileSubPart, typesOut, namespaces.concat([filePart.name]));
-        });
-        break;
-      case ComponentKind.ENUM:
-        typesOut.push(new ModuleType({
-          name: filePart.name,
-          namespaces: namespaces,
-          file: file,
-          kind: 'enum',
-          inherits: []
-        }));
-        break;
-      case ComponentKind.INTERFACE:
-        typesOut.push(new ModuleType({
-          name: filePart.name,
-          namespaces: namespaces,
-          file: file,
-          kind: 'interface',
-          inherits: []
-        }));
-        break;
-      case ComponentKind.CLASS:
-        const result = new ModuleType({
-          name: filePart.name,
-          namespaces: namespaces,
-          file: file,
-          kind: 'class',
-          isAbstract: filePart.isAbstract,
-          inherits: []
-        });
+    if (filePart.componentKind === ComponentKind.NAMESPACE) {
+      // Handle nested namespaces with recursion.
+      filePart.parts.forEach((fileSubPart: any) => {
+        this.getTypes(file, fileSubPart, typesOut, namespaces.concat([filePart.name]));
+      });
+    } else if (filePart.componentKind === ComponentKind.ENUM) {
+      typesOut.push(new ModuleType({
+        name: filePart.name,
+        namespaces: namespaces,
+        file: file,
+        kind: 'enum',
+        inherits: []
+      }));
+    } else if (filePart.componentKind === ComponentKind.INTERFACE) {
+      typesOut.push(new ModuleType({
+        name: filePart.name,
+        namespaces: namespaces,
+        file: file,
+        kind: 'interface',
+        inherits: []
+      }));
+    } else if (filePart.componentKind === ComponentKind.CLASS) {
+      const result = new ModuleType({
+        name: filePart.name,
+        namespaces: namespaces,
+        file: file,
+        kind: 'class',
+        isAbstract: filePart.isAbstract,
+        inherits: []
+      });
 
-        if (filePart.extendsClass !== undefined) {
-          result.inherits.push([
-            this.getJsFile(path.resolve(filePart.extendsClassFile)),
-            filePart.extendsClass
-              .substring(Math.max(0, filePart.extendsClass.lastIndexOf('.')))
-              .replace('.', '')
-          ]);
-        }
+      if (filePart.extendsClass !== undefined) {
+        result.inherits.push([
+          this.getJsFile(path.resolve(filePart.extendsClassFile)),
+          filePart.extendsClass
+            .substring(Math.max(0, filePart.extendsClass.lastIndexOf('.')))
+            .replace('.', '')
+        ]);
+      }
 
-        filePart.implementsInterfaces.forEach((iName: string, index: number) => {
-          result.inherits.push([
-            this.getJsFile(path.resolve(filePart.implementsInterfacesFiles[index])),
-            iName
-              .substring(Math.max(0, iName.lastIndexOf('.')))
-              .replace('.', '')
-          ]);
-        });
+      filePart.implementsInterfaces.forEach((iName: string, index: number) => {
+        result.inherits.push([
+          this.getJsFile(path.resolve(filePart.implementsInterfacesFiles[index])),
+          iName
+            .substring(Math.max(0, iName.lastIndexOf('.')))
+            .replace('.', '')
+        ]);
+      });
 
-        typesOut.push(result);
-        break;
-      default:
-        break;
+      typesOut.push(result);
     }
+
   }
 
   /**

@@ -14,4 +14,4 @@
  * limitations under the License.
  */
 import { Options } from './lang/ts/intermock';
-export declare function mock(options: Options): string | Record<string | number, {}>;
+export declare function mock(options: Options): string | Record<string | number, any>;

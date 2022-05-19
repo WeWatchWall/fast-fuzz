@@ -24,7 +24,6 @@ module.exports = {
     ecmaVersion: 2020
   },
   "ignorePatterns": [
-    "istanbuljs/*",
     "dist/*",
     "*.test.js",
     ".eslintrc.js",

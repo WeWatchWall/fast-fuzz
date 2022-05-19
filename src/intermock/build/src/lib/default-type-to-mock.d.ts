@@ -1,3 +1,4 @@
+/* eslint-disable */
 export declare const supportedPrimitiveTypes: {
     [key: string]: boolean;
 };

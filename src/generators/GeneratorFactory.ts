@@ -10,7 +10,7 @@ import { GeneratorType } from "./GeneratorType";
 import { IGenerator } from "./IGenerator";
 import { Mode } from "./Mode";
 
-export namespace GeneratorFactory {
+export class GeneratorFactory {
   
   /**
    * Factory method for generators for the built-in types.
@@ -22,7 +22,7 @@ export namespace GeneratorFactory {
    * @param [max] 
    * @returns init 
    */
-   export function init(
+   static init(
     type: BuiltIn,
     dimension = 0,
     literals: string[],
@@ -54,7 +54,7 @@ export namespace GeneratorFactory {
    * @param [dimension]
    * @param [index] 
    */
-  export function initType(
+  static initType(
     type: ModuleType,
     dimension = 0,
     index?: number,

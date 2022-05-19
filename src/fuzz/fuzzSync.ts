@@ -14,8 +14,8 @@ const MODE_SCALE = 1.5;
 // Main fuzzing function that runs the tests and reports the results. 
 export function fuzzSync(
   method: ModuleMethod,
-  getArgs: Function,
-  testFunc: Function,
+  getArgs: Function,  // eslint-disable-line
+  testFunc: Function, // eslint-disable-line
   filePath: string,
   maxTime = 1e4,
   maxRuns = 1e5
@@ -66,6 +66,7 @@ export function fuzzSync(
     // Test loop stats.
     let isExpired = false;
 
+    // eslint-disable-next-line
     while (true) {
       // Check the running stats for termination.
       if (runCount % maxRunsCheck == 0) {
