@@ -51,7 +51,7 @@ export function fuzzSync(
     Globals.mode = mode;
 
     // Vary the number of runs based on target area.
-    let runCount: number = 0;
+    let runCount = 0;
     const maxRunsMode: number = maxRunsModes.pop();
     const maxRunsCheck: number = Math.pow(10, Math.max(1, Math.floor(Math.log10(maxRunsMode)) - 1));
     const start: number = Date.now();

@@ -70,7 +70,7 @@ export class GeneratorType extends Generator {
 
   private generateSingle(typeArg: ModuleType, type: any, count: number, resultsOut: any[]): void {
 
-    let iResults: any = mock({
+    const iResults: any = mock({
       files: GeneratorType.interfaces,
       interfaces: [typeArg.name],
       isOptionalAlwaysEnabled: true,

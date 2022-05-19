@@ -9,7 +9,7 @@ describe('Enum array generators with numeric values.', function () {
   });
 
   it('Generates default values.', async () => {
-    let results: any[] = global.fastFuzzResults;
+    const results: any[] = global.fastFuzzResults;
 
     const method = results.find((result: any) => result.name === 'enum_num_array');
     expect(method).to.not.equal(undefined);

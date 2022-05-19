@@ -9,7 +9,7 @@ describe('Naked generators with simple values.', function () {
   });
 
   it('Generates single buillt-in argument for non-decorated method.', async () => {
-    let results: any[] = global.fastFuzzResults;
+    const results: any[] = global.fastFuzzResults;
 
     const method = results.find((result: any) => result.name === 'naked_static');
     expect(method).to.not.equal(undefined);
@@ -17,7 +17,7 @@ describe('Naked generators with simple values.', function () {
   });
 
   it('Generates single instance of type with non-decorated method.', async () => {
-    let results: any[] = global.fastFuzzResults;
+    const results: any[] = global.fastFuzzResults;
 
     const method = results.find((result: any) => result.name === 'naked_instance');
     expect(method).to.not.equal(undefined);

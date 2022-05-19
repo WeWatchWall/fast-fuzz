@@ -2,10 +2,10 @@
 const FlatPromise = require("flat-promise");
 import { Fuzz } from '../../src/fast-fuzz';
 
-const AGE_17: number = 17;
-const AGE_22: number = 22;
-const CODE_7: number = 7;
-const CODE_10: number = 10;
+const AGE_17 = 17;
+const AGE_22 = 22;
+const CODE_7 = 7;
+const CODE_10 = 10;
 
 export class Guided_Static {
 

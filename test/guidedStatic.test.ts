@@ -9,7 +9,7 @@ describe('Guided static methods.', function () {
   });
 
   it('Fuzz simple method static', async () => {
-    let results: any[] = global.fastFuzzResults;
+    const results: any[] = global.fastFuzzResults;
 
     const method = results.find((result: any) => result.name === 'guided_static_simple');
     expect(method).to.not.equal(undefined);
@@ -17,7 +17,7 @@ describe('Guided static methods.', function () {
   });
 
   it('Fuzz regular method static', async () => {
-    let results: any[] = global.fastFuzzResults;
+    const results: any[] = global.fastFuzzResults;
 
     const method = results.find((result: any) => result.name === 'guided_static_regular');
     expect(method).to.not.equal(undefined);
@@ -25,7 +25,7 @@ describe('Guided static methods.', function () {
   });
 
   it('Fuzz async interface static', async () => {
-    let results: any[] = global.fastFuzzResults;
+    const results: any[] = global.fastFuzzResults;
 
     const method = results.find((result: any) => result.name === 'guided_static_IAsync');
     expect(method).to.not.equal(undefined);
@@ -33,7 +33,7 @@ describe('Guided static methods.', function () {
   });
 
   it('Fuzz async method static', async () => {
-    let results: any[] = global.fastFuzzResults;
+    const results: any[] = global.fastFuzzResults;
 
     const method = results.find((result: any) => result.name === 'guided_static_async');
     expect(method).to.not.equal(undefined);

@@ -151,7 +151,7 @@ function getArgs(method: ModuleMethod, generator: GeneratorArg): any[] {
   // Set the method to generate new arguments.
   method.test.isStart = true;
 
-  let resultObject: any = generator.next();
+  const resultObject: any = generator.next();
 
   const result: any[] = [];
   method.args.forEach((arg: string) => {

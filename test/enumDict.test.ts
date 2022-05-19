@@ -9,7 +9,7 @@ describe('Enum generators with dictionary values.', function () {
   });
 
   it('Generates broken numeric series.', async () => {
-    let results: any[] = global.fastFuzzResults;
+    const results: any[] = global.fastFuzzResults;
 
     const method = results.find((result: any) => result.name === 'enum_dict_num');
     expect(method).to.not.equal(undefined);
@@ -17,7 +17,7 @@ describe('Enum generators with dictionary values.', function () {
   });
 
   it('Generates single string value.', async () => {
-    let results: any[] = global.fastFuzzResults;
+    const results: any[] = global.fastFuzzResults;
 
     const method = results.find((result: any) => result.name === 'enum_dict_mix');
     expect(method).to.not.equal(undefined);
@@ -25,7 +25,7 @@ describe('Enum generators with dictionary values.', function () {
   });
 
   it('Generates broken numeric series and string value.', async () => {
-    let results: any[] = global.fastFuzzResults;
+    const results: any[] = global.fastFuzzResults;
 
     const method = results.find((result: any) => result.name === 'enum_dict_mix_num');
     expect(method).to.not.equal(undefined);
@@ -33,7 +33,7 @@ describe('Enum generators with dictionary values.', function () {
   });
 
   it('Generates autoincrement and string value.', async () => {
-    let results: any[] = global.fastFuzzResults;
+    const results: any[] = global.fastFuzzResults;
 
     const method = results.find((result: any) => result.name === 'enum_dict_mix_auto');
     expect(method).to.not.equal(undefined);

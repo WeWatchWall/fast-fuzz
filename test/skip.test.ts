@@ -9,7 +9,7 @@ describe('Skip decorator targets.', function () {
   });
 
   it('Skip property in simple instance method.', async () => {
-    let results: any[] = global.fastFuzzResults;
+    const results: any[] = global.fastFuzzResults;
 
     const method = results.find((result: any) => result.name === 'skip_instance_simple');
     expect(method).to.not.equal(undefined);
@@ -17,7 +17,7 @@ describe('Skip decorator targets.', function () {
   });
 
   it('Skip argument in simple static method.', async () => {
-    let results: any[] = global.fastFuzzResults;
+    const results: any[] = global.fastFuzzResults;
 
     const method = results.find((result: any) => result.name === 'skip_static_simple');
     expect(method).to.not.equal(undefined);
@@ -25,14 +25,14 @@ describe('Skip decorator targets.', function () {
   });
 
   it('Skip simple static method.', async () => {
-    let results: any[] = global.fastFuzzResults;
+    const results: any[] = global.fastFuzzResults;
 
     const method = results.find((result: any) => result.name === 'skip_static_skip');
     expect(method).to.equal(undefined);
   });
 
   it('Skip all arguments in simple static method.', async () => {
-    let results: any[] = global.fastFuzzResults;
+    const results: any[] = global.fastFuzzResults;
 
     const method = results.find((result: any) => result.name === 'skip_static_all');
     expect(method).to.not.equal(undefined);
@@ -40,7 +40,7 @@ describe('Skip decorator targets.', function () {
   });
 
   it('Skip simple instance method.', async () => {
-    let results: any[] = global.fastFuzzResults;
+    const results: any[] = global.fastFuzzResults;
 
     const method = results.find((result: any) => result.name === 'skip_instance_skip');
     expect(method).to.equal(undefined);

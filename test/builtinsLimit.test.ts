@@ -9,7 +9,7 @@ describe('Builtin generators with limited values.', function () {
   });
 
   it('Generates integer values.', async () => {
-    let results: any[] = global.fastFuzzResults;
+    const results: any[] = global.fastFuzzResults;
 
     const method = results.find((result: any) => result.name === 'builtin_int_limit');
     expect(method).to.not.equal(undefined);
@@ -17,7 +17,7 @@ describe('Builtin generators with limited values.', function () {
   });
 
   it('Generates number values.', async () => {
-    let results: any[] = global.fastFuzzResults;
+    const results: any[] = global.fastFuzzResults;
 
     const method = results.find((result: any) => result.name === 'builtin_float_limit');
     expect(method).to.not.equal(undefined);
@@ -25,7 +25,7 @@ describe('Builtin generators with limited values.', function () {
   });
 
   it('Generates date values.', async () => {
-    let results: any[] = global.fastFuzzResults;
+    const results: any[] = global.fastFuzzResults;
 
     const method = results.find((result: any) => result.name === 'builtin_date_limit');
     expect(method).to.not.equal(undefined);
@@ -33,7 +33,7 @@ describe('Builtin generators with limited values.', function () {
   });
 
   it('Generates string values.', async () => {
-    let results: any[] = global.fastFuzzResults;
+    const results: any[] = global.fastFuzzResults;
 
     const method = results.find((result: any) => result.name === 'builtin_string_limit');
     expect(method).to.not.equal(undefined);

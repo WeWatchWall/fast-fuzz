@@ -9,7 +9,7 @@ describe('Simple instance methods.', function () {
   });
 
   it('Fuzz simple method instance', async () => {
-    let results: any[] = global.fastFuzzResults;
+    const results: any[] = global.fastFuzzResults;
 
     const method = results.find((result: any) => result.name === 'simple_instance_simple');
     expect(method).to.not.equal(undefined);
@@ -17,7 +17,7 @@ describe('Simple instance methods.', function () {
   });
 
   it('Fuzz regular method instance', async () => {
-    let results: any[] = global.fastFuzzResults;
+    const results: any[] = global.fastFuzzResults;
 
     const method = results.find((result: any) => result.name === 'simple_instance_regular');
     expect(method).to.not.equal(undefined);
@@ -25,7 +25,7 @@ describe('Simple instance methods.', function () {
   });
 
   it('Fuzz async interface instance', async () => {
-    let results: any[] = global.fastFuzzResults;
+    const results: any[] = global.fastFuzzResults;
 
     const method = results.find((result: any) => result.name === 'simple_instance_IAsync');
     expect(method).to.not.equal(undefined);
@@ -34,7 +34,7 @@ describe('Simple instance methods.', function () {
 
   
   it('Fuzz async method instance', async () => {
-    let results: any[] = global.fastFuzzResults;
+    const results: any[] = global.fastFuzzResults;
 
     const method = results.find((result: any) => result.name === 'simple_instance_async');
     expect(method).to.not.equal(undefined);

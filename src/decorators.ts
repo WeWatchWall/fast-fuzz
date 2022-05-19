@@ -210,7 +210,7 @@ export namespace Fuzz {
 
     // Populate the method details.
     const fileName: string = Decorators.getFileName(6);
-    let className: string = Decorators.getMethodName(target);
+    const className: string = Decorators.getMethodName(target);
     const methodName: string = new String(key).toString();
 
     // Find and populate the central method repo. 

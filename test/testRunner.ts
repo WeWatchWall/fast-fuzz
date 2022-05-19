@@ -5,11 +5,11 @@ const results: { [key: string]: any[] } = {};
 
 export async function init(
   name: string,
-  time: number = 5e3,
-  runCount: number = 1e5
+  time = 5e3,
+  runCount = 1e5
 ): Promise<any[]> {
   if (results[name] === undefined) {
-    let cliResult: string = await execShellCommand(`node ./dist/src/index.js -i "./test/sut" -s "./" -d "../../dist/test/sut" -c "${name}" -t ${time} -n ${runCount} -q true`);
+    const cliResult: string = await execShellCommand(`node ./dist/src/index.js -i "./test/sut" -s "./" -d "../../dist/test/sut" -c "${name}" -t ${time} -n ${runCount} -q true`);
     
     let error: any;
     try {

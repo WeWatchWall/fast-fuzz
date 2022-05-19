@@ -9,7 +9,7 @@ describe('Type generators with inherited values.', function () {
   });
 
   it('Generates single instance of type.', async () => {
-    let results: any[] = global.fastFuzzResults;
+    const results: any[] = global.fastFuzzResults;
 
     const method = results.find((result: any) => result.name === 'type_inherit_simple');
     expect(method).to.not.equal(undefined);
@@ -17,7 +17,7 @@ describe('Type generators with inherited values.', function () {
   });
 
   it('Generates instance array of type.', async () => {
-    let results: any[] = global.fastFuzzResults;
+    const results: any[] = global.fastFuzzResults;
 
     const method = results.find((result: any) => result.name === 'type_inherit_abstract');
     expect(method).to.not.equal(undefined);
@@ -25,7 +25,7 @@ describe('Type generators with inherited values.', function () {
   });
 
   it('Generates single instance of type for a regular function.', async () => {
-    let results: any[] = global.fastFuzzResults;
+    const results: any[] = global.fastFuzzResults;
 
     const method = results.find((result: any) => result.name === 'type_inherit_interface');
     expect(method).to.not.equal(undefined);

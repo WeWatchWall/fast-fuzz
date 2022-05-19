@@ -1,7 +1,7 @@
 import { Fuzz } from '../../src/fast-fuzz';
 
-const AGE_17: number = 17;
-const AGE_22: number = 22;
+const AGE_17 = 17;
+const AGE_22 = 22;
 
 export class Skip {
   @Fuzz.prop("string") prop_1: string;

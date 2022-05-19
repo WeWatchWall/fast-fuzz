@@ -9,7 +9,7 @@ describe('Enum generators with numeric values.', function () {
   });
 
   it('Generates default values.', async () => {
-    let results: any[] = global.fastFuzzResults;
+    const results: any[] = global.fastFuzzResults;
 
     const method = results.find((result: any) => result.name === 'enum_num_default');
     expect(method).to.not.equal(undefined);
@@ -17,7 +17,7 @@ describe('Enum generators with numeric values.', function () {
   });
 
   it('Generates autoincrement values.', async () => {
-    let results: any[] = global.fastFuzzResults;
+    const results: any[] = global.fastFuzzResults;
 
     const method = results.find((result: any) => result.name === 'enum_num_auto');
     expect(method).to.not.equal(undefined);
