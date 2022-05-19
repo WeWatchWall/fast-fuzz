@@ -90,7 +90,7 @@ export const propType = function (
     const generator: IGenerator =
       GeneratorFactory.initType(type, dimension);
 
-    Transform(({ }) => {
+    Transform(() => {
       return generator.next();
     })(target, key);
   };
@@ -109,7 +109,7 @@ export const propType = function (
   
   let generator: IGenerator;
 
-  Transform(({ }) => {
+  Transform(() => {
     if (generator === undefined) {
       generator = new GeneratorFalsy();
     }
