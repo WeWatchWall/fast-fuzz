@@ -25,7 +25,7 @@ export const prop = function (
 ): PropertyDecorator {
 
   return (
-    target: Object,
+    target: any,
     key: string | symbol
   ) => {
 
@@ -35,7 +35,7 @@ export const prop = function (
     let methodMode: Mode = Mode.Falsy;
     let generator: IGenerator;
 
-    Transform(({ }) => {
+    Transform(() => {
       if (
         methodId !== Globals.methodCount ||
         methodMode !== Globals.mode
@@ -67,7 +67,7 @@ export const propType = function (
 ): PropertyDecorator {
 
   return (
-    target: Object,
+    target: any,
     key: string | symbol
   ) => {
 
@@ -101,7 +101,7 @@ export const propType = function (
  * @returns prop Type = `PropertyDecorator`.
  */
   export const skipProp: PropertyDecorator = (
-  target: Object,
+  target: any,
   key: string | symbol
 ) => {
 
@@ -135,7 +135,7 @@ export const arg = function (
 ): ParameterDecorator {
 
   return (
-    target: Object,
+    target: any,
     key: string | symbol,
     index: number
   ) => {
@@ -161,7 +161,7 @@ export const argType = function (
 ): ParameterDecorator {
 
   return (
-    target: Object,
+    target: any,
     key: string | symbol,
     index: number
   ) => {
@@ -181,7 +181,7 @@ export const argType = function (
  * @returns arg Type = `ParameterDecorator`.
  */
   export const skipArg: ParameterDecorator = (
-  target: Object,
+  target: any,
   key: string | symbol,
   index: number
 ) => {
@@ -200,7 +200,7 @@ export const argType = function (
  */
 export const method: MethodDecorator =
 (
-  target: Object,
+  target: any,
   key: string | symbol,
   descriptor: PropertyDescriptor
 ) => {
@@ -267,7 +267,7 @@ export const method: MethodDecorator =
  */
   export const skipMethod: MethodDecorator =
   (
-    target: Object,
+    target: any,
     key: string | symbol,
     descriptor: PropertyDescriptor
   ) => {
