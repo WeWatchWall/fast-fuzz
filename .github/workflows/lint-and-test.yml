@@ -1,9 +1,9 @@
-name: Build and test
+name: Lint and test
 
 on: [push, pull_request]
 
 jobs:
-  build_and_test:
+  lint_and_test:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
