@@ -16,14 +16,6 @@ describe('Type generators with simple values.', function () {
     expect(method.results.length).to.equal(6);
   });
 
-  it('Generates single instance of type for non-decorated method.', async () => {
-    let results: any[] = global.fastFuzzResults;
-
-    const method = results.find((result: any) => result.name === 'type_single_simple_naked');
-    expect(method).to.not.equal(undefined);
-    expect(method.results.length).to.equal(1);
-  });
-
   it('Generates instance array of type.', async () => {
     let results: any[] = global.fastFuzzResults;
 

@@ -157,6 +157,7 @@ function getArgs(method: ModuleMethod, generator: GeneratorArg): any[] {
   method.args.forEach((arg: string) => {
     result.push(resultObject[arg]);
   });
+  method.test.callArgs = result;
 
   return result;
 }

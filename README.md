@@ -131,7 +131,8 @@ Methods can be skipped from testing using the ```@Fuzz.skipMethod``` decorator.
 
 Arguments can be set to ```undefined``` or ```null``` using the ```@Fuzz.skipArg``` decorator.
 
-Without decoration, it is still able to fuzz any types that have only built-in types and methods with built-in arguments.
+Without decoration, it is still able to fuzz any classes that have properties *and* methods
+with arguments that are restricted to only built-in types (excluding Date).
 However, the values do not have limits so they will take much longer to test.
 
 ## Code Style Tips
@@ -163,7 +164,6 @@ However, the values do not have limits so they will take much longer to test.
 
 ## TODO Priorities
 
-- Fill in type values for missing decorators.
 - Linting.
 - Add file name to prop ```type not found error```.
 - Intermediate results.
