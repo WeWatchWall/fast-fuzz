@@ -59,10 +59,13 @@ import { fastFuzz } from 'fast-fuzz';
 async Main () {
   await fastFuzz(
     projectFolder,
-    maxTime, maxRuns,
-    methods, classes,
-    source, dist,
-    verbose
+    maxTime,          // [Optional] Default = 10s.
+    maxRuns,          // [Optional] Default = 100e3.
+    methods, classes, // [Optional] Default = all.
+    source, dist,     // [Optional] Default = 'src' and 'dist'.
+    verbose,          // [Optional] Default = false.
+    // [Optional] For intermediate results before the promise resolves.
+    resultsOut
   );
 }
 Main();
@@ -164,7 +167,6 @@ However, the values do not have limits so they will take much longer to test.
 
 ## TODO Priorities
 
-- Intermediate results.
 - Benchmarking of target functions to determine the best run time and number of tests.
 - Side-by-side single and multithreaded runners.
 - Integration testing by stuffing arguments between methods by type.

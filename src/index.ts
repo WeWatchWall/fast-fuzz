@@ -1,9 +1,12 @@
 #!/usr/bin/env node
 
+const FlatPromise = require('flat-promise');
 import commander from 'commander';
+import logUpdate from 'log-update';
 import safeStringify from 'fast-safe-stringify';
 
 import { fastFuzz } from './fuzz/fuzz';
+import { Results } from './fuzz/result';
 
 commander
   .addHelpCommand()
@@ -50,8 +53,26 @@ async function Main() {
       writable: true
     });
   }
-  
-  console.log(safeStringify(await fastFuzz(
+
+  // Just wait for results for non-interactive session.
+  if (commander.quiet) {
+    console.log(safeStringify(await fastFuzz(
+      commander.input,
+      commander.maxTime,
+      commander.maxRuns,
+      commander.methods,
+      commander.classes,
+      commander.source,
+      commander.dist,
+      !commander.quiet
+    )));
+    return;
+  }
+
+  // Show intermediate results.
+  const results: Results[] = [];
+  var isResolved = false;
+  fastFuzz(
     commander.input,
     commander.maxTime,
     commander.maxRuns,
@@ -59,7 +80,26 @@ async function Main() {
     commander.classes,
     commander.source,
     commander.dist,
-    !commander.quiet
-  )));
+    !commander.quiet,
+    results
+  ).then(() => {
+    isResolved = true;
+  });
+
+  while (!isResolved) {
+    await wait(5000);
+
+    logUpdate(safeStringify(results));
+  }
+
+  logUpdate(safeStringify(results));
+  logUpdate.done();
 }
 Main();
+
+async function wait(ms) {
+  let flatPromise = new FlatPromise();
+
+  setTimeout(() => flatPromise.resolve(), ms);
+  return flatPromise.promise;
+}

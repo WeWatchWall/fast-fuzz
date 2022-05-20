@@ -22,8 +22,9 @@ export async function fuzzAsync(
   testFunc: Function, // eslint-disable-line
   filePath: string,
   maxTime = 1e4,
-  maxRuns = 1e5
-) {
+  maxRuns = 1e5,
+  resultsOut: Result[]
+): Promise<Result[]> {
   // Resolve the system under test(SUT).
   filePath = path.resolve(filePath);
   if (!global.__coverage__[filePath]) { throw new Error(`File not found: ${filePath}`); }
@@ -45,7 +46,6 @@ export async function fuzzAsync(
 
   // Track progress.
   const covResults: Set<string> = new Set();
-  const results: Result[] = [];
 
   // Loop through the modes and fuzz domain.
   let resultCount = 1;
@@ -122,7 +122,7 @@ export async function fuzzAsync(
         cleanupError(result);
       }
 
-      results.push(new Result({
+      resultsOut.push(new Result({
         id: resultCount++,
         modeId: mode,
         mode: Mode[mode],
@@ -139,5 +139,5 @@ export async function fuzzAsync(
   resetCoverage(filePath);
 
   // Report the generated tests.
-  return results;
+  return resultsOut;
 }

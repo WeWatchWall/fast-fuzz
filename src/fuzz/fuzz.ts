@@ -38,7 +38,8 @@ export async function fastFuzz(
   classPattern?: string,
   src?: string,
   dist?: string,
-  verbose = false
+  verbose = false,
+  resultsOut: Results[] = []
 ): Promise<Results[]> {
   if (instrumenter === undefined) {
     await init(folder, src, dist);
@@ -46,7 +47,6 @@ export async function fastFuzz(
 
   interfaces = Object.values(Globals.codeUtil.interfaces);
 
-  const results: Results[] = [];
   const start: number = Date.now();
 
   /* #region  Output verbose info. */
@@ -93,19 +93,19 @@ export async function fastFuzz(
       let fuzzResults: Result[];
       if (method.isStatic || method.className === undefined) {
         if (method.isAsync) {
-          fuzzResults = await fuzzStaticAsync(file, method, maxTime, maxRuns);
+          fuzzResults = await fuzzStaticAsync(file, method, maxTime, maxRuns, fuzzResults);
         } else {
-          fuzzResults = fuzzStatic(file, method, maxTime, maxRuns);
+          fuzzResults = fuzzStatic(file, method, maxTime, maxRuns, fuzzResults);
         }
       } else {
         if (method.isAsync) {
-          fuzzResults = await fuzzMethodAsync(file, method, maxTime, maxRuns);
+          fuzzResults = await fuzzMethodAsync(file, method, maxTime, maxRuns, fuzzResults);
         } else {
-          fuzzResults = fuzzMethod(file, method, maxTime, maxRuns);
+          fuzzResults = fuzzMethod(file, method, maxTime, maxRuns, fuzzResults);
         }
       }
 
-      results.push({
+      resultsOut.push({
         name: method.name,
         className: method.className,
         namespaces: method.namespaces,
@@ -121,7 +121,7 @@ export async function fastFuzz(
     `);
   }
 
-  return results;
+  return resultsOut;
 }
 
 async function init(
@@ -166,7 +166,8 @@ function fuzzStatic(
   filePath: string,
   method: ModuleMethod,
   maxTime = 1e4,
-  maxRuns = 1e5
+  maxRuns = 1e5,
+  resultsOut: Result[]
 ): Result[] {
   // Init the arg generator.
   interfaces.push(method.IArgs);
@@ -197,7 +198,8 @@ function fuzzStatic(
     (args: any[]) => func(...args),
     filePath,
     maxTime,
-    maxRuns
+    maxRuns,
+    resultsOut
   );
 
   interfaces.pop();
@@ -209,7 +211,8 @@ async function fuzzStaticAsync(
   filePath: string,
   method: ModuleMethod,
   maxTime = 1e4,
-  maxRuns = 1e5
+  maxRuns = 1e5,
+  resultsOut: Result[]
 ): Promise<Result[]> {
   // Init the arg generator.
   interfaces.push(method.IArgs);
@@ -240,7 +243,8 @@ async function fuzzStaticAsync(
     async (args: any[]) => await func(...args),
     filePath,
     maxTime,
-    maxRuns
+    maxRuns,
+    resultsOut
   );
 
   interfaces.pop();
@@ -252,7 +256,8 @@ function fuzzMethod(
   filePath: string,
   method: ModuleMethod,
   maxTime = 1e4,
-  maxRuns = 1e5
+  maxRuns = 1e5,
+  resultsOut: Result[]
 ): Result[] {
   // Init the arg generator.
   interfaces.push(method.IArgs);
@@ -282,7 +287,8 @@ function fuzzMethod(
     },
     filePath,
     maxTime,
-    maxRuns
+    maxRuns,
+    resultsOut
   );
 
   interfaces.pop();
@@ -294,7 +300,8 @@ async function fuzzMethodAsync(
   filePath: string,
   method: ModuleMethod,
   maxTime = 1e4,
-  maxRuns = 1e5
+  maxRuns = 1e5,
+  resultsOut: Result[]
 ): Promise<Result[]> {
   // Init the arg generator.
   interfaces.push(method.IArgs);
@@ -324,7 +331,8 @@ async function fuzzMethodAsync(
     },
     filePath,
     maxTime,
-    maxRuns
+    maxRuns,
+    resultsOut
   );
 
   interfaces.pop();
