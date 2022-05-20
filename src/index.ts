@@ -69,6 +69,7 @@ async function Main() {
   }
 
   // Show intermediate results.
+  const start: number = Date.now();
   const results: Results[] = [];
   let isResolved = false;
   fastFuzz(
@@ -86,12 +87,16 @@ async function Main() {
   });
 
   while (!isResolved) {
-    await wait(1000);
+    await wait(5000);
 
     logUpdate(safeStringify(results));
   }
 
   logUpdate(safeStringify(results));
+  logUpdate.done();
+  logUpdate(`
+    Time elapsed (s): ${(Date.now() - start) / 1e3}
+  `);
   logUpdate.done();
 }
 Main();

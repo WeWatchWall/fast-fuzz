@@ -2,6 +2,7 @@ import { createInstrumenter } from 'istanbul-lib-instrument';
 import { hookRequire } from 'istanbul-lib-hook';
 
 import path from 'path';
+import logUpdate from 'log-update';
 
 import { Globals } from '../utils/globals';
 import { Code } from '../utils/code';
@@ -47,8 +48,6 @@ export async function fastFuzz(
 
   interfaces = Object.values(Globals.codeUtil.interfaces);
 
-  const start: number = Date.now();
-
   /* #region  Output verbose info. */
   if (verbose) {
     let methodCount = 0;
@@ -66,10 +65,11 @@ export async function fastFuzz(
       }
     }
 
-    console.log(`
+    logUpdate(`
       Method count: ${methodCount},
       Estimated time (s): ${methodCount * maxTime / 1000}
     `);
+    logUpdate.done();
   }
   /* #endregion */
 
@@ -113,12 +113,6 @@ export async function fastFuzz(
         results: fuzzResults
       });
     }
-  }
-
-  if (verbose) {
-    console.log(`
-      Time elapsed (s): ${(Date.now() - start) / 1e3}
-    `);
   }
 
   return resultsOut;
