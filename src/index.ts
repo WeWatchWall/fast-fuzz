@@ -71,7 +71,7 @@ async function Main() {
 
   // Show intermediate results.
   const results: Results[] = [];
-  var isResolved = false;
+  let isResolved = false;
   fastFuzz(
     commander.input,
     commander.maxTime,
@@ -98,7 +98,7 @@ async function Main() {
 Main();
 
 async function wait(ms) {
-  let flatPromise = new FlatPromise();
+  const flatPromise = new FlatPromise();
 
   setTimeout(() => flatPromise.resolve(), ms);
   return flatPromise.promise;
