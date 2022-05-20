@@ -1,5 +1,4 @@
 #!/usr/bin/env node
-
 const FlatPromise = require('flat-promise');
 import commander from 'commander';
 import logUpdate from 'log-update';
@@ -87,7 +86,7 @@ async function Main() {
   });
 
   while (!isResolved) {
-    await wait(5000);
+    await wait(1000);
 
     logUpdate(safeStringify(results));
   }

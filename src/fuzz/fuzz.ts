@@ -90,7 +90,7 @@ export async function fastFuzz(
       Globals.methodCount++;
       Globals.literals = method.literals;
 
-      let fuzzResults: Result[];
+      let fuzzResults: Result[] = [];
       if (method.isStatic || method.className === undefined) {
         if (method.isAsync) {
           fuzzResults = await fuzzStaticAsync(file, method, maxTime, maxRuns, fuzzResults);
