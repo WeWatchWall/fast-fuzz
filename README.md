@@ -164,7 +164,6 @@ However, the values do not have limits so they will take much longer to test.
 
 ## TODO Priorities
 
-- Add file name to prop ```type not found error```.
 - Intermediate results.
 - Benchmarking of target functions to determine the best run time and number of tests.
 - Side-by-side single and multithreaded runners.

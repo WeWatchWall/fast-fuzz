@@ -78,7 +78,7 @@ export const propType = function (
       console.warn(
         `
           Missing type on decorated property:
-          File name: TODO: add this info,
+          File name: ${Decorators.getFileName(6)},
           Class name: ${Decorators.getMethodName(target)},
           Property name: ${new String(key).toString()},
           Argument: ${JSON.stringify(arg)}
