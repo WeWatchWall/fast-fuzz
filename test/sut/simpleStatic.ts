@@ -5,7 +5,7 @@ import {
 } from "../../src/fast-fuzz";
 
 export class Simple_Static {
-  
+
   @fuzzMethod
   public static simple_static_simple (
     @fuzzArg("integer") age: number
@@ -82,4 +82,21 @@ export class Simple_Static {
   
     return await flatPromise.promise;
   }
+
+  @fuzzMethod
+  public static simple_static_error (
+    @fuzzArg("integer") age: number
+  ): boolean {
+
+    switch (age) {
+      case 22:
+        return false;
+      case 17:
+        throw new Error('Expected this.');
+      default:
+        break;
+    }
+    return true;
+  }
+
 }
