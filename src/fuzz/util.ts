@@ -1,3 +1,11 @@
+// Cleanup the error stack.
+export function cleanupError(error: any) {
+  const stack = error.stack.split('\n');
+  
+  stack.splice(-8);
+  error.stack = stack.join('\n');
+}
+
 // Sets all the branch stats to 0.
 export function resetCoverage (fileName: string) {
   const fileCov: any = global.__coverage__[fileName];

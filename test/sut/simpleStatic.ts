@@ -99,4 +99,19 @@ export class Simple_Static {
     return true;
   }
 
+  @fuzzMethod
+  public static async simple_static_error_async (
+    @fuzzArg("integer") age: number
+  ): Promise<boolean> {
+
+    switch (age) {
+      case 22:
+        return false;
+      case 17:
+        throw new Error('Expected this.');
+      default:
+        break;
+    }
+    return true;
+  }
 }

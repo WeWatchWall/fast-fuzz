@@ -2,7 +2,11 @@ import path from "path";
 import copy from "fast-copy";
 import { diff } from 'deep-object-diff';
 
-import {simpleHash, resetCoverage} from './util';
+import {
+  cleanupError,
+  simpleHash,
+  resetCoverage
+} from './util';
 import { Mode } from "../generators/Mode";
 import { Result } from "./result";
 import { Globals } from "../utils/globals";
@@ -83,12 +87,14 @@ export function fuzzSync(
       } = copy(fileCoverage);
 
       const args: any[] = getArgs();
+      let isError = false;
       let result: any;
 
       // Run the function and report the error 
       try {
         result = testFunc(args);
       } catch (error: any) {
+        isError = true;
         result = error;
       }
 
@@ -113,6 +119,10 @@ export function fuzzSync(
         continue;
       }
       covResults.add(coverageHash);
+
+      if (isError) {
+        cleanupError(result);
+      }
 
       results.push(new Result({
         id: resultCount++,

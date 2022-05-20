@@ -34,6 +34,23 @@ async function Main() {
   }
   commander.quiet = commander.quiet !== undefined;
 
+  if (!('toJSON' in Error.prototype)) {
+    Object.defineProperty(Error.prototype, 'toJSON', {
+      value: function () {
+        const alt = {};
+        alt['name'] = this.name;
+        
+        Object.getOwnPropertyNames(this).forEach((key) => {
+          alt[key] = this[key];
+        }, this);
+
+        return alt;
+      },
+      configurable: true,
+      writable: true
+  });
+  }
+  
   console.log(safeStringify(await fastFuzz(
     commander.input,
     commander.maxTime,

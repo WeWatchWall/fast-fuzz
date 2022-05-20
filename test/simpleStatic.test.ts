@@ -40,4 +40,20 @@ describe('Simple static methods.', function () {
     expect(method).to.not.equal(undefined);
     expect(method.results.length).to.equal(6);
   });
+
+  it('Fuzz simple method with error', async () => {
+    const results: any[] = global.fastFuzzResults;
+
+    const method = results.find((result: any) => result.name === 'simple_static_error');
+    expect(method).to.not.equal(undefined);
+    expect(method.results.length).to.equal(3);
+  });
+
+  it('Fuzz simple async method with error', async () => {
+    const results: any[] = global.fastFuzzResults;
+
+    const method = results.find((result: any) => result.name === 'simple_static_error_async');
+    expect(method).to.not.equal(undefined);
+    expect(method.results.length).to.equal(3);
+  });
 });
