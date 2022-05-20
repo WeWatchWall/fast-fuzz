@@ -48,7 +48,7 @@ async function Main() {
       },
       configurable: true,
       writable: true
-  });
+    });
   }
   
   console.log(safeStringify(await fastFuzz(
