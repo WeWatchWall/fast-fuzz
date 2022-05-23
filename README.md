@@ -172,5 +172,4 @@ However, the values do not have limits so they will take much longer to test.
 - Benchmarking of target functions to determine the best run time and number of tests.
 - Redundant runner for the args-results pairs.
 - Option to run the constructors.
-- Integration testing by stuffing results between methods by type.
 - Get rid of the Intermock dependency and allow same type names across files.
