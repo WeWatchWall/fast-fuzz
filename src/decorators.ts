@@ -1,6 +1,8 @@
 import { Transform } from 'class-transformer';
+import { Generator } from './generators/Generator';
 import { GeneratorFactory } from './generators/GeneratorFactory';
 import { GeneratorFalsy } from './generators/GeneratorFalsy';
+import { GeneratorType } from './generators/GeneratorType';
 
 import { IGenerator } from "./generators/IGenerator";
 import { Mode } from './generators/Mode';
@@ -240,13 +242,21 @@ export const method: MethodDecorator =
       methodId !== Globals.methodCount ||
       methodMode !== Globals.mode
     ) {
-      testArgs.generators = Decorators.addMethodArgs(testArgs.args, fileName, method);
+      const generators = Decorators.addMethodArgs(testArgs.args, fileName, method);
+      testArgs.generators = generators.generators;
+      testArgs.typeGenerators = generators.typeGenerators;
     }
 
     // Run the arguments' generators.
     testArgs.generators.forEach((generator: IGenerator) => {
       args[generator.index] = generator.next();
     });
+
+    if (Generator.mode !== Mode.Falsy) {
+      testArgs.typeGenerators.forEach((generator: GeneratorType) => {
+        testArgs.callArgsTypes.push(generator.nextTypes());
+      });   
+    }
 
     // Reset the mock flag in case of recursion or subsequent calls.
     testArgs.isStart = false;

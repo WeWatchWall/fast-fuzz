@@ -16,6 +16,9 @@ export class GeneratorType extends Generator {
   private mode: Mode;
   private isIgnoreFalsy: boolean;
 
+  private nextCount?: number;
+  private instanceTypes?: ModuleType[];
+
   constructor(type: ModuleType, dimension = 0, index?: number, mode?: Mode, isIgnoreFalsy = false) {
     // Create the interfaces for each type, excluding IFuzzArgs(TODO?).
     if (GeneratorType.interfaces === undefined) {
@@ -33,30 +36,54 @@ export class GeneratorType extends Generator {
   }
 
   generate(count: number): any[] {
-    const result: any[] = [];
 
     this.init();
   
-    switch (this.mode) {
-      case Mode.Falsy:
-        for (let index = 0; index < count; index++) {
-          result.push(this.falsyLiterals[Generator.getRandomIndex(this.falsyLiterals.length)]);
-        }
-        break;
-      default:
-        if (this.numTypes < 2) {
-          this.generateSingle(this.typeArgs[0], this.types[0], count, result);
-        } else {
-          this.generateMany(count, result);
-        }
-        break;
+    if (this.mode === Mode.Falsy) {
+      const result = [];
+      for (let index = 0; index < count; index++) {
+        result.push(this.falsyLiterals[Generator.getRandomIndex(this.falsyLiterals.length)]);
+      }
+      return result;
+    } else {
+      const result: {
+        type: ModuleType,
+        instance: any
+      }[] = [];
+      
+      if (this.numTypes < 2) {
+        this.generateSingle(this.typeArgs[0], this.types[0], count, result);
+      } else {
+        this.generateMany(count, result);
+      }
+
+      this.instanceTypes = result.map(value => value.type);
+
+      return result.map(value => value.instance);
     }
 
-    return result;
   }
 
   next(): any {
-    return Generator.next(this);
+    const result = Generator.next(this);
+    this.nextCount = result.count;
+    return result.result;
+  }
+
+  nextTypes(): {
+    index: number,
+    dimension: number,
+    types: ModuleType[]
+  } {
+    if (this.nextCount === 0) {
+      return undefined;
+    }  
+
+    return {
+      index: this.index,
+      dimension: this.dimension,
+      types: this.instanceTypes.splice(-1 * this.nextCount)
+    };
   }
 
   private init(): void {
@@ -68,7 +95,15 @@ export class GeneratorType extends Generator {
     this.numTypes = this.typeArgs.length;
   }
 
-  private generateSingle(typeArg: ModuleType, type: any, count: number, resultsOut: any[]): void {
+  private generateSingle(
+    typeArg: ModuleType,
+    type: any,
+    count: number,
+    resultsOut: {
+      type: ModuleType,
+      instance: any
+    }[]
+  ): void {
 
     const iResults: any = mock({
       files: GeneratorType.interfaces,
@@ -80,19 +115,25 @@ export class GeneratorType extends Generator {
 
     for (let index = 0; index < count; index++) {
       if (!this.isIgnoreFalsy && Math.random() > Generator.P_FALSY) {
-        resultsOut.push(this.falsyLiterals[Generator.getRandomIndex(this.falsyLiterals.length)]);
+        resultsOut.push({
+          type: typeArg,
+          instance: this.falsyLiterals[
+            Generator.getRandomIndex(this.falsyLiterals.length)
+          ]
+        });
         continue;
       }
   
-      resultsOut.push(
-        plainToInstance(
+      resultsOut.push({
+        type: typeArg,
+        instance: plainToInstance(
           type,
           iResults[index],
           {
             enableImplicitConversion: true
           }
         )
-      );
+      });
     }
   }
 

@@ -17,7 +17,7 @@ export class GeneratorFalsy extends Generator {
   }
 
   next(): any {
-    return Generator.next(this);
+    return Generator.next(this).result;
   }
 
 }

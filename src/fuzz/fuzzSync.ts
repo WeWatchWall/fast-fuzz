@@ -23,7 +23,8 @@ export function fuzzSync(
   filePath: string,
   maxTime = 1e4,
   maxRuns = 1e5,
-  resultsOut: Result[]
+  resultsOut: Result[],
+  persistInstances: Function
 ): Result[] {
   // Resolve the system under test(SUT).
   filePath = path.resolve(filePath);
@@ -135,6 +136,8 @@ export function fuzzSync(
           (runCount * 1000 / (Date.now() - start)).toPrecision(4)
         )
       }));
+
+      persistInstances();
     }
   }
 

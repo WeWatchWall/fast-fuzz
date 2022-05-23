@@ -134,41 +134,54 @@ export abstract class Generator implements IGenerator {
    * Gets the next generator values based on its state.
    * @param generator 
    */
-  protected static next(generator: Generator): any {
+  protected static next(generator: Generator): {
+    count: number,
+    result: any
+  } {
 
     if (generator.dimension === 0) {
       if (generator.values.length === 0) {
         Generator.generate(generator, 1);
       }
 
-      return generator.values.pop();
+      return {
+        count: 1,
+        result: generator.values.pop()
+      };
     } else if (generator.dimension === 1) {
       if (Math.random() > Generator.P_FALSY) {
-        return Generator.DEFAULT_FALSY[
-          Generator.getRandomIndex(Generator.DEFAULT_FALSY.length)
-        ];
+        return {
+          count: 0,
+          result: Generator.DEFAULT_FALSY[
+            Generator.getRandomIndex(Generator.DEFAULT_FALSY.length)
+          ]
+        };
       }
 
       const limit = generator.limits.array;
-      const size = Generator.getRandomInt(
+      const count = Generator.getRandomInt(
         limit.min,
         limit.max
       );
 
-      if (size > generator.values.length) {
-        Generator.generate(generator, size);
+      if (count > generator.values.length) {
+        Generator.generate(generator, count);
       }
 
       const result: any[] = [];
-      for (let index = 0; index < size; index++) {
+      for (let index = 0; index < count; index++) {
         result.push(generator.values.pop());
       }
-      return result;
+
+      return { count, result };
     }  else {
       if (Math.random() > Generator.P_FALSY) {
-        return Generator.DEFAULT_FALSY[
-          Generator.getRandomIndex(Generator.DEFAULT_FALSY.length)
-        ];
+        return {
+          count: 0,
+          result: Generator.DEFAULT_FALSY[
+            Generator.getRandomIndex(Generator.DEFAULT_FALSY.length)
+          ]
+        };
       }
 
       const dLimit = generator.limits.array;
@@ -187,9 +200,15 @@ export abstract class Generator implements IGenerator {
         Generator.generate(generator, totalSize);
       }
 
+      let count = 0;
       // eslint-disable-next-line
       // @ts-ignore — `Type instantiation is excessively deep...`
-      return makeMatrix(dSizes, () => generator.values.pop());
+      const result = makeMatrix(dSizes, () => { 
+        count++;
+        return generator.values.pop();
+      });
+
+      return {count, result};
     }
   
   }

@@ -42,7 +42,7 @@ export class GeneratorBool extends Generator {
   }
 
   next(): any {
-    return Generator.next(this);
+    return Generator.next(this).result;
   }
 
 }

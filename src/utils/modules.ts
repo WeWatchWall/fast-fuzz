@@ -1,3 +1,4 @@
+import { GeneratorType } from "../generators/GeneratorType";
 import { IGenerator } from "../generators/IGenerator";
 import { MethodArg } from "./decorators";
 
@@ -26,9 +27,22 @@ export class ModuleMethod {
 export class TestMethod {
   args: MethodArg[];
   isStart: boolean;
+
   generators: IGenerator[];
+  typeGenerators: GeneratorType[];
+
+  // Storage for the method run args.
   callArgs?: any[];
+  // Storage for the method run arg types.
+  callArgsTypes?: {
+    index: number,
+    dimension: number,
+    types: ModuleType[]
+  }[];
+  // Storage for the constructed instance.
   instance?: any;
+  // Storage for the instance type.
+  instanceType?: ModuleType;
 }
 
 export class ModuleType {

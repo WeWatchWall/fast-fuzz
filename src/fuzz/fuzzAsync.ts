@@ -23,7 +23,8 @@ export async function fuzzAsync(
   filePath: string,
   maxTime = 1e4,
   maxRuns = 1e5,
-  resultsOut: Result[]
+  resultsOut: Result[],
+  persistInstances: Function, // eslint-disable-line
 ): Promise<Result[]> {
   // Resolve the system under test(SUT).
   filePath = path.resolve(filePath);
@@ -133,6 +134,8 @@ export async function fuzzAsync(
           (runCount * 1000 / (Date.now() - start)).toPrecision(4)
         )
       }));
+
+      persistInstances();
     }
   }
 

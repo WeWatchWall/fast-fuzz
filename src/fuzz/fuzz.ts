@@ -144,6 +144,7 @@ async function init(
 function getArgs(method: ModuleMethod, generator: GeneratorArg): any[] {
   // Set the method to generate new arguments.
   method.test.isStart = true;
+  method.test.callArgsTypes = [];
 
   const resultObject: any = generator.next();
 
@@ -193,7 +194,13 @@ function fuzzStatic(
     filePath,
     maxTime,
     maxRuns,
-    resultsOut
+    resultsOut,
+    () => {
+      Globals.instances.push({
+        args: method.test.callArgs,
+        callTypes: method.test.callArgsTypes
+      });
+    }
   );
 
   interfaces.pop();
@@ -238,7 +245,13 @@ async function fuzzStaticAsync(
     filePath,
     maxTime,
     maxRuns,
-    resultsOut
+    resultsOut,
+    () => {
+      Globals.instances.push({
+        args: method.test.callArgs,
+        callTypes: method.test.callArgsTypes
+      });
+    }
   );
 
   interfaces.pop();
@@ -265,6 +278,7 @@ function fuzzMethod(
         moduleType.name === method.className
       );
 
+  method.test.instanceType = type;
   const generator: IGenerator =
     GeneratorFactory.initType(type, 0, 0, Mode.Stuff, true);
 
@@ -282,7 +296,21 @@ function fuzzMethod(
     filePath,
     maxTime,
     maxRuns,
-    resultsOut
+    resultsOut,
+    () => {
+      Globals.instances.push({
+        args: method.test.callArgs,
+        callTypes: method.test.callArgsTypes
+      });
+      Globals.instances.push({
+        args: [method.test.instance],
+        callTypes: [{
+          index: 0,
+          dimension: 0,
+          types: [type]
+        }]
+      });
+    }
   );
 
   interfaces.pop();
@@ -309,6 +337,7 @@ async function fuzzMethodAsync(
         moduleType.name === method.className
       );
 
+  method.test.instanceType = type;
   const generator: IGenerator =
     GeneratorFactory.initType(type, 0, 0, Mode.Stuff, true);
 
@@ -326,7 +355,21 @@ async function fuzzMethodAsync(
     filePath,
     maxTime,
     maxRuns,
-    resultsOut
+    resultsOut,
+    () => {
+      Globals.instances.push({
+        args: method.test.callArgs,
+        callTypes: method.test.callArgsTypes
+      });
+      Globals.instances.push({
+        args: [method.test.instance],
+        callTypes: [{
+          index: 0,
+          dimension: 0,
+          types: [type]
+        }]
+      });
+    }
   );
 
   interfaces.pop();

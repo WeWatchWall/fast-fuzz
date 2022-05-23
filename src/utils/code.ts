@@ -304,7 +304,8 @@ export class Code {
         test: {
           args: [],
           isStart: false,
-          generators: []
+          generators: [],
+          typeGenerators: []
         },
         // TODO: filter out functions?
         args: filePart.parameters.map((arg: any) => arg.name)

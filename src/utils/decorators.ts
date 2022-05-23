@@ -1,5 +1,6 @@
 import { GeneratorFactory } from "../generators/GeneratorFactory";
 import { GeneratorFalsy } from "../generators/GeneratorFalsy";
+import { GeneratorType } from "../generators/GeneratorType";
 import { IGenerator } from "../generators/IGenerator";
 import { Globals } from "./globals";
 import { ModuleMethod, ModuleType, TestMethod } from "./modules";
@@ -52,14 +53,17 @@ export class Decorators {
       Decorators.resetMethod();
     }
 
+    const generators = Decorators.addMethodArgs(
+      this.args,
+      file,
+      method
+    );
+
     const result: TestMethod = {
       args: this.args,
       isStart: false,
-      generators: Decorators.addMethodArgs(
-        this.args,
-        file,
-        method
-      )
+      generators: generators.generators,
+      typeGenerators: generators.typeGenerators
     };
     method.test = result;
 
@@ -67,13 +71,23 @@ export class Decorators {
     return result;
   }
 
-  static addMethodArgs(args: MethodArg[], file: string, method: ModuleMethod): IGenerator[] {
-    const result: IGenerator[] = [];
+  static addMethodArgs(
+    args: MethodArg[],
+    file: string,
+    method: ModuleMethod
+  ): {
+    generators: IGenerator[],
+    typeGenerators: GeneratorType[]
+  } {
+    const result = {
+      generators: [],
+      typeGenerators: []
+    };
 
     // Initialize the generators.
     args.forEach((arg: MethodArg) => {
       if (arg.isSkip) {
-        result.push(new GeneratorFalsy(0, arg.index));
+        result.generators.push(new GeneratorFalsy(0, arg.index));
         return;
       }
 
@@ -116,7 +130,7 @@ export class Decorators {
       }
 
       if (isBuiltIn) {
-        result.push(GeneratorFactory.init(
+        result.generators.push(GeneratorFactory.init(
           <BuiltIn>arg.type,
           arg.dimension,
           method.literals,
@@ -125,11 +139,18 @@ export class Decorators {
           arg.max
         ));
       } else {
-        result.push(GeneratorFactory.initType(
+        const typeGenerator = GeneratorFactory.initType(
           type,
           arg.dimension,
           arg.index
-        ));
+        );
+
+        result.generators.push(typeGenerator);
+
+        if (type.kind === 'enum') {
+          return;
+        }
+        result.typeGenerators.push(typeGenerator);
       }
     });
 
