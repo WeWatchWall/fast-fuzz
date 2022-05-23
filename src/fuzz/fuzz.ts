@@ -31,6 +31,15 @@ hookRequire((_filePath) => true, (code, { filename }) => {
 
 let interfaces: [string, string][];
 
+const instances: {
+  args: any[],
+  callTypes: {
+    index: number,
+    dimension: number,
+    types: ModuleType[]
+  }[]
+}[] = [];
+
 export async function fastFuzz(
   folder: string,
   maxTime = 1e4,
@@ -196,7 +205,7 @@ function fuzzStatic(
     maxRuns,
     resultsOut,
     () => {
-      Globals.instances.push({
+      instances.push({
         args: method.test.callArgs,
         callTypes: method.test.callArgsTypes
       });
@@ -247,7 +256,7 @@ async function fuzzStaticAsync(
     maxRuns,
     resultsOut,
     () => {
-      Globals.instances.push({
+      instances.push({
         args: method.test.callArgs,
         callTypes: method.test.callArgsTypes
       });
@@ -298,11 +307,11 @@ function fuzzMethod(
     maxRuns,
     resultsOut,
     () => {
-      Globals.instances.push({
+      instances.push({
         args: method.test.callArgs,
         callTypes: method.test.callArgsTypes
       });
-      Globals.instances.push({
+      instances.push({
         args: [method.test.instance],
         callTypes: [{
           index: 0,
@@ -357,11 +366,11 @@ async function fuzzMethodAsync(
     maxRuns,
     resultsOut,
     () => {
-      Globals.instances.push({
+      instances.push({
         args: method.test.callArgs,
         callTypes: method.test.callArgsTypes
       });
-      Globals.instances.push({
+      instances.push({
         args: [method.test.instance],
         callTypes: [{
           index: 0,
