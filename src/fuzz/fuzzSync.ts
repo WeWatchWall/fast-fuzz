@@ -24,7 +24,7 @@ export function fuzzSync(
   maxTime = 1e4,
   maxRuns = 1e5,
   resultsOut: Result[],
-  persistInstances: Function
+  persistInstances: Function // eslint-disable-line
 ): Result[] {
   // Resolve the system under test(SUT).
   filePath = path.resolve(filePath);
