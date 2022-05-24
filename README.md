@@ -179,5 +179,6 @@ testing between functions.
 - Side-by-side single and multithreaded runners.
 - Benchmarking of target functions to determine the best run time and number of tests.
 - Redundant runner for the args-results pairs.
+- Stuffing for nested type args.
 - Option to run the constructors.
 - Get rid of the Intermock dependency and allow same type names across files.
