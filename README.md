@@ -64,6 +64,7 @@ async Main () {
     methods, classes, // [Optional] Default = all.
     source, dist,     // [Optional] Default = 'src' and 'dist'.
     verbose,          // [Optional] Default = false.
+    force,            // [Optional] Default = false.
     // [Optional] For intermediate results before the promise resolves.
     resultsOut
   );
@@ -85,7 +86,8 @@ fast-fuzz
   -c, --classes <RegExp>        A Regex expression to filter the classes to test.
   -s, --source <path>           Path of the source folder relative to the project.
   -d, --dist <path>             Path of the binary folder relative to the project.
-  -q, --quiet <true>            Only output the results JSON
+  -q, --quiet true              Only output the results JSON
+  -f, --force                   Force overwrite fuzzInstances.json.
   -h, --help                    display help for command
 ```
 
@@ -138,6 +140,12 @@ Without decoration, it is still able to fuzz any classes that have properties *a
 with arguments that are restricted to only built-in types (excluding Date).
 However, the values do not have limits so they will take much longer to test.
 
+The framework writes a fuzzInstances.json file in the folder with a dictinary of
+instances organized by file and type. This file is not overwritten once it exists
+unless the force flag is applied. These instances are useful for stuffing where their
+type is required in subsequent runs. Said differently, this allows for some integration
+testing between functions.
+
 ## Code Style Tips
 
 ### Types
@@ -168,6 +176,7 @@ However, the values do not have limits so they will take much longer to test.
 ## TODO Priorities
 
 - Integration testing by stuffing arguments between methods by type.
+- Check stuffing for generating when there are no literals.
 - Side-by-side single and multithreaded runners.
 - Benchmarking of target functions to determine the best run time and number of tests.
 - Redundant runner for the args-results pairs.

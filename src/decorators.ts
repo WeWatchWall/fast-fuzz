@@ -37,7 +37,9 @@ export const prop = function (
     let methodMode: Mode = Mode.Falsy;
     let generator: IGenerator;
 
-    Transform(() => {
+    Transform(({ value }) => {
+      if (Globals.isLoading) { return value; }
+
       if (
         methodId !== Globals.methodCount ||
         methodMode !== Globals.mode

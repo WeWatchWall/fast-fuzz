@@ -11,4 +11,13 @@ export class Globals {
   static literals: string[] = [];
   static methodCount = 0;
   static mode: Mode = Mode.Falsy;
+
+  static instances: {
+    [key: string]: {
+      [key: string]: {
+        instances: any[]
+      }
+    }
+  } = {};
+  static isLoading = false;
 }

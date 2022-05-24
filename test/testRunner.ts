@@ -1,3 +1,4 @@
+import fs from 'fs';
 import { assert } from 'chai';
 const execShellCommand = require("../execShellCommand.js");
 
@@ -9,6 +10,12 @@ export async function init(
   runCount = 1e5
 ): Promise<any[]> {
   if (results[name] === undefined) {
+    // Get rid of previous instances.
+    const fileName = './test/sut/fuzzInstances.json';
+    if (name !== 'Stuff' && fs.existsSync(fileName)) {
+      fs.unlinkSync(fileName);
+    }
+
     const cliResult: string = await execShellCommand(`node ./dist/src/index.js -i "./test/sut" -s "./" -d "../../dist/test/sut" -c "${name}" -t ${time} -n ${runCount} -q true`);
     
     let error: any;

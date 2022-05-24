@@ -17,7 +17,8 @@ commander
   .option('-c, --classes <RegExp>', 'A Regex expression to filter the classes to test.')
   .option('-s, --source <path>', 'Path of the source folder relative to the project.')
   .option('-d, --dist <path>', 'Path of the binary folder relative to the project.')
-  .option('-q, --quiet <true>', 'Only output the results JSON.')
+  .option('-f, --force true', 'Force overwrite fuzz instances JSON file.')
+  .option('-q, --quiet true', 'Only output the results JSON.')
   .parse(process.argv);
 
 if (!commander.input) {
@@ -35,6 +36,7 @@ async function Main() {
     if (Number.isNaN(commander.maxRuns)) { delete commander.maxRuns; }
   }
   commander.quiet = commander.quiet !== undefined;
+  commander.force = commander.force !== undefined;
 
   if (!('toJSON' in Error.prototype)) {
     Object.defineProperty(Error.prototype, 'toJSON', {
@@ -63,7 +65,8 @@ async function Main() {
       commander.classes,
       commander.source,
       commander.dist,
-      !commander.quiet
+      !commander.quiet,
+      commander.force
     )));
     return;
   }
@@ -81,6 +84,7 @@ async function Main() {
     commander.source,
     commander.dist,
     !commander.quiet,
+    commander.force,
     results
   ).then(() => {
     isResolved = true;

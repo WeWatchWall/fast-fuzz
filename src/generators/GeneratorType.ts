@@ -19,7 +19,16 @@ export class GeneratorType extends Generator {
   private nextCount?: number;
   private instanceTypes?: ModuleType[];
 
-  constructor(type: ModuleType, dimension = 0, index?: number, mode?: Mode, isIgnoreFalsy = false) {
+  private objects?: any[];
+  private objectTypes?: ModuleType[];
+
+  constructor(
+    type: ModuleType,
+    dimension = 0,
+    index?: number,
+    mode?: Mode,
+    isIgnoreFalsy = false
+  ) {
     // Create the interfaces for each type, excluding IFuzzArgs(TODO?).
     if (GeneratorType.interfaces === undefined) {
       GeneratorType.interfaces = Object.values(Globals.codeUtil.interfaces);
@@ -42,8 +51,35 @@ export class GeneratorType extends Generator {
     if (this.mode === Mode.Falsy) {
       const result = [];
       for (let index = 0; index < count; index++) {
-        result.push(this.falsyLiterals[Generator.getRandomIndex(this.falsyLiterals.length)]);
+        result.push(
+          this.falsyLiterals[
+            Generator.getRandomIndex(this.falsyLiterals.length)
+          ]
+        );
       }
+      return result;
+    } else if (this.objects !== undefined && this.mode === Mode.Stuff) {
+      const result = [];
+      this.instanceTypes = [];
+
+      for (let index = 0; index < count; index++) {
+        if (Math.random() > Generator.P_FALSY) {
+          result.push(
+            this.falsyLiterals[
+              Generator.getRandomIndex(this.falsyLiterals.length)
+            ]
+          );
+          this.instanceTypes.push(this.typeArgs[
+            Generator.getRandomIndex(this.typeArgs.length)
+          ]);
+          continue;
+        }
+
+        const objectIndex = Generator.getRandomIndex(this.objects.length);
+        result.push(this.objects[objectIndex]);
+        this.instanceTypes.push(this.objectTypes[objectIndex]);
+      }
+
       return result;
     } else {
       const result: {
@@ -90,9 +126,40 @@ export class GeneratorType extends Generator {
     if (this.types.length > 0) { return; }
 
     this.typeArgs.forEach((typeArg: ModuleType) => {
+      // Get the actual type.
       this.types.push(Generator.getType(typeArg));
     });
     this.numTypes = this.typeArgs.length;
+
+    if (Globals.instances === undefined) { return; }
+
+    // Try to fill in any instances.
+    Globals.isLoading = true;
+    this.typeArgs.forEach((typeArg: ModuleType, index: number) => {
+      if (Globals.instances[typeArg.file] === undefined) { return; }
+      if (Globals.instances[typeArg.file][typeArg.name] === undefined) {
+        return;
+      }
+
+      const type = this.types[index]; 
+      Globals
+        .instances[typeArg.file][typeArg.name]
+        .instances
+        .forEach(instance => {
+          if (this.objects === undefined) {
+            this.objects = [];
+            this.objectTypes = [];
+          }
+
+          this.objects.push(plainToInstance(
+            type,
+            instance,
+            { enableImplicitConversion: true }
+          ));
+          this.objectTypes.push(typeArg);
+        });
+    });
+    Globals.isLoading = false;
   }
 
   private generateSingle(
@@ -129,9 +196,7 @@ export class GeneratorType extends Generator {
         instance: plainToInstance(
           type,
           iResults[index],
-          {
-            enableImplicitConversion: true
-          }
+          { enableImplicitConversion: true }
         )
       });
     }

@@ -1,7 +1,9 @@
 import { createInstrumenter } from 'istanbul-lib-instrument';
 import { hookRequire } from 'istanbul-lib-hook';
 
+import fs from 'fs';
 import path from 'path';
+import safeStringify from 'fast-safe-stringify';
 import logUpdate from 'log-update';
 
 import { Globals } from '../utils/globals';
@@ -31,7 +33,8 @@ hookRequire((_filePath) => true, (code, { filename }) => {
 
 let interfaces: [string, string][];
 
-const instances: {
+let instancesPath: string;
+let instances: {
   args: any[],
   callTypes: {
     index: number,
@@ -49,6 +52,7 @@ export async function fastFuzz(
   src?: string,
   dist?: string,
   verbose = false,
+  force = false,
   resultsOut: Results[] = []
 ): Promise<Results[]> {
   if (instrumenter === undefined) {
@@ -99,6 +103,7 @@ export async function fastFuzz(
       Globals.methodCount++;
       Globals.literals = method.literals;
 
+      // Run the appropiate static & async method
       let fuzzResults: Result[] = [];
       if (method.isStatic || method.className === undefined) {
         if (method.isAsync) {
@@ -114,6 +119,7 @@ export async function fastFuzz(
         }
       }
 
+      // Output the method results.
       resultsOut.push({
         name: method.name,
         className: method.className,
@@ -121,9 +127,14 @@ export async function fastFuzz(
         file,
         results: fuzzResults
       });
+
+      // Collect the instances.
+      getInstances(instances, Globals.instances);
+      instances = [];
     }
   }
 
+  saveInstances({ force, instances: Globals.instances });
   return resultsOut;
 }
 
@@ -148,6 +159,11 @@ async function init(
 
   instrumenter = createInstrumenter({ compact: true, reportLogic: true })
   await Globals.codeUtil.load();
+
+  // Load the instances file.
+  instancesPath = path.join(folder, '/fuzzInstances.json');
+  if (!fs.existsSync(instancesPath)) { return; }
+  Globals.instances = JSON.parse(fs.readFileSync(instancesPath, 'utf8'));
 }
 
 function getArgs(method: ModuleMethod, generator: GeneratorArg): any[] {
@@ -384,4 +400,79 @@ async function fuzzMethodAsync(
   interfaces.pop();
 
   return results;
+}
+
+function getInstances(
+  instances: {
+    args: any[],
+    callTypes: {
+      index: number,
+      dimension: number,
+      types: ModuleType[]
+    }[]
+  }[],
+  instancesOut: {
+    [key: string]: {
+      [key: string]: {
+        instances: any[]
+      }
+    }
+  }
+) {
+  instances.forEach(instance => {
+    if (
+      instance === undefined ||
+      instance.args === undefined ||
+      instance.args.length === 0
+    ) { return; }
+
+    instance.callTypes.forEach(callType => {
+      let arg = instance.args[callType.index];
+
+      if (
+        arg === undefined ||
+        callType.types === undefined ||
+        callType.types.length === 0
+      ) { return; }
+
+      if (callType.dimension === 0) { arg = [arg]; }
+      else { arg = arg.flat(); }
+
+      for (let index = 0; index < arg.length; index++) {
+        const argElement = arg[index];
+        const typeElement: ModuleType = callType.types[index];
+
+        if (instancesOut[typeElement.file] === undefined) {
+          instancesOut[typeElement.file] = {};
+        }
+        if (instancesOut[typeElement.file][typeElement.name] === undefined) {
+          instancesOut[typeElement.file][typeElement.name] = {
+            // type: typeElement,
+            instances: []
+          };
+        }
+
+        instancesOut[typeElement.file][typeElement.name]
+          .instances
+          .push(argElement);
+      }
+    });
+  });
+}
+
+function saveInstances({ force, instances }: {
+  force: boolean;
+  instances: {
+    [key: string]: {
+      [key: string]: {
+        instances: any[];
+      };
+    };
+  };
+}) {
+  if (!force && fs.existsSync(instancesPath)) { return; }
+
+  const output = safeStringify(instances);
+
+  fs.writeFileSync(instancesPath, output);
 }

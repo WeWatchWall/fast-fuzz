@@ -31,4 +31,12 @@ describe('Type generators with inherited values.', function () {
     expect(method).to.not.equal(undefined);
     expect(method.results.length).to.equal(6);
   });
+
+  it('Generates the fuzzInstances.json file.', async () => {
+    const results: any[] = global.fastFuzzResults;
+
+    const method = results.find((result: any) => result.name === 'type_instance');
+    expect(method).to.not.equal(undefined);
+    expect(method.results.length).to.equal(6);
+  });
 });
