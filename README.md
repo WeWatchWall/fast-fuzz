@@ -140,7 +140,7 @@ Without decoration, it is still able to fuzz any classes that have properties *a
 with arguments that are restricted to only built-in types (excluding Date).
 However, the values do not have limits so they will take much longer to test.
 
-The framework writes a fuzzInstances.json file in the folder with a dictinary of
+The framework writes a fuzzInstances.json file in the folder with a dictionary of
 instances organized by file and type. This file is not overwritten once it exists
 unless the force flag is applied. These instances are useful for stuffing where their
 type is required in subsequent runs. Said differently, this allows for some integration
