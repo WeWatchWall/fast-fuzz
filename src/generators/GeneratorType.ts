@@ -63,17 +63,17 @@ export class GeneratorType extends Generator {
       this.instanceTypes = [];
 
       for (let index = 0; index < count; index++) {
-        if (Math.random() > Generator.P_FALSY) {
-          result.push(
-            this.falsyLiterals[
-              Generator.getRandomIndex(this.falsyLiterals.length)
-            ]
-          );
-          this.instanceTypes.push(this.typeArgs[
-            Generator.getRandomIndex(this.typeArgs.length)
-          ]);
-          continue;
-        }
+        // if (Math.random() > Generator.P_FALSY) {
+        //   result.push(
+        //     this.falsyLiterals[
+        //       Generator.getRandomIndex(this.falsyLiterals.length)
+        //     ]
+        //   );
+        //   this.instanceTypes.push(this.typeArgs[
+        //     Generator.getRandomIndex(this.typeArgs.length)
+        //   ]);
+        //   continue;
+        // }
 
         const objectIndex = Generator.getRandomIndex(this.objects.length);
         result.push(this.objects[objectIndex]);

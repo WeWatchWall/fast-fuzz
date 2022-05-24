@@ -304,7 +304,9 @@ function fuzzMethod(
       );
 
   method.test.instanceType = type;
-  const generator: IGenerator =
+
+  let isIncrement = false;
+  let generator: IGenerator =
     GeneratorFactory.initType(type, 0, 0, Mode.Stuff, true);
 
   const results = fuzzSync(
@@ -315,6 +317,11 @@ function fuzzMethod(
       // const instance = generator.next();
       // const func = instance[method.name];
       // const result = func(...args);
+      if (!isIncrement && Globals.mode > Mode.Stuff) {
+        isIncrement = true;
+        generator = GeneratorFactory.initType(type, 0, 0, Mode.Low_2, true);
+      }
+  
       method.test.instance = generator.next();
       return method.test.instance[method.name](...args);
     },
@@ -363,7 +370,9 @@ async function fuzzMethodAsync(
       );
 
   method.test.instanceType = type;
-  const generator: IGenerator =
+  
+  let isIncrement = false;
+  let generator: IGenerator =
     GeneratorFactory.initType(type, 0, 0, Mode.Stuff, true);
 
   const results = await fuzzAsync(
@@ -374,6 +383,11 @@ async function fuzzMethodAsync(
       // const instance = generator.next();
       // const func = instance[method.name];
       // const result = func(...args);
+      if (!isIncrement && Globals.mode > Mode.Stuff) {
+        isIncrement = true;
+        generator = GeneratorFactory.initType(type, 0, 0, Mode.Low_2, true);
+      }
+
       method.test.instance = generator.next();
       return await method.test.instance[method.name](...args);
     },
