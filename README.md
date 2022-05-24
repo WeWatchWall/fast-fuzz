@@ -175,7 +175,6 @@ testing between functions.
 
 ## TODO Priorities
 
-- Integration testing by stuffing arguments between methods by type.
 - Check stuffing for generating when there are no literals.
 - Side-by-side single and multithreaded runners.
 - Benchmarking of target functions to determine the best run time and number of tests.
