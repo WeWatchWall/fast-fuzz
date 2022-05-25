@@ -33,7 +33,7 @@ describe('Regular instance methods.', function () {
   });
 
   it('Fuzz async method instance', async () => {
-    let results: any[] = global.fastFuzzResults;
+    const results: any[] = global.fastFuzzResults;
 
     const method = results.find((result: any) => result.name === 'regular_instance_async');
     expect(method).to.not.equal(undefined);

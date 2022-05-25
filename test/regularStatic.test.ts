@@ -33,7 +33,7 @@ describe('Regular static methods.', function () {
   });
 
   it('Fuzz async method static', async () => {
-    let results: any[] = global.fastFuzzResults;
+    const results: any[] = global.fastFuzzResults;
 
     const method = results.find((result: any) => result.name === 'regular_static_async');
     expect(method).to.not.equal(undefined);
