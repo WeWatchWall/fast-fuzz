@@ -146,6 +146,12 @@ unless the force flag is applied. These instances are useful for stuffing where 
 type is required in subsequent runs. Said differently, this allows for some integration
 testing between functions.
 
+For now, the detection of interesting arguments only applies to arguments and not their
+nested objects. Using single responsibility from the SOLID design principles, this means
+adding any function that deals with an object's state directly inside that object
+or at least separately. Another option is that the user can manually update the
+fuzzInstances.json file with those nested argument objects.
+
 ## Code Style Tips
 
 ### Types
@@ -179,6 +185,6 @@ testing between functions.
 - Side-by-side single and multithreaded runners.
 - Benchmarking of target functions to determine the best run time and number of tests.
 - Redundant runner for the args-results pairs.
-- Stuffing for nested type args.
+- Stuffing for nested type args by registration of generators and collection of values upon successful detection.
 - Option to run the constructors.
 - Get rid of the Intermock dependency and allow same type names across files.
