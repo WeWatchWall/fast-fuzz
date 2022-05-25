@@ -75,6 +75,7 @@ export class GeneratorType extends Generator {
           continue;
         }
 
+        // TODO: If the object has state, it has to be recreated. It shouldn't.
         const objectIndex = Generator.getRandomIndex(this.objects.length);
         result.push(this.objects[objectIndex]);
         this.instanceTypes.push(this.objectTypes[objectIndex]);
