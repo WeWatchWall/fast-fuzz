@@ -181,7 +181,6 @@ fuzzInstances.json file with those nested argument objects.
 
 ## TODO Priorities
 
-- Check stuffing for generating when there are no literals.
 - Side-by-side single and multithreaded runners.
 - Benchmarking of target functions to determine the best run time and number of tests.
 - Redundant runner for the args-results pairs.
