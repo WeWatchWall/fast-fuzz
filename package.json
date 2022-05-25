@@ -1,6 +1,6 @@
 {
   "name": "fast-fuzz",
-  "version": "4.4.0",
+  "version": "4.4.1",
   "description": "Test case fuzzer with branch coverage guidance.",
   "main": "./dist/src/fast-fuzz.js",
   "types": "./dist/src/fast-fuzz.d.ts",

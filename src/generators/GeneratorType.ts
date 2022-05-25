@@ -58,22 +58,22 @@ export class GeneratorType extends Generator {
         );
       }
       return result;
-    } else if (this.objects !== undefined && this.mode === Mode.Stuff) {
+    } else if (this.mode === Mode.Stuff && this.objects !== undefined) {
       const result = [];
       this.instanceTypes = [];
 
       for (let index = 0; index < count; index++) {
-        // if (Math.random() > Generator.P_FALSY) {
-        //   result.push(
-        //     this.falsyLiterals[
-        //       Generator.getRandomIndex(this.falsyLiterals.length)
-        //     ]
-        //   );
-        //   this.instanceTypes.push(this.typeArgs[
-        //     Generator.getRandomIndex(this.typeArgs.length)
-        //   ]);
-        //   continue;
-        // }
+        if (!this.isIgnoreFalsy && Math.random() > Generator.P_FALSY) {
+          result.push(
+            this.falsyLiterals[
+              Generator.getRandomIndex(this.falsyLiterals.length)
+            ]
+          );
+          this.instanceTypes.push(this.typeArgs[
+            Generator.getRandomIndex(this.typeArgs.length)
+          ]);
+          continue;
+        }
 
         const objectIndex = Generator.getRandomIndex(this.objects.length);
         result.push(this.objects[objectIndex]);
@@ -86,7 +86,9 @@ export class GeneratorType extends Generator {
         type: ModuleType,
         instance: any
       }[] = [];
-      
+
+      // TODO: Ignore literals here for now because of random nesting.
+
       if (this.numTypes < 2) {
         this.generateSingle(this.typeArgs[0], this.types[0], count, result);
       } else {

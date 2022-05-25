@@ -4,7 +4,7 @@ import {
 } from "../../src/fast-fuzz";
 import { IInstance } from "./typeInstance";
 
-export class Stuff_Simple {
+export class Stuff_Instance {
 
   @fuzzMethod
   public static stuff_instance(

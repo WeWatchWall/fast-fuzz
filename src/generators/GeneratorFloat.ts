@@ -37,12 +37,9 @@ export class GeneratorFloat extends Generator {
           ]
         );
       }
-    } else if (Generator.mode === Mode.Stuff) {
+    } else if (Generator.mode === Mode.Stuff  && this.literals.length > 0) {
       for (let index = 0; index < count; index++) {
-        if (
-          this.literals.length === 0 ||
-          Math.random() > Generator.P_FALSY
-        ) {
+        if (Math.random() > Generator.P_FALSY) {
           result.push(
             this.falsyLiterals[
               Generator.getRandomIndex(this.falsyLiterals.length)
