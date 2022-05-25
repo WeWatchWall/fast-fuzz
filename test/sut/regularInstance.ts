@@ -1,4 +1,4 @@
-// const FlatPromise = require("flat-promise");
+const FlatPromise = require("flat-promise");
 import {
   fuzzArg,
   fuzzMethod,
@@ -67,27 +67,27 @@ export class Regular_Instance {
     return true;
   }
 
-  // @fuzzMethod
-  // public async regular_instance_async(
-  //   @fuzzArg("string") name: string,
-  //   @fuzzArg("integer") age: number,
-  //   @fuzzArg("integer") code: number
-  // ): Promise<boolean> {
-  //   const flatPromise = new FlatPromise();
+  @fuzzMethod
+  public async regular_instance_async(
+    @fuzzArg("string") _name: string,
+    @fuzzArg("integer") _age: number,
+    @fuzzArg("integer") _code: number
+  ): Promise<boolean> {
+    const flatPromise = new FlatPromise();
 
-  //   setTimeout(() => {
-  //     if (this.code == CODE_7) {
-  //       if (this.name == 'Bob') {
-  //         flatPromise.resolve(false);
-  //       }
-  //     } else if (this.code == CODE_10) {
-  //       if (this.age == AGE_22 && this.name == 'Alice') {
-  //         flatPromise.resolve(false);
-  //       }
-  //     }
-  //     flatPromise.resolve(true);
-  //   }, 1);
+    setTimeout(() => {
+      if (this.code == CODE_7) {
+        if (this.name == 'Bob') {
+          flatPromise.resolve(false);
+        }
+      } else if (this.code == CODE_10) {
+        if (this.age == AGE_22 && this.name == 'Alice') {
+          flatPromise.resolve(false);
+        }
+      }
+      flatPromise.resolve(true);
+    }, 1);
   
-  //   return await flatPromise.promise;
-  // }
+    return await flatPromise.promise;
+  }
 }

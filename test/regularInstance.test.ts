@@ -2,11 +2,10 @@ import { expect } from 'chai';
 import { init } from './testRunner';
 
 describe('Regular instance methods.', function () {
-  this.timeout(6 * 60 * 1e3);
+  this.timeout(3 * 60 * 1e3);
 
   before(async () => {
-    // Params to get all the results: 180e3, 3e6.
-    global.fastFuzzResults = await init('Regular', 60e3);
+    global.fastFuzzResults = await init('Regular');
   });
 
   it('Fuzz simple method instance', async () => {
@@ -33,11 +32,11 @@ describe('Regular instance methods.', function () {
     expect(method.results.length).to.greaterThanOrEqual(4);
   });
 
-  // it('Fuzz async method instance', async () => {
-  //   let results: any[] = global.fastFuzzResults;
+  it('Fuzz async method instance', async () => {
+    let results: any[] = global.fastFuzzResults;
 
-  //   const method = results.find((result: any) => result.name === 'regular_instance_async');
-  //   expect(method).to.not.equal(undefined);
-  //   expect(method.results.length).to.greaterThanOrEqual(4);
-  // });
+    const method = results.find((result: any) => result.name === 'regular_instance_async');
+    expect(method).to.not.equal(undefined);
+    expect(method.results.length).to.greaterThanOrEqual(3);
+  });
 });

@@ -1,4 +1,4 @@
-// const FlatPromise = require("flat-promise");
+const FlatPromise = require("flat-promise");
 import {
   fuzzArg,
   fuzzMethod
@@ -64,27 +64,27 @@ export class Regular_Static {
     return true;
   }
 
-  // @fuzzMethod
-  // public static async regular_static_async(
-  //   @fuzzArg("string") name: string,
-  //   @fuzzArg("integer") age: number,
-  //   @fuzzArg("integer") code: number
-  // ): Promise<boolean> {
-  //   const flatPromise = new FlatPromise();
+  @fuzzMethod
+  public static async regular_static_async(
+    @fuzzArg("string") name: string,
+    @fuzzArg("integer") age: number,
+    @fuzzArg("integer") code: number
+  ): Promise<boolean> {
+    const flatPromise = new FlatPromise();
 
-  //   setTimeout(() => {
-  //     if (code == CODE_7) {
-  //       if (name == 'Bob') {
-  //         flatPromise.resolve(false);
-  //       }
-  //     } else if (code == CODE_10) {
-  //       if (age == AGE_22 && name == 'Alice') {
-  //         flatPromise.resolve(false);
-  //       }
-  //     }
-  //     flatPromise.resolve(true);
-  //   }, 1);
+    setTimeout(() => {
+      if (code == CODE_7) {
+        if (name == 'Bob') {
+          flatPromise.resolve(false);
+        }
+      } else if (code == CODE_10) {
+        if (age == AGE_22 && name == 'Alice') {
+          flatPromise.resolve(false);
+        }
+      }
+      flatPromise.resolve(true);
+    }, 1);
   
-  //   return await flatPromise.promise;
-  // }
+    return await flatPromise.promise;
+  }
 }

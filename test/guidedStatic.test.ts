@@ -2,10 +2,10 @@ import { expect } from 'chai';
 import { init } from './testRunner';
 
 describe('Guided static methods.', function () {
-  this.timeout(6 * 60 * 1e3);
+  this.timeout(3 * 60 * 1e3);
 
   before(async () => {
-    global.fastFuzzResults = await init('Guided', 10e3, 3e5);
+    global.fastFuzzResults = await init('Guided');
   });
 
   it('Fuzz simple method static', async () => {
@@ -37,6 +37,6 @@ describe('Guided static methods.', function () {
 
     const method = results.find((result: any) => result.name === 'guided_static_async');
     expect(method).to.not.equal(undefined);
-    expect(method.results.length).to.be.greaterThanOrEqual(5);
+    expect(method.results.length).to.be.greaterThanOrEqual(4);
   });
 });

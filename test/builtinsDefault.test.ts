@@ -2,10 +2,10 @@ import { expect } from 'chai';
 import { init } from './testRunner';
 
 describe('Builtin generators with default values.', function () {
-  this.timeout(6 * 60 * 1e3);
+  this.timeout(3 * 60 * 1e3);
 
   before(async () => {
-    global.fastFuzzResults = await init('Builtins', undefined, 3e4);
+    global.fastFuzzResults = await init('Builtins');
   });
 
   it('Generates boolean values.', async () => {

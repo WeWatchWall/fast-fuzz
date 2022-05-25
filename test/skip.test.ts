@@ -2,7 +2,7 @@ import { expect } from 'chai';
 import { init } from './testRunner';
 
 describe('Skip decorator targets.', function () {
-  this.timeout(6 * 60 * 1e3);
+  this.timeout(3 * 60 * 1e3);
 
   before(async () => {
     global.fastFuzzResults = await init('Skip');
