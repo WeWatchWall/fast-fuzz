@@ -19,8 +19,7 @@ export class GeneratorType extends Generator {
   private nextCount?: number;
   private instanceTypes?: ModuleType[];
 
-  private objects?: any[];
-  private objectTypes?: ModuleType[];
+  private typesCount?: number;
 
   constructor(
     type: ModuleType,
@@ -47,47 +46,30 @@ export class GeneratorType extends Generator {
   generate(count: number): any[] {
 
     this.init();
-  
+
+    const result: {
+      type: ModuleType,
+      instance: any
+    }[] = [];
+
     if (this.mode === Mode.Falsy) {
-      const result = [];
+      const resultFalsy = [];
       for (let index = 0; index < count; index++) {
-        result.push(
+        resultFalsy.push(
           this.falsyLiterals[
             Generator.getRandomIndex(this.falsyLiterals.length)
           ]
         );
       }
-      return result;
-    } else if (this.mode === Mode.Stuff && this.objects !== undefined) {
-      const result = [];
-      this.instanceTypes = [];
+      return resultFalsy;
+    } else if (this.mode === Mode.Stuff && this.typesCount > 0) {
+      Globals.isLoading = true;
+      this.generateStuffInstances(count, false, result);
+      Globals.isLoading = false;
 
-      for (let index = 0; index < count; index++) {
-        if (!this.isIgnoreFalsy && Math.random() > Generator.P_FALSY) {
-          result.push(
-            this.falsyLiterals[
-              Generator.getRandomIndex(this.falsyLiterals.length)
-            ]
-          );
-          this.instanceTypes.push(this.typeArgs[
-            Generator.getRandomIndex(this.typeArgs.length)
-          ]);
-          continue;
-        }
-
-        // TODO: If the object has state, it has to be recreated. It shouldn't.
-        const objectIndex = Generator.getRandomIndex(this.objects.length);
-        result.push(this.objects[objectIndex]);
-        this.instanceTypes.push(this.objectTypes[objectIndex]);
-      }
-
-      return result;
+      this.instanceTypes = result.map(value => value.type);
+      return result.map(value => value.instance);
     } else {
-      const result: {
-        type: ModuleType,
-        instance: any
-      }[] = [];
-
       // TODO: Ignore literals here for now because of random nesting.
 
       if (this.numTypes < 2) {
@@ -97,7 +79,6 @@ export class GeneratorType extends Generator {
       }
 
       this.instanceTypes = result.map(value => value.type);
-
       return result.map(value => value.instance);
     }
 
@@ -109,11 +90,7 @@ export class GeneratorType extends Generator {
     return result.result;
   }
 
-  nextTypes(): {
-    index: number,
-    dimension: number,
-    types: ModuleType[]
-  } {
+  nextTypes(): { index: number, dimension: number, types: ModuleType[] } {
     if (this.nextCount === 0) {
       return undefined;
     }  
@@ -134,35 +111,73 @@ export class GeneratorType extends Generator {
     });
     this.numTypes = this.typeArgs.length;
 
-    if (Globals.instances === undefined) { return; }
+    this.typesCount = this.generateStuffInstances(0, true);
+  }
 
-    // Try to fill in any instances.
-    Globals.isLoading = true;
+  private generateStuffInstances(
+    count: number,
+    isDryRun = false,
+    resultsOut: {
+      type: ModuleType,
+      instance: any
+    }[] = []
+  ): number {
+    const instancesCount = Math.floor(count / this.typesCount);
+    let typesCount = 0;
+
+    // Check all the implementation types.
     this.typeArgs.forEach((typeArg: ModuleType, index: number) => {
+      // Check that the type of interest has instances for stuffing.
       if (Globals.instances[typeArg.file] === undefined) { return; }
       if (Globals.instances[typeArg.file][typeArg.name] === undefined) {
         return;
       }
 
+      // Count types with stuff instances.
+      typesCount++;
+      if (isDryRun) { return; }
+
+      // Loop over the type's instances.
       const type = this.types[index]; 
       Globals
         .instances[typeArg.file][typeArg.name]
         .instances
         .forEach(instance => {
-          if (this.objects === undefined) {
-            this.objects = [];
-            this.objectTypes = [];
-          }
+          // Generate an equal number of instances for each type.
+          for (let index = 0; index < instancesCount; index++) {
+            // Generate falsy values.
+            if (!this.isIgnoreFalsy && Math.random() > Generator.P_FALSY) {
+              resultsOut.push({
+                instance: this.falsyLiterals[
+                  Generator.getRandomIndex(this.falsyLiterals.length)
+                ],
+                type: this.typeArgs[
+                  Generator.getRandomIndex(this.typeArgs.length)
+                ]
+              });
+              continue;
+            }
 
-          this.objects.push(plainToInstance(
-            type,
-            instance,
-            { enableImplicitConversion: true }
-          ));
-          this.objectTypes.push(typeArg);
+            // Generate instance with the type.
+            resultsOut.push({
+              instance: plainToInstance(
+                type,
+                instance,
+                { enableImplicitConversion: true }
+              ),
+              type: typeArg
+            });
+          }
         });
     });
-    Globals.isLoading = false;
+
+    // Skip output on dry runs.
+    if (!isDryRun && typesCount > 1) {
+      GeneratorType.shuffle(resultsOut);
+    }
+
+    // Count the number of types with instances. 
+    return typesCount;
   }
 
   private generateSingle(
