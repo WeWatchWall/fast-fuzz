@@ -151,9 +151,7 @@ export class GeneratorType extends Generator {
                 instance: this.falsyLiterals[
                   Generator.getRandomIndex(this.falsyLiterals.length)
                 ],
-                type: this.typeArgs[
-                  Generator.getRandomIndex(this.typeArgs.length)
-                ]
+                type: typeArg
               });
               continue;
             }
