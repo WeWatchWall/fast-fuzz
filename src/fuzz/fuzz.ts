@@ -221,6 +221,8 @@ function fuzzStatic(
     maxRuns,
     resultsOut,
     () => {
+      if (Globals.mode <= Mode.Stuff) { return; }
+
       instances.push({
         args: method.test.callArgs,
         callTypes: method.test.callArgsTypes
@@ -272,6 +274,8 @@ async function fuzzStaticAsync(
     maxRuns,
     resultsOut,
     () => {
+      if (Globals.mode <= Mode.Stuff) { return; }
+
       instances.push({
         args: method.test.callArgs,
         callTypes: method.test.callArgsTypes
@@ -330,6 +334,8 @@ function fuzzMethod(
     maxRuns,
     resultsOut,
     () => {
+      if (Globals.mode <= Mode.Stuff) { return; }
+
       instances.push({
         args: method.test.callArgs,
         callTypes: method.test.callArgsTypes
@@ -396,6 +402,8 @@ async function fuzzMethodAsync(
     maxRuns,
     resultsOut,
     () => {
+      if (Globals.mode <= Mode.Stuff) { return; }
+
       instances.push({
         args: method.test.callArgs,
         callTypes: method.test.callArgsTypes

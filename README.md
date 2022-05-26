@@ -185,7 +185,6 @@ fuzzInstances.json file with those nested argument objects.
 - Benchmarking of target functions to determine the best run time and number of tests.
 
 - Redundant runner for the args-results pairs.
-- Re-initialize copies of stuffed types for stateful objects.
 - Stuffing for nested type args by registration of generators and collection of values upon successful detection.
 - Option to run the constructors.
 - Get rid of the Intermock dependency and allow same type names across files.
