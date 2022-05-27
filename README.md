@@ -59,9 +59,11 @@ import { fuzz } from 'fast-fuzz';
 async Main () {
   await fuzz(
     projectFolder,
+    threads,          // [Optional] Default = OS defined. 0 for in-process.
     maxTime,          // [Optional] Default = 10s.
     maxRuns,          // [Optional] Default = 100e3.
     methods, classes, // [Optional] Default = all.
+    files,            // [Optional] Default = all.
     source, dist,     // [Optional] Default = 'src' and 'dist'.
     verbose,          // [Optional] Default = false.
     force,            // [Optional] Default = false.
@@ -79,16 +81,19 @@ fast-fuzz
   -i, --input <path>            Path of the Typescript project.
 
   Optional:
-  -V, --version                 output the version number
+  -V, --version                 Output the version number
+  -p, --threads <count>         The number of parallel threads.
+                                  Default = OS defined. 0 for in-process.
   -t, --maxTime <milliseconds>  The maximum time(ms) per function. Default = 10s.
   -n, --maxRuns <milliseconds>  The maximum count of runs per function. Default = 100e3.
   -m, --methods <RegExp>        A Regex expression to filter the methods to test.
   -c, --classes <RegExp>        A Regex expression to filter the classes to test.
+  -f, --files <RegExp>          A Regex expression to filter the files to test.
   -s, --source <path>           Path of the source folder relative to the project.
   -d, --dist <path>             Path of the binary folder relative to the project.
   -q, --quiet true              Only output the results JSON
-  -f, --force true              Force overwrite fuzzInstances.json.
-  -h, --help                    display help for command
+  -F, --force true              Force overwrite fuzzInstances.json.
+  -h, --help                    Display help for command
 ```
 
 The target code usually needs to be decorated with:
@@ -152,6 +157,9 @@ adding any function that deals with an object's state directly inside that objec
 or at least separately. Another option is that the user can manually update the
 fuzzInstances.json file with those nested argument objects.
 
+By setting the threads option to 0, the results of the fuzzing are the original objects,
+and can thus be reused in other code.
+
 ## Code Style Tips
 
 ### Types
@@ -181,7 +189,6 @@ fuzzInstances.json file with those nested argument objects.
 
 ## TODO Priorities
 
-- Side-by-side single and multithreaded runners.
 - Benchmarking of target functions to determine the best run time and number of tests.
 
 - Redundant runner for the args-results pairs.

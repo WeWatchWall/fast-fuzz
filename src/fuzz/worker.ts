@@ -28,14 +28,19 @@ const job = multee.createHandler(
       case Call.count:
         return await count(
           callArgs.args[0],
-          callArgs.args[1]
+          callArgs.args[1],
+          callArgs.args[2]
         );
       case Call.fuzz:
         return safeStringify(await fuzz(
           callArgs.args[0],
           callArgs.args[1],
           callArgs.args[2],
-          callArgs.args[3]
+          callArgs.args[3],
+          callArgs.args[4],
+          callArgs.args[5],
+          callArgs.args[6],
+          callArgs.args[7]
         ));
       case Call.getInstances:
         return safeStringify(await getInstances());

@@ -5,14 +5,17 @@ import logUpdate from 'log-update';
 import safeStringify from 'fast-safe-stringify';
 
 import {
-  init as initWorker,
-  count,
-  fuzz as fuzzWorker,
-  getInstances
+  init as initSingle,
+  count as countSingle,
+  fuzz as fuzzSingle,
+  getInstances as iSingle
 } from './fuzz';
+import { FuzzRunner } from './fuzzRunner';
+
 import { Results } from './result';
 
 let instancesPath: string;
+let fuzzRunner: FuzzRunner;
 
 /**
  * Initializes the code analysis.
@@ -22,6 +25,7 @@ let instancesPath: string;
  */
 async function init(
   folder: string,
+  threads?: number,
   src?: string,
   dist?: string
 ): Promise<void> {
@@ -33,7 +37,14 @@ async function init(
   }
 
   // Initialize the worker.
-  await initWorker(folder, src, dist, instances);
+  if (threads === 0) {
+    await initSingle(folder, src, dist, instances);
+  }
+  else {
+    fuzzRunner = new FuzzRunner();
+    await fuzzRunner.init(folder, src, dist, instances, threads);
+  }
+
 }
 
 /**
@@ -51,30 +62,68 @@ async function init(
  */
 export async function fuzz(
   folder: string,
+  threads?: number,
   maxTime = 1e4,
   maxRuns = 1e5,
   methodPattern?: string,
   classPattern?: string,
+  filePattern?: string,
   src?: string,
   dist?: string,
   verbose = false,
   force = false,
   resultsOut: Results[] = []
 ): Promise<Results[]> {
-  await init(folder, src, dist);
+  await init(folder, threads, src, dist);
 
   if (verbose) {
-    const methodCount = await count(methodPattern, classPattern);
+    let methodCount: number;
+    if (threads === 0) {
+      methodCount = await countSingle(
+        methodPattern,
+        classPattern,
+        filePattern
+      );
+    } else {
+      methodCount = await fuzzRunner.count(
+        methodPattern,
+        classPattern,
+        filePattern
+      );
+    }
+
+    // Log the method count and estimates.
     logUpdate(`
       Method count: ${methodCount},
       Estimated time (s): ${methodCount * maxTime / 1000}
     `);
     logUpdate.done();
   }
+  let instances: any;
+  if (threads === 0) {
+    await fuzzSingle(
+      maxTime,
+      maxRuns,
+      methodPattern,
+      classPattern,
+      filePattern,
+      resultsOut
+    );
 
-  await fuzzWorker(maxTime, maxRuns, methodPattern, classPattern, resultsOut);
+    instances = await iSingle();
+  } else {
+    await fuzzRunner.fuzz(
+      maxTime,
+      maxRuns,
+      methodPattern,
+      classPattern,
+      filePattern,
+      resultsOut
+    );
 
-  const instances = await getInstances();
+    instances = await fuzzRunner.getInstances();
+  }
+
   saveInstances({ force, instances });
   return resultsOut;
 }

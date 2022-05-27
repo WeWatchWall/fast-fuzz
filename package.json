@@ -1,6 +1,6 @@
 {
   "name": "fast-fuzz",
-  "version": "4.4.3",
+  "version": "5.0.0",
   "description": "Test case fuzzer with branch coverage guidance.",
   "main": "./dist/src/fast-fuzz.js",
   "types": "./dist/src/fast-fuzz.d.ts",
@@ -47,6 +47,7 @@
     "typescript": "^4.6.3"
   },
   "dependencies": {
+    "await-lock": "^2.2.2",
     "class-transformer": "^0.5.1",
     "commander": "^6.2.1",
     "deep-object-diff": "^1.1.0",

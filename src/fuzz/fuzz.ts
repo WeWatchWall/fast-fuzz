@@ -114,12 +114,17 @@ function checkInit(): void {
  */
 export async function count(
   methodPattern?: string,
-  classPattern?: string
+  classPattern?: string,
+  filePattern?: string
  ): Promise<number> {
   checkInit();
 
   let methodCount = 0;
-  for (const [, methods] of Object.entries(Globals.codeUtil.methods)) {
+  for (const [file, methods] of Object.entries(Globals.codeUtil.methods)) {
+    if (filePattern !== undefined && !(new RegExp(filePattern)).test(file)) {
+      continue;
+    }
+
     for (const method of methods) {
       if (classPattern !== undefined && !(new RegExp(classPattern)).test(method.className)) {
         continue;
@@ -142,6 +147,7 @@ export async function count(
  * @param [maxRuns] 
  * @param [methodPattern]
  * @param [classPattern]
+ * @param [filePattern]
  * @param [resultsOut] 
  */
 export async function fuzz(
@@ -149,13 +155,23 @@ export async function fuzz(
   maxRuns = 1e5,
   methodPattern?: string,
   classPattern?: string,
-  resultsOut: Results[] = []
+  filePattern?: string,
+  resultsOut: Results[] = [],
+  index = 0,
+  count = 0
 ): Promise<Results[]> {
+  let currentCount = 0;
+  let currentIndex = 0;
+
   checkInit();
 
   interfaces = Object.values(Globals.codeUtil.interfaces);
 
   for (const [file, methods] of Object.entries(Globals.codeUtil.methods)) {
+    if (filePattern !== undefined && !(new RegExp(filePattern)).test(file)) {
+      continue;
+    }
+
     for (const method of methods) {
       /* #region  Method filtering. */
       if (classPattern !== undefined && !(new RegExp(classPattern)).test(method.className)) {
@@ -167,6 +183,17 @@ export async function fuzz(
       }
       if (method.name === '__constructor') { continue; }
       /* #endregion */
+
+      if (count === 0 || currentIndex < index) {
+        currentIndex++;
+        continue;
+      }
+      if (count !== 0 && currentCount >= count) {
+        break;
+      }
+
+      currentIndex++;
+      currentCount++;
 
       // Set the generators to reset with the new literals.
       Globals.methodCount++;

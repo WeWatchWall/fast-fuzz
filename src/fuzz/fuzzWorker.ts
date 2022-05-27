@@ -31,11 +31,16 @@ export class FuzzWorker {
    */
   async count(
     methodPattern?: string,
-    classPattern?: string
+    classPattern?: string,
+    filePattern?: string
   ): Promise<number> {
     return await this.worker.run({
       name: Call.count,
-      args: [methodPattern, classPattern]
+      args: [
+        methodPattern,
+        classPattern,
+        filePattern
+      ]
     });
   }
 
@@ -52,7 +57,10 @@ export class FuzzWorker {
     maxRuns = 1e5,
     methodPattern?: string,
     classPattern?: string,
-    resultsOut: Results[] = []
+    filePattern?: string,
+    resultsOut: Results[] = [],
+    index = 0,
+    count = 0
   ): Promise<Results[]> {
     const result = JSON.parse(await this.worker.run({
       name: Call.fuzz,
@@ -60,7 +68,11 @@ export class FuzzWorker {
         maxTime,
         maxRuns,
         methodPattern,
-        classPattern
+        classPattern,
+        filePattern,
+        undefined,
+        index,
+        count
       ]
     }));
 

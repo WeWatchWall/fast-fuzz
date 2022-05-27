@@ -11,13 +11,15 @@ commander
   .addHelpCommand()
   .version(require('../../package').version)
   .option('-i, --input <path>', 'Path of the Typescript project.')
+  .option('-p, --threads <count>', 'The number of parallel threads. Default = OS defined. 0 for in-process.')
   .option('-t, --maxTime <milliseconds>', 'The maximum time(ms) per function. Actual value is multiplied by 4. Default = 10s.')
   .option('-n, --maxRuns <count>', 'The maximum count of runs per function. Default = 100e3.')
   .option('-m, --methods <RegExp>', 'A Regex expression to filter the methods to test.')
   .option('-c, --classes <RegExp>', 'A Regex expression to filter the classes to test.')
+  .option('-f, --files <RegExp>', 'A Regex expression to filter the files to test.')
   .option('-s, --source <path>', 'Path of the source folder relative to the project.')
   .option('-d, --dist <path>', 'Path of the binary folder relative to the project.')
-  .option('-f, --force true', 'Force overwrite fuzz instances JSON file.')
+  .option('-F, --force true', 'Force overwrite fuzz instances JSON file.')
   .option('-q, --quiet true', 'Only output the results JSON.')
   .parse(process.argv);
 
@@ -59,10 +61,12 @@ async function Main() {
   if (commander.quiet) {
     console.log(safeStringify(await fuzz(
       commander.input,
+      commander.threads,
       commander.maxTime,
       commander.maxRuns,
       commander.methods,
       commander.classes,
+      commander.files,
       commander.source,
       commander.dist,
       !commander.quiet,
@@ -77,10 +81,12 @@ async function Main() {
   let isResolved = false;
   fuzz(
     commander.input,
+    commander.threads,
     commander.maxTime,
     commander.maxRuns,
     commander.methods,
     commander.classes,
+    commander.files,
     commander.source,
     commander.dist,
     !commander.quiet,
