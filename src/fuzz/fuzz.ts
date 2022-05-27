@@ -96,11 +96,6 @@ async function initLocal(
 
 /**
  * Check that the instrumentation is initialized.
- * @param [maxTime] 
- * @param [maxRuns] 
- * @param [methodPattern]
- * @param [classPattern]
- * @param [resultsOut] 
  */
 function checkInit(): void {
   if (instrumenter === undefined) {
@@ -110,11 +105,9 @@ function checkInit(): void {
 
 /**
  * Counts the number of methods.
- * @param [maxTime] 
- * @param [maxRuns] 
  * @param [methodPattern]
  * @param [classPattern]
- * @param [resultsOut] 
+ * @returns count of methods.
  */
 export function count(
   methodPattern?: string,
@@ -141,7 +134,7 @@ export function count(
 }
 
 /**
- * Inits the local code analysis.
+ * Fuzz the TS folder.
  * @param [maxTime] 
  * @param [maxRuns] 
  * @param [methodPattern]
@@ -211,7 +204,7 @@ export async function fuzz(
 }
 
 /**
- * Fuzzs static methods.
+ * Fuzz static methods.
  * @param filePath 
  * @param method 
  * @param [maxTime] 
@@ -273,7 +266,7 @@ function fuzzStatic(
 }
 
 /**
- * Fuzzs static methods async.
+ * Fuzz static methods async.
  * @param filePath 
  * @param method 
  * @param [maxTime] 

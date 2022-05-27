@@ -15,6 +15,12 @@ import { Results } from './result';
 let isInit = false;
 let instancesPath: string;
 
+/**
+ * Initializes the code analysis.
+ * @param folder 
+ * @param [src]
+ * @param [dist]
+ */
 async function init(
   folder: string,
   src?: string,
@@ -35,6 +41,19 @@ async function init(
   isInit = true;
 }
 
+/**
+ * Fuzz the TS folder.
+ * @param folder 
+ * @param [maxTime] 
+ * @param [maxRuns] 
+ * @param [methodPattern]
+ * @param [classPattern]
+ * @param [src]
+ * @param [dist]
+ * @param [verbose]
+ * @param [force]
+ * @param [resultsOut] 
+ */
 export async function fuzz(
   folder: string,
   maxTime = 1e4,
