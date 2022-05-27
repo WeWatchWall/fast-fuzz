@@ -12,7 +12,6 @@ import {
 } from './fuzz';
 import { Results } from './result';
 
-let isInit = false;
 let instancesPath: string;
 
 /**
@@ -26,8 +25,6 @@ async function init(
   src?: string,
   dist?: string
 ): Promise<void> {
-  if (isInit) { return; }
-
   // Load the instances file.
   let instances: any;
   instancesPath = path.join(folder, '/fuzzInstances.json');
@@ -37,8 +34,6 @@ async function init(
 
   // Initialize the worker.
   await initWorker(folder, src, dist, instances);
-
-  isInit = true;
 }
 
 /**
@@ -69,7 +64,7 @@ export async function fuzz(
   await init(folder, src, dist);
 
   if (verbose) {
-    const methodCount = count(methodPattern, classPattern);
+    const methodCount = await count(methodPattern, classPattern);
     logUpdate(`
       Method count: ${methodCount},
       Estimated time (s): ${methodCount * maxTime / 1000}
@@ -79,7 +74,7 @@ export async function fuzz(
 
   await fuzzWorker(maxTime, maxRuns, methodPattern, classPattern, resultsOut);
 
-  const instances = getInstances();
+  const instances = await getInstances();
   saveInstances({ force, instances });
   return resultsOut;
 }

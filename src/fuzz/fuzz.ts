@@ -29,7 +29,7 @@ hookRequire((_filePath) => true, (code, { filename }) => {
 /* #endregion */
 
 /* #region  Local variables. */
-let isInit = false;
+let currentFolder: string;
 let interfaces: [string, string][];
 let instances: {
   args: any[],
@@ -53,7 +53,7 @@ export async function init(
   src?: string,
   dist?: string,
   instances?: any
-) {
+): Promise<void> {
   if (instances !== undefined) {
     Globals.instances = instances;
   }
@@ -71,8 +71,11 @@ async function initLocal(
   folder: string,
   src = 'src/',
   dist = 'dist/',
-) {
-  if (isInit) { return; }
+): Promise<void> {
+  if (
+    currentFolder !== undefined &&
+    currentFolder === folder
+  ) { return; }
 
   Globals.isTest = true;
 
@@ -88,10 +91,10 @@ async function initLocal(
       .replace(new RegExp('\\\\\\\\', 'g'), '/')
   );
 
-  instrumenter = createInstrumenter({ compact: true, reportLogic: true })
+  instrumenter = createInstrumenter({ compact: true, reportLogic: true });
   await Globals.codeUtil.load();
 
-  isInit = true;
+  currentFolder = folder;
 }
 
 /**
@@ -109,10 +112,10 @@ function checkInit(): void {
  * @param [classPattern]
  * @returns count of methods.
  */
-export function count(
+export async function count(
   methodPattern?: string,
   classPattern?: string
- ): number {
+ ): Promise<number> {
   checkInit();
 
   let methodCount = 0;
@@ -570,6 +573,6 @@ function loadInstances(
  * Gets instances.
  * @returns instances 
  */
-export function getInstances(): any {
+export async function getInstances(): Promise<any> {
   return Globals.instances;
 }
