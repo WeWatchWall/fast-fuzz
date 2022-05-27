@@ -54,10 +54,10 @@ There are two ways to invoke the fast-fuzz package:
 - Through code:
 
 ```typescript
-import { fastFuzz } from 'fast-fuzz';
+import { fuzz } from 'fast-fuzz';
 
 async Main () {
-  await fastFuzz(
+  await fuzz(
     projectFolder,
     maxTime,          // [Optional] Default = 10s.
     maxRuns,          // [Optional] Default = 100e3.
@@ -71,6 +71,10 @@ async Main () {
 }
 Main();
 ```
+
+The library invocation only initializes the first time on a single folder.
+Subsequent calls will ignore those arguments.
+The process will need to be restarted to fuzz multiple target folders.
 
 - Command line (from within the package.json scripts):
 

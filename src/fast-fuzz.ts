@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import { fastFuzz } from './fuzz/fuzz';
+import { fuzz } from './fuzz/fuzzCaller';
 
 import { 
   arg as fuzzArg,
@@ -13,7 +13,7 @@ import {
 } from './decorators';
 
 export { 
-  fastFuzz,
+  fuzz,
   fuzzArg,
   fuzzArgType,
   fuzzMethod,

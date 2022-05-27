@@ -1,22 +1,19 @@
 import { createInstrumenter } from 'istanbul-lib-instrument';
 import { hookRequire } from 'istanbul-lib-hook';
 
-import fs from 'fs';
 import path from 'path';
-import safeStringify from 'fast-safe-stringify';
-import logUpdate from 'log-update';
 
 import { Globals } from '../utils/globals';
 import { Code } from '../utils/code';
 
+import { fuzzAsync } from './fuzzAsync';
 import { fuzzSync } from './fuzzSync';
+import { GeneratorArg } from '../generators/GeneratorArg';
+import { GeneratorFactory } from '../generators/GeneratorFactory';
+import { IGenerator } from '../generators/IGenerator';
+import { Mode } from '../generators/Mode';
 import { ModuleMethod, ModuleType } from '../utils/modules';
 import { Result, Results } from './result';
-import { IGenerator } from '../generators/IGenerator';
-import { GeneratorFactory } from '../generators/GeneratorFactory';
-import { Mode } from '../generators/Mode';
-import { fuzzAsync } from './fuzzAsync';
-import { GeneratorArg } from '../generators/GeneratorArg';
 
 /* #region  Instrumenter hook. */
 let instrumenter: any;
@@ -31,9 +28,9 @@ hookRequire((_filePath) => true, (code, { filename }) => {
 });
 /* #endregion */
 
+/* #region  Local variables. */
+let isInit = false;
 let interfaces: [string, string][];
-
-let instancesPath: string;
 let instances: {
   args: any[],
   callTypes: {
@@ -42,49 +39,125 @@ let instances: {
     types: ModuleType[]
   }[]
 }[] = [];
+/* #endregion */
 
-export async function fastFuzz(
+/**
+ * Inits the local code analysis and type stuffing.
+ * @param folder 
+ * @param [src] 
+ * @param [dist] 
+ * @param [instances] 
+ */
+export async function init(
   folder: string,
+  src?: string,
+  dist?: string,
+  instances?: any
+) {
+  if (instances !== undefined) {
+    Globals.instances = instances;
+  }
+
+  await initLocal(folder, src, dist);
+}
+
+/**
+ * Inits the local code analysis.
+ * @param folder 
+ * @param [src] 
+ * @param [dist] 
+ */
+async function initLocal(
+  folder: string,
+  src = 'src/',
+  dist = 'dist/',
+) {
+  if (isInit) { return; }
+
+  Globals.isTest = true;
+
+  Globals.codeUtil = new Code();
+  await Globals.codeUtil.init(
+    path
+      .join(folder, src)
+      .replace(new RegExp('\\\\', 'g'), '/')
+      .replace(new RegExp('\\\\\\\\', 'g'), '/'),
+    path
+      .join(folder, dist)
+      .replace(new RegExp('\\\\', 'g'), '/')
+      .replace(new RegExp('\\\\\\\\', 'g'), '/')
+  );
+
+  instrumenter = createInstrumenter({ compact: true, reportLogic: true })
+  await Globals.codeUtil.load();
+
+  isInit = true;
+}
+
+/**
+ * Check that the instrumentation is initialized.
+ * @param [maxTime] 
+ * @param [maxRuns] 
+ * @param [methodPattern]
+ * @param [classPattern]
+ * @param [resultsOut] 
+ */
+function checkInit(): void {
+  if (instrumenter === undefined) {
+    throw new Error('The Fuzz method only runs after calling init. ');
+  }
+}
+
+/**
+ * Counts the number of methods.
+ * @param [maxTime] 
+ * @param [maxRuns] 
+ * @param [methodPattern]
+ * @param [classPattern]
+ * @param [resultsOut] 
+ */
+export function count(
+  methodPattern?: string,
+  classPattern?: string
+ ): number {
+  checkInit();
+
+  let methodCount = 0;
+  for (const [, methods] of Object.entries(Globals.codeUtil.methods)) {
+    for (const method of methods) {
+      if (classPattern !== undefined && !(new RegExp(classPattern)).test(method.className)) {
+        continue;
+      }
+      if (methodPattern !== undefined && !(new RegExp(methodPattern)).test(method.name)) {
+        continue;
+      }
+      if (method.name === '__constructor') { continue; }
+
+      methodCount++;
+    }
+  }
+
+  return methodCount;
+}
+
+/**
+ * Inits the local code analysis.
+ * @param [maxTime] 
+ * @param [maxRuns] 
+ * @param [methodPattern]
+ * @param [classPattern]
+ * @param [resultsOut] 
+ */
+export async function fuzz(
   maxTime = 1e4,
   maxRuns = 1e5,
   methodPattern?: string,
   classPattern?: string,
-  src?: string,
-  dist?: string,
-  verbose = false,
-  force = false,
   resultsOut: Results[] = []
 ): Promise<Results[]> {
-  if (instrumenter === undefined) {
-    await init(folder, src, dist);
-  }
+  checkInit();
 
   interfaces = Object.values(Globals.codeUtil.interfaces);
-
-  /* #region  Output verbose info. */
-  if (verbose) {
-    let methodCount = 0;
-    for (const [, methods] of Object.entries(Globals.codeUtil.methods)) {
-      for (const method of methods) {
-        if (classPattern !== undefined && !(new RegExp(classPattern)).test(method.className)) {
-          continue;
-        }
-        if (methodPattern !== undefined && !(new RegExp(methodPattern)).test(method.name)) {
-          continue;
-        }
-        if (method.name === '__constructor') { continue; }
-
-        methodCount++;
-      }
-    }
-
-    logUpdate(`
-      Method count: ${methodCount},
-      Estimated time (s): ${methodCount * maxTime / 1000}
-    `);
-    logUpdate.done();
-  }
-  /* #endregion */
 
   for (const [file, methods] of Object.entries(Globals.codeUtil.methods)) {
     for (const method of methods) {
@@ -129,59 +202,23 @@ export async function fastFuzz(
       });
 
       // Collect the instances.
-      getInstances(instances, Globals.instances);
+      loadInstances(instances, Globals.instances);
       instances = [];
     }
   }
 
-  saveInstances({ force, instances: Globals.instances });
   return resultsOut;
 }
 
-async function init(
-  folder: string,
-  src = 'src/',
-  dist = 'dist/',
-) {
-  Globals.isTest = true;
-
-  Globals.codeUtil = new Code();
-  await Globals.codeUtil.init(
-    path
-      .join(folder, src)
-      .replace(new RegExp('\\\\', 'g'), '/')
-      .replace(new RegExp('\\\\\\\\', 'g'), '/'),
-    path
-      .join(folder, dist)
-      .replace(new RegExp('\\\\', 'g'), '/')
-      .replace(new RegExp('\\\\\\\\', 'g'), '/')
-  );
-
-  instrumenter = createInstrumenter({ compact: true, reportLogic: true })
-  await Globals.codeUtil.load();
-
-  // Load the instances file.
-  instancesPath = path.join(folder, '/fuzzInstances.json');
-  if (!fs.existsSync(instancesPath)) { return; }
-  Globals.instances = JSON.parse(fs.readFileSync(instancesPath, 'utf8'));
-}
-
-function getArgs(method: ModuleMethod, generator: GeneratorArg): any[] {
-  // Set the method to generate new arguments.
-  method.test.isStart = true;
-  method.test.callArgsTypes = [];
-
-  const resultObject: any = generator.next();
-
-  const result: any[] = [];
-  method.args.forEach((arg: string) => {
-    result.push(resultObject[arg]);
-  });
-  method.test.callArgs = result;
-
-  return result;
-}
-
+/**
+ * Fuzzs static methods.
+ * @param filePath 
+ * @param method 
+ * @param [maxTime] 
+ * @param [maxRuns] 
+ * @param resultsOut 
+ * @returns static 
+ */
 function fuzzStatic(
   filePath: string,
   method: ModuleMethod,
@@ -192,7 +229,7 @@ function fuzzStatic(
   // Init the arg generator.
   interfaces.push(method.IArgs);
   const argGenerator = new GeneratorArg(interfaces);
-  
+
   /* #region  Get the static method. */
   const type: ModuleType =
     Globals
@@ -235,6 +272,15 @@ function fuzzStatic(
   return results;
 }
 
+/**
+ * Fuzzs static methods async.
+ * @param filePath 
+ * @param method 
+ * @param [maxTime] 
+ * @param [maxRuns] 
+ * @param resultsOut 
+ * @returns static async 
+ */
 async function fuzzStaticAsync(
   filePath: string,
   method: ModuleMethod,
@@ -288,6 +334,15 @@ async function fuzzStaticAsync(
   return results;
 }
 
+/**
+ * Fuzz methods.
+ * @param filePath 
+ * @param method 
+ * @param [maxTime] 
+ * @param [maxRuns] 
+ * @param resultsOut 
+ * @returns method 
+ */
 function fuzzMethod(
   filePath: string,
   method: ModuleMethod,
@@ -325,7 +380,7 @@ function fuzzMethod(
         isIncrement = true;
         generator = GeneratorFactory.initType(type, 0, 0, Mode.Low_2, true);
       }
-  
+
       method.test.instance = generator.next();
       return method.test.instance[method.name](...args);
     },
@@ -356,6 +411,15 @@ function fuzzMethod(
   return results;
 }
 
+/**
+ * Fuzz methods async.
+ * @param filePath 
+ * @param method 
+ * @param [maxTime] 
+ * @param [maxRuns] 
+ * @param resultsOut 
+ * @returns method async 
+ */
 async function fuzzMethodAsync(
   filePath: string,
   method: ModuleMethod,
@@ -376,7 +440,7 @@ async function fuzzMethodAsync(
       );
 
   method.test.instanceType = type;
-  
+
   let isIncrement = false;
   let generator: IGenerator =
     GeneratorFactory.initType(type, 0, 0, Mode.Stuff, true);
@@ -424,7 +488,34 @@ async function fuzzMethodAsync(
   return results;
 }
 
-function getInstances(
+/**
+ * Gets args.
+ * @param method 
+ * @param generator 
+ * @returns args 
+ */
+function getArgs(method: ModuleMethod, generator: GeneratorArg): any[] {
+  // Set the method to generate new arguments.
+  method.test.isStart = true;
+  method.test.callArgsTypes = [];
+
+  const resultObject: any = generator.next();
+
+  const result: any[] = [];
+  method.args.forEach((arg: string) => {
+    result.push(resultObject[arg]);
+  });
+  method.test.callArgs = result;
+
+  return result;
+}
+
+/**
+ * Loads instances after every method fuzz.
+ * @param instances 
+ * @param instancesOut 
+ */
+function loadInstances(
   instances: {
     args: any[],
     callTypes: {
@@ -440,7 +531,7 @@ function getInstances(
       }
     }
   }
-) {
+): void {
   instances.forEach(instance => {
     if (
       instance === undefined ||
@@ -482,19 +573,10 @@ function getInstances(
   });
 }
 
-function saveInstances({ force, instances }: {
-  force: boolean;
-  instances: {
-    [key: string]: {
-      [key: string]: {
-        instances: any[];
-      };
-    };
-  };
-}) {
-  if (!force && fs.existsSync(instancesPath)) { return; }
-
-  const output = safeStringify(instances);
-
-  fs.writeFileSync(instancesPath, output);
+/**
+ * Gets instances.
+ * @returns instances 
+ */
+export function getInstances(): any {
+  return Globals.instances;
 }

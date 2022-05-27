@@ -4,7 +4,7 @@ import commander from 'commander';
 import logUpdate from 'log-update';
 import safeStringify from 'fast-safe-stringify';
 
-import { fastFuzz } from './fuzz/fuzz';
+import { fuzz } from './fuzz/fuzzCaller';
 import { Results } from './fuzz/result';
 
 commander
@@ -57,7 +57,7 @@ async function Main() {
 
   // Just wait for results for non-interactive session.
   if (commander.quiet) {
-    console.log(safeStringify(await fastFuzz(
+    console.log(safeStringify(await fuzz(
       commander.input,
       commander.maxTime,
       commander.maxRuns,
@@ -75,7 +75,7 @@ async function Main() {
   const start: number = Date.now();
   const results: Results[] = [];
   let isResolved = false;
-  fastFuzz(
+  fuzz(
     commander.input,
     commander.maxTime,
     commander.maxRuns,
