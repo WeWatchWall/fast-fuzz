@@ -91,7 +91,7 @@ fast-fuzz
   -s, --source <path>           Path of the source folder relative to the project.
   -d, --dist <path>             Path of the binary folder relative to the project.
   -q, --quiet true              Only output the results JSON
-  -f, --force                   Force overwrite fuzzInstances.json.
+  -f, --force true              Force overwrite fuzzInstances.json.
   -h, --help                    display help for command
 ```
 
