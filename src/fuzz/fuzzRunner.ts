@@ -10,7 +10,8 @@ import { Results } from './result';
 export class FuzzRunner {
   /* #region  Local variables. */
   private lock = new AwaitLock();
-  private methodIndex: number;
+  private methodIndexPre: number;
+  private methodIndexPost: number;
 
   private pCount: number;
   private workers: FuzzWorker[] = [];
@@ -86,7 +87,8 @@ export class FuzzRunner {
     const pCount = Math.min(count, this.pCount);
     const finalPromise = new FlatPromise();
 
-    this.methodIndex = - 1;
+    this.methodIndexPre = - 1;
+    this.methodIndexPost = - 1;
     for (let index = 0; index < pCount; index++) {
       this.runWorker(
         this.workers[index],
@@ -176,7 +178,7 @@ export class FuzzRunner {
       await this.lock.acquireAsync();
       try {
         // Increment the method
-        this.methodIndex++;
+        this.methodIndexPre++;
 
         // Run one method.
         resultsP = worker.fuzz(
@@ -186,7 +188,7 @@ export class FuzzRunner {
           classPattern,
           filePattern,
           resultsOut,
-          this.methodIndex,
+          this.methodIndexPre,
           1
         );
       } finally {
@@ -195,9 +197,18 @@ export class FuzzRunner {
 
       await resultsP;
   
-    } while(this.methodIndex < count);
+      // Accounting for finished methods.
+      await this.lock.acquireAsync();
+      try {
+        this.methodIndexPost++;
+      } finally {
+        this.lock.release();
+      }
+    } while(this.methodIndexPre < count - 1);
 
     // Finalize the results.
-    finalPromise.resolve();
+    if (this.methodIndexPost === count - 1) {
+      finalPromise.resolve();
+    }
   }
 }

@@ -184,12 +184,12 @@ export async function fuzz(
       if (method.name === '__constructor') { continue; }
       /* #endregion */
 
+      if (count !== 0 && currentCount >= count) {
+        break;
+      }
       if (currentIndex < index) {
         currentIndex++;
         continue;
-      }
-      if (count !== 0 && currentCount >= count) {
-        break;
       }
 
       currentIndex++;
