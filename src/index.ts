@@ -29,6 +29,10 @@ if (!commander.input) {
 }
 
 async function Main() {
+  if (commander.threads !== undefined) {
+    commander.threads = Number.parseInt(commander.threads);
+    if (Number.isNaN(commander.threads)) { delete commander.threads; }
+  }
   if (commander.maxTime !== undefined) {
     commander.maxTime = Number.parseFloat(commander.maxTime);
     if (Number.isNaN(commander.maxTime)) { delete commander.maxTime; }

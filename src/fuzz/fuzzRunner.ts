@@ -168,7 +168,7 @@ export class FuzzRunner {
     filePattern: string,
     resultsOut: Results[],
     count: number
-  ) {
+  ): Promise<void> {
     // Consume methods until they run out.
     do {
       let resultsP: Promise<Results[]>
@@ -193,9 +193,8 @@ export class FuzzRunner {
         this.lock.release();
       }
 
-      const results = await resultsP;
-      // Append the fuzzing results.
-      resultsOut.push(...results);
+      await resultsP;
+  
     } while(this.methodIndex < count);
 
     // Finalize the results.

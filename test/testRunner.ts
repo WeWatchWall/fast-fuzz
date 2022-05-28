@@ -16,7 +16,7 @@ export async function init(
       fs.unlinkSync(fileName);
     }
 
-    const cliResult: string = await execShellCommand(`node ./dist/src/index.js -i "./test/sut" -s "./" -d "../../dist/test/sut" -c "${name}" -t ${time} -n ${runCount} -q true`);
+    const cliResult: string = await execShellCommand(`node ./dist/src/index.js -i "./test/sut" -s "./" -d "../../dist/test/sut" -c "${name}" -t ${time} -n ${runCount} -p 2 -q true`);
     
     let error: any;
     try {

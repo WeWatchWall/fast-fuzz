@@ -76,6 +76,7 @@ export async function fuzz(
 ): Promise<Results[]> {
   await init(folder, threads, src, dist);
 
+  console.clear();
   if (verbose) {
     let methodCount: number;
     if (threads === 0) {
@@ -122,6 +123,10 @@ export async function fuzz(
     );
 
     instances = await fuzzRunner.getInstances();
+  }
+
+  if (threads !== 0) {
+    fuzzRunner.terminate();
   }
 
   saveInstances({ force, instances });

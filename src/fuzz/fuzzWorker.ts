@@ -76,6 +76,7 @@ export class FuzzWorker {
       ]
     }));
 
+    // Append the fuzzing results.
     resultsOut.push(...result);
     return resultsOut;
   }
