@@ -6,8 +6,7 @@ const results: { [key: string]: any[] } = {};
 
 export async function init(
   name: string,
-  time = 5e3,
-  runCount = 1e4
+  time = 10e3
 ): Promise<any[]> {
   if (results[name] === undefined) {
     // Get rid of previous instances.
@@ -16,7 +15,7 @@ export async function init(
       fs.unlinkSync(fileName);
     }
 
-    const cliResult: string = await execShellCommand(`node ./dist/src/index.js -i "./test/sut" -s "./" -d "../../dist/test/sut" -c "${name}" -t ${time} -n ${runCount} -p 2 -q true`);
+    const cliResult: string = await execShellCommand(`node ./dist/src/index.js -i "./test/sut" -s "./" -d "../../dist/test/sut" -c "${name}" -t ${time} -n 2 -q true`);
     
     let error: any;
     try {

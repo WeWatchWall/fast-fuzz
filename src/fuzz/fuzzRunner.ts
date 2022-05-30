@@ -95,14 +95,12 @@ export class FuzzRunner {
   /**
    * Fuzz the TS folder.
    * @param [maxTime] 
-   * @param [maxRuns] 
    * @param [methodPattern]
    * @param [classPattern]
    * @param [resultsOut] 
    */
   async fuzz(
     maxTime = 1e4,
-    maxRuns = 1e5,
     methodPattern?: string,
     classPattern?: string,
     filePattern?: string,
@@ -119,7 +117,6 @@ export class FuzzRunner {
         this.workers[index],
         finalPromise,
         maxTime,
-        maxRuns,
         methodPattern,
         classPattern,
         filePattern,
@@ -179,7 +176,6 @@ export class FuzzRunner {
    * @param count 
    * @param finalPromise 
    * @param maxTime 
-   * @param maxRuns 
    * @param methodPattern 
    * @param classPattern 
    * @param filePattern 
@@ -189,7 +185,6 @@ export class FuzzRunner {
     worker: FuzzWorker,
     finalPromise: any,
     maxTime: number,
-    maxRuns: number,
     methodPattern: string,
     classPattern: string,
     filePattern: string,
@@ -208,7 +203,6 @@ export class FuzzRunner {
         // Run one method.
         resultsP = worker.fuzz(
           maxTime,
-          maxRuns,
           methodPattern,
           classPattern,
           filePattern,

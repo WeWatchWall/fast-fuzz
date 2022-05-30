@@ -43,10 +43,10 @@ let instances: {
 
 /**
  * Inits the local code analysis and type stuffing.
- * @param folder 
- * @param [src] 
- * @param [dist] 
- * @param [instances] 
+ * @param folder @type {string} 
+ * @param [src] @type {string} 
+ * @param [dist] @type {string} 
+ * @param [instances] @type {any} 
  */
 export async function init(
   folder: string,
@@ -63,9 +63,9 @@ export async function init(
 
 /**
  * Inits the local code analysis.
- * @param folder 
- * @param [src] 
- * @param [dist] 
+ * @param folder @type {string} 
+ * @param [src] @type {string} 
+ * @param [dist] @type {string} 
  */
 async function initLocal(
   folder: string,
@@ -108,15 +108,16 @@ function checkInit(): void {
 
 /**
  * Counts the number of methods.
- * @param [methodPattern]
- * @param [classPattern]
+ * @param [methodPattern] @type {RegExp} 
+ * @param [classPattern] @type {RegExp} 
+ * @param [filePattern] @type {RegExp} 
  * @returns count of methods.
  */
 export async function count(
   methodPattern?: string,
   classPattern?: string,
   filePattern?: string
- ): Promise<number> {
+): Promise<number> {
   checkInit();
 
   let methodCount = 0;
@@ -143,16 +144,14 @@ export async function count(
 
 /**
  * Fuzz the TS folder.
- * @param [maxTime] 
- * @param [maxRuns] 
- * @param [methodPattern]
- * @param [classPattern]
- * @param [filePattern]
- * @param [resultsOut] 
+ * @param [maxTime] @type {number} 
+ * @param [methodPattern] @type {RegExp} 
+ * @param [classPattern] @type {RegExp} 
+ * @param [filePattern] @type {RegExp} 
+ * @param [resultsOut] @type {Results[]} 
  */
 export async function fuzz(
   maxTime = 1e4,
-  maxRuns = 1e5,
   methodPattern?: string,
   classPattern?: string,
   filePattern?: string,
@@ -184,6 +183,7 @@ export async function fuzz(
       if (method.name === '__constructor') { continue; }
       /* #endregion */
 
+      /* #region  Check the resume state and skip those methods. */
       if (count !== 0 && currentCount >= count) {
         break;
       }
@@ -194,26 +194,16 @@ export async function fuzz(
 
       currentIndex++;
       currentCount++;
+      /* #endregion */
 
       // Set the generators to reset with the new literals.
-      Globals.methodCount++;
       Globals.literals = method.literals;
 
+      // Benchmark for number of runs in the specified time.
+      const maxRuns = await getMaxRuns(method, file, maxTime);
+
       // Run the appropiate static & async method
-      let fuzzResults: Result[] = [];
-      if (method.isStatic || method.className === undefined) {
-        if (method.isAsync) {
-          fuzzResults = await fuzzStaticAsync(file, method, maxTime, maxRuns, fuzzResults);
-        } else {
-          fuzzResults = fuzzStatic(file, method, maxTime, maxRuns, fuzzResults);
-        }
-      } else {
-        if (method.isAsync) {
-          fuzzResults = await fuzzMethodAsync(file, method, maxTime, maxRuns, fuzzResults);
-        } else {
-          fuzzResults = fuzzMethod(file, method, maxTime, maxRuns, fuzzResults);
-        }
-      }
+      let fuzzResults: Result[] = await fuzzAnyMethod(method, file, maxTime, maxRuns);
 
       // Output the method results.
       resultsOut.push({
@@ -221,6 +211,7 @@ export async function fuzz(
         className: method.className,
         namespaces: method.namespaces,
         file,
+        avgSpeed: maxRuns / maxTime,
         results: fuzzResults
       });
 
@@ -233,14 +224,68 @@ export async function fuzz(
   return resultsOut;
 }
 
+
+/**
+ * Gets max runs from 1000, in 10% of the time.
+ * @param method @type {ModuleMethod} 
+ * @param file @type {string} 
+ * @param maxTime @type {number} 
+ * @returns maxRuns @type {number} 
+ */
+async function getMaxRuns(
+  method: ModuleMethod,
+  file: string,
+  maxTime: number
+): Promise<number> {
+  const numRuns = 1e3;
+  const start = Date.now();
+
+  await fuzzAnyMethod(method, file, maxTime / 10, numRuns);
+  const result = Math.floor(maxTime / ((Date.now() - start) / numRuns));
+
+  return Math.max(numRuns, result);
+}
+
+/**
+ * Fuzzes any method.
+ * @param method @type {ModuleMethod} 
+ * @param file @type {string} 
+ * @param maxTime @type {number} 
+ * @param maxRuns @type {number} 
+ * @returns @type {Result[]} 
+ */
+async function fuzzAnyMethod(
+  method: ModuleMethod,
+  file: string,
+  maxTime: number,
+  maxRuns: number
+): Promise<Result[]> {
+  Globals.methodCount++;
+  let fuzzResults: Result[] = [];
+  if (method.isStatic || method.className === undefined) {
+    if (method.isAsync) {
+      fuzzResults = await fuzzStaticAsync(file, method, maxTime, maxRuns, fuzzResults);
+    } else {
+      fuzzResults = fuzzStatic(file, method, maxTime, maxRuns, fuzzResults);
+    }
+  } else {
+    if (method.isAsync) {
+      fuzzResults = await fuzzMethodAsync(file, method, maxTime, maxRuns, fuzzResults);
+    } else {
+      fuzzResults = fuzzMethod(file, method, maxTime, maxRuns, fuzzResults);
+    }
+  }
+  return fuzzResults;
+}
+
 /**
  * Fuzz static methods.
- * @param filePath 
- * @param method 
- * @param [maxTime] 
- * @param [maxRuns] 
- * @param resultsOut 
- * @returns static 
+ * @param filePath @type {string} 
+ * @param method @type {ModuleMethod} 
+ * @param [maxTime] @type {number} 
+ * @param [maxRuns] @type {number} 
+ * @param resultsOut @type {Result[]} 
+ * @returns results @type {Result[]} 
  */
 function fuzzStatic(
   filePath: string,
@@ -297,12 +342,12 @@ function fuzzStatic(
 
 /**
  * Fuzz static methods async.
- * @param filePath 
- * @param method 
- * @param [maxTime] 
- * @param [maxRuns] 
- * @param resultsOut 
- * @returns static async 
+ * @param filePath @type {string} 
+ * @param method @type {ModuleMethod} 
+ * @param [maxTime] @type {number} 
+ * @param [maxRuns] @type {number} 
+ * @param resultsOut @type {Result[]} 
+ * @returns results @type {Result[]} 
  */
 async function fuzzStaticAsync(
   filePath: string,
@@ -359,12 +404,12 @@ async function fuzzStaticAsync(
 
 /**
  * Fuzz methods.
- * @param filePath 
- * @param method 
- * @param [maxTime] 
- * @param [maxRuns] 
- * @param resultsOut 
- * @returns method 
+ * @param filePath @type {string} 
+ * @param method @type {ModuleMethod} 
+ * @param [maxTime] @type {number} 
+ * @param [maxRuns] @type {number} 
+ * @param resultsOut @type {Result[]} 
+ * @returns results @type {Result[]} 
  */
 function fuzzMethod(
   filePath: string,
@@ -436,12 +481,12 @@ function fuzzMethod(
 
 /**
  * Fuzz methods async.
- * @param filePath 
- * @param method 
- * @param [maxTime] 
- * @param [maxRuns] 
- * @param resultsOut 
- * @returns method async 
+ * @param filePath @type {string} 
+ * @param method @type {ModuleMethod} 
+ * @param [maxTime] @type {number} 
+ * @param [maxRuns] @type {number} 
+ * @param resultsOut @type {Result[]} 
+ * @returns results @type {Result[]} 
  */
 async function fuzzMethodAsync(
   filePath: string,
@@ -513,9 +558,9 @@ async function fuzzMethodAsync(
 
 /**
  * Gets args.
- * @param method 
- * @param generator 
- * @returns args 
+ * @param method @type {ModuleMethod} 
+ * @param generator @type {GeneratorArg} 
+ * @returns args @type {any[]} 
  */
 function getArgs(method: ModuleMethod, generator: GeneratorArg): any[] {
   // Set the method to generate new arguments.
@@ -535,8 +580,8 @@ function getArgs(method: ModuleMethod, generator: GeneratorArg): any[] {
 
 /**
  * Loads instances after every method fuzz.
- * @param instances 
- * @param instancesOut 
+ * @param instances @type {any[]}
+ * @param instancesOut @type {any}
  */
 function loadInstances(
   instances: {
@@ -598,7 +643,7 @@ function loadInstances(
 
 /**
  * Gets instances.
- * @returns instances 
+ * @returns instances @type {any} 
  */
 export async function getInstances(): Promise<any> {
   return Globals.instances;

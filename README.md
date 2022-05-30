@@ -61,7 +61,6 @@ async Main () {
     projectFolder,
     threads,          // [Optional] Default = OS defined. 0 for in-process.
     maxTime,          // [Optional] Default = 10s.
-    maxRuns,          // [Optional] Default = 100e3.
     methods, classes, // [Optional] Default = all.
     files,            // [Optional] Default = all.
     source, dist,     // [Optional] Default = 'src' and 'dist'.
@@ -84,8 +83,7 @@ fast-fuzz
   -V, --version                 Output the version number
   -p, --threads <count>         The number of parallel threads.
                                   Default = OS defined. 0 for in-process.
-  -t, --maxTime <milliseconds>  The maximum time(ms) per function. Default = 10s.
-  -n, --maxRuns <milliseconds>  The maximum count of runs per function. Default = 100e3.
+  -t, --maxTime <milliseconds>  The maximum time(ms) per function. Default = 10 min.
   -m, --methods <RegExp>        A Regex expression to filter the methods to test.
   -c, --classes <RegExp>        A Regex expression to filter the classes to test.
   -f, --files <RegExp>          A Regex expression to filter the files to test.
@@ -187,9 +185,7 @@ and can thus be reused in other code.
 - All unrelated literals should be put at the beginning of the file.
 - Any methods that are not exported or within a class should not contain literals as these will be picked up by the earlier fuzzed method in the file. Another option is to put ineligible methods before the fuzzed ones.
 
-## TODO Priorities
-
-- Benchmarking of target functions to determine the best run time and number of tests.
+## TODO
 
 - Redundant runner for the args-results pairs.
 - Stuffing for nested type args by registration of generators and collection of values upon successful detection.

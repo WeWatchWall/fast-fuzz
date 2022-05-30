@@ -6,7 +6,7 @@ describe('Type generators with inherited values', function () {
   this.timeout(3 * 60 * 1e3);
 
   before(async () => {
-    global.fastFuzzResults = await init('Stuff', undefined, 3e3);
+    global.fastFuzzResults = await init('Stuff');
   });
 
   it('Loads and uses the fuzzInstances.json file.', async () => {

@@ -5,7 +5,7 @@ describe('Naked generators with simple values.', function () {
   this.timeout(3 * 60 * 1e3);
 
   before(async () => {
-    global.fastFuzzResults = await init('Naked', 30e3, 5e5);
+    global.fastFuzzResults = await init('Naked', 60e3);
   });
 
   it('Generates single buillt-in argument for non-decorated method.', async () => {

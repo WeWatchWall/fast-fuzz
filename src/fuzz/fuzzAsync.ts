@@ -57,7 +57,9 @@ export async function fuzzAsync(
 
     // Vary the number of runs based on target area.
     let runCount = 0;
+    let lastIndex = 0;
     const maxRunsMode: number = maxRunsModes.pop();
+    const maxRunsFailFast = Math.floor(0.682 * maxRunsMode);
     const maxRunsCheck: number = Math.pow(10, Math.max(1, Math.floor(Math.log10(maxRunsMode)) - 1));
     const start: number = Date.now();
     const runTime: number = maxTime * maxRunsMode / (MODE_SCALE * maxRuns);
@@ -74,7 +76,10 @@ export async function fuzzAsync(
     // eslint-disable-next-line
     while (true) {
       // Check the running stats for termination.
-      if (runCount % maxRunsCheck == 0) { isExpired = (Date.now() - start) > runTime; }
+      if (runCount % maxRunsCheck == 0) {
+        isExpired = (Date.now() - start) > runTime;
+        isExpired = isExpired || ((runCount - lastIndex) > maxRunsFailFast);
+      }
       if (isExpired || runCount > maxRunsMode) {
         break;
       }
@@ -123,6 +128,7 @@ export async function fuzzAsync(
         cleanupError(result);
       }
 
+      // Update results.
       resultsOut.push(new Result({
         id: resultCount++,
         modeId: mode,
@@ -135,11 +141,11 @@ export async function fuzzAsync(
         )
       }));
 
+      // Update accounting vars.
+      lastIndex = runCount;
       persistInstances();
     }
   }
-
-  resetCoverage(filePath);
 
   // Report the generated tests.
   return resultsOut;

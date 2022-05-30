@@ -23,5 +23,6 @@ export class Results {
   className?: string;
   namespaces: string[];
   file: string;
+  avgSpeed: number;
   results: Result[];
 }

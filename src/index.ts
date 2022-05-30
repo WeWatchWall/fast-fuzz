@@ -11,9 +11,8 @@ commander
   .addHelpCommand()
   .version(require('../../package').version)
   .option('-i, --input <path>', 'Path of the Typescript project.')
-  .option('-p, --threads <count>', 'The number of parallel threads. Default = OS defined. 0 for in-process.')
+  .option('-n, --threads <count>', 'The number of parallel threads. Default = OS defined. 0 for in-process.')
   .option('-t, --maxTime <milliseconds>', 'The maximum time(ms) per function. Actual value is multiplied by 4. Default = 10s.')
-  .option('-n, --maxRuns <count>', 'The maximum count of runs per function. Default = 100e3.')
   .option('-m, --methods <RegExp>', 'A Regex expression to filter the methods to test.')
   .option('-c, --classes <RegExp>', 'A Regex expression to filter the classes to test.')
   .option('-f, --files <RegExp>', 'A Regex expression to filter the files to test.')
@@ -36,10 +35,6 @@ async function Main() {
   if (commander.maxTime !== undefined) {
     commander.maxTime = Number.parseFloat(commander.maxTime);
     if (Number.isNaN(commander.maxTime)) { delete commander.maxTime; }
-  }
-  if (commander.maxRuns !== undefined) {
-    commander.maxRuns = Number.parseFloat(commander.maxRuns);
-    if (Number.isNaN(commander.maxRuns)) { delete commander.maxRuns; }
   }
   commander.quiet = commander.quiet !== undefined;
   commander.force = commander.force !== undefined;
@@ -67,7 +62,6 @@ async function Main() {
       commander.input,
       commander.threads,
       commander.maxTime,
-      commander.maxRuns,
       commander.methods,
       commander.classes,
       commander.files,
@@ -87,7 +81,6 @@ async function Main() {
     commander.input,
     commander.threads,
     commander.maxTime,
-    commander.maxRuns,
     commander.methods,
     commander.classes,
     commander.files,

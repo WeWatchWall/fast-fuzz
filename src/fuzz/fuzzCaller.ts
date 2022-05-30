@@ -51,7 +51,6 @@ async function init(
  * Fuzz the TS folder.
  * @param folder 
  * @param [maxTime] 
- * @param [maxRuns] 
  * @param [methodPattern]
  * @param [classPattern]
  * @param [src]
@@ -64,7 +63,6 @@ export async function fuzz(
   folder: string,
   threads?: number,
   maxTime = 1e4,
-  maxRuns = 1e5,
   methodPattern?: string,
   classPattern?: string,
   filePattern?: string,
@@ -104,7 +102,6 @@ export async function fuzz(
   if (threads === 0) {
     await fuzzSingle(
       maxTime,
-      maxRuns,
       methodPattern,
       classPattern,
       filePattern,
@@ -115,7 +112,6 @@ export async function fuzz(
   } else {
     await fuzzRunner.fuzz(
       maxTime,
-      maxRuns,
       methodPattern,
       classPattern,
       filePattern,

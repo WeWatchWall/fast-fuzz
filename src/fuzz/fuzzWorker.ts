@@ -46,15 +46,13 @@ export class FuzzWorker {
 
   /**
    * Fuzz the TS folder.
-   * @param [maxTime] 
-   * @param [maxRuns] 
+   * @param [maxTime]  
    * @param [methodPattern]
    * @param [classPattern]
    * @param [resultsOut] 
    */
   async fuzz(
     maxTime = 1e4,
-    maxRuns = 1e5,
     methodPattern?: string,
     classPattern?: string,
     filePattern?: string,
@@ -66,7 +64,6 @@ export class FuzzWorker {
       name: Call.fuzz,
       args: [
         maxTime,
-        maxRuns,
         methodPattern,
         classPattern,
         filePattern,

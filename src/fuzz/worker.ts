@@ -39,8 +39,7 @@ const job = multee.createHandler(
           callArgs.args[3],
           callArgs.args[4],
           callArgs.args[5],
-          callArgs.args[6],
-          callArgs.args[7]
+          callArgs.args[6]
         ));
       case Call.getInstances:
         return safeStringify(await getInstances());
