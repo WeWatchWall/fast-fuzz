@@ -37,7 +37,13 @@ export class FuzzRunner {
       this.pCount = pCount;
     }
 
-    for (let index = 0; index < this.pCount; index++) {
+    // Bookkeeping.
+    const finalPromise = new FlatPromise();
+    let workersCount = 0;
+
+    // Inner function that initializes a worker
+    //   and checks for the termination condition.
+    const initWorker = async () => {
       const worker = new FuzzWorker();
       this.workers.push(worker)
       await worker.init(
@@ -46,7 +52,26 @@ export class FuzzRunner {
         dist,
         instances
       );
+
+      await this.lock.acquireAsync();
+      try {
+        workersCount++;
+      } finally {
+        this.lock.release();
+      }
+
+      if (workersCount === this.pCount) {
+        finalPromise.resolve();
+      }
+    };
+
+    // Run the initialization function pCount times.
+    for (let index = 0; index < this.pCount; index++) {
+      initWorker();
     }
+
+    // Wait until all the threads are initialized.
+    await finalPromise.promise;
   }
 
   /**
