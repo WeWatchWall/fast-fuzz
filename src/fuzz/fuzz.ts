@@ -203,7 +203,7 @@ export async function fuzz(
       const maxRuns = await getMaxRuns(method, file, maxTime);
 
       // Run the appropiate static & async method
-      let fuzzResults: Result[] = await fuzzAnyMethod(method, file, maxTime, maxRuns);
+      const fuzzResults: Result[] = await fuzzAnyMethod(method, file, maxTime, maxRuns);
 
       // Output the method results.
       resultsOut.push({
