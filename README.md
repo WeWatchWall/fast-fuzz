@@ -81,7 +81,7 @@ fast-fuzz
 
   Optional:
   -V, --version                 Output the version number
-  -p, --threads <count>         The number of parallel threads.
+  -n, --threads <count>         The number of parallel threads.
                                   Default = OS defined. 0 for in-process.
   -t, --maxTime <milliseconds>  The maximum time(ms) per function. Default = 10 min.
   -m, --methods <RegExp>        A Regex expression to filter the methods to test.
