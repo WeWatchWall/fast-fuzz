@@ -6,7 +6,7 @@ const results: { [key: string]: any[] } = {};
 
 export async function init(
   name: string,
-  time = 10e3
+  time = 15e3
 ): Promise<any[]> {
   if (results[name] === undefined) {
     // Get rid of previous instances.
