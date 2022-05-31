@@ -165,8 +165,10 @@ and can thus be reused in other code.
 - Type arguments for arguments and properties not yet tested, e.g. ```function Foo(arg: Bar<Type>) {}```.
 - Function types for arguments and properties not yet tested, e.g. ```function Foo(arg: () => Type) {}```.
 - Types that are not included in the sources are probably going to cause problems.
+- Types that inherit one another should be in the same file (due to Intermock).
 - Export types for testing.
-- Types in different files should not be named the same. This might be fixed soon.
+- Doesn't support initialization of global state -- i.e. static properties.
+- Types in different files are recommended to not be named the same.
 - Type declarations with similar names should be ordered alphabetically, especially for similar names.
 - Imported types should be ordered alphabetically, especially for similar names.
 - Use static classes instead of namespaces to include their methods in the fuzzing.
@@ -187,6 +189,7 @@ and can thus be reused in other code.
 
 ## TODO
 
+- Aggregate inherited types in the same interface file.
 - Redundant runner for the args-results pairs.
 - Stuffing for nested type args by registration of generators and collection of values upon successful detection.
 - Option to run the constructors.
