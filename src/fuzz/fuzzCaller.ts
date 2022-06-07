@@ -1,5 +1,6 @@
 import fs from 'fs';
 import path from 'path';
+import os from 'os';
 
 import logUpdate from 'log-update';
 import safeStringify from 'fast-safe-stringify';
@@ -92,9 +93,11 @@ export async function fuzz(
     }
 
     // Log the method count and estimates.
+    let threadsOut = threads === undefined ? os.cpus().length : threads;
+    threadsOut = threadsOut === 0 ? 1 : threadsOut;
     logUpdate(`
       Method count: ${methodCount},
-      Estimated time (s): ${methodCount * maxTime / 1000}
+      Estimated time (s): ${(methodCount * maxTime / 1000) / threadsOut}
     `);
     logUpdate.done();
   }

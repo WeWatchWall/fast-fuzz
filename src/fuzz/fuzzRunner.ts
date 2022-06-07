@@ -1,4 +1,4 @@
-import os from 'os'
+import os from 'os';
 
 import AwaitLock from 'await-lock';
 import FlatPromise from 'flat-promise';

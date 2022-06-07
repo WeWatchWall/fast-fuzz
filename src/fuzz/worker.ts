@@ -19,6 +19,24 @@ const job = multee.createHandler(
   }): Promise<any> => {
     switch (callArgs.name) {
       case Call.init:
+        // Add JSON writer to all the errors.
+        if (!('toJSON' in Error.prototype)) {
+          Object.defineProperty(Error.prototype, 'toJSON', {
+            value: function () {
+              const alt = {};
+              alt['name'] = this.name;
+              
+              Object.getOwnPropertyNames(this).forEach((key) => {
+                alt[key] = this[key];
+              }, this);
+
+              return alt;
+            },
+            configurable: true,
+            writable: true
+          });
+        }
+
         return await init(
           callArgs.args[0],
           callArgs.args[1],
