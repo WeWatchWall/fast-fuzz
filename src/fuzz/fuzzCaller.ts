@@ -92,9 +92,12 @@ export async function fuzz(
       );
     }
 
-    // Log the method count and estimates.
+    // Calculate number of threads.
     let threadsOut = threads === undefined ? os.cpus().length : threads;
     threadsOut = threadsOut === 0 ? 1 : threadsOut;
+    threadsOut = Math.min(threadsOut, methodCount);
+  
+    // Log the method count and estimates
     logUpdate(`
       Method count: ${methodCount},
       Estimated time (s): ${(methodCount * maxTime / 1000) / threadsOut}
