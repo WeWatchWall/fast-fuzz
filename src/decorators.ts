@@ -91,10 +91,21 @@ export const propType = function (
       return;
     }
 
-    const generator: IGenerator =
-      GeneratorFactory.initType(type, dimension);
+    let methodId = 0;
+    let methodMode: Mode = Mode.Falsy;
+    let generator: IGenerator;
 
     Transform(() => {
+      if (
+        methodId !== Globals.methodCount ||
+        methodMode !== Globals.mode
+      ) {
+        generator = GeneratorFactory.initType(type, dimension);
+        
+        methodId = Globals.methodCount;
+        methodMode = Globals.mode;
+      }
+
       return generator.next();
     })(target, key);
   };
