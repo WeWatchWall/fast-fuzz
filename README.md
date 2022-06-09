@@ -180,6 +180,7 @@ and can thus be reused in other code.
 - Return types should not contain brackets ```( or )``` because they are used to detect method signatures.
 - Async methods are drastically slower if there is any sort of waiting.
 - Constructors are skipped for now, and objects are constructed from their properties.
+- Constructors should not throw errors such as validation.
 
 ### Literals
 
