@@ -1,7 +1,6 @@
-import { Transform } from 'class-transformer';
+import { Exclude, Transform } from 'class-transformer';
 import { Generator } from './generators/Generator';
 import { GeneratorFactory } from './generators/GeneratorFactory';
-import { GeneratorFalsy } from './generators/GeneratorFalsy';
 import { GeneratorType } from './generators/GeneratorType';
 
 import { IGenerator } from "./generators/IGenerator";
@@ -121,16 +120,8 @@ export const propType = function (
 ) => {
 
   if (!Globals.isTest) { return; }
-  
-  let generator: IGenerator;
 
-  Transform(() => {
-    if (generator === undefined) {
-      generator = new GeneratorFalsy();
-    }
-
-    return generator.next();
-  })(target, key);
+  Exclude()(target, key);
 };
 
 /**
