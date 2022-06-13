@@ -15,7 +15,7 @@ export class Skip {
   @fuzzSkipProp age: number;
   @fuzzProp("integer", 0, 5, 10) code: number;
 
-  private private_prop = 1;
+  private private_prop;
 
   @fuzzMethod
   public skip_instance_simple (
@@ -93,6 +93,7 @@ export class Skip {
     @fuzzSkipArg _age: number,
     @fuzzSkipArg _code: number
   ): boolean {
+    this.private_prop = 1;
 
     switch (this.private_prop === 1 && this.age) {
       case AGE_22:
