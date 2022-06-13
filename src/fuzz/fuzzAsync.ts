@@ -66,6 +66,7 @@ export async function fuzzAsync(
 
     // Store coverage pointer for the sake of performance.
     const fileCoverage = {
+      s: global.__coverage__[filePath].s,
       b: global.__coverage__[filePath].b,
       bT: global.__coverage__[filePath].bT
     };
@@ -86,6 +87,7 @@ export async function fuzzAsync(
       runCount++;
 
       const covBefore: {
+        s: any,
         b: any,
         bT: any
       } = copy(fileCoverage);
@@ -105,7 +107,10 @@ export async function fuzzAsync(
       // Hash difference between coverage.
       let covDiff: string = JSON.stringify({
         // f: diff(fileCoverageBefore?.f, fileCoverage.f),
-        // s: diff(fileCoverageBefore?.s, fileCoverage.s),
+        s: diff(
+          covBefore === null || covBefore === void 0 ? void 0 : covBefore.s,
+          fileCoverage.s
+        ),
         b: diff(
           covBefore === null || covBefore === void 0 ? void 0 : covBefore.b,
           fileCoverage.b
