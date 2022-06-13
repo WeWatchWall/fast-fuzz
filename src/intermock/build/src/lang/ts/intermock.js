@@ -48,7 +48,7 @@ function generatePrimitive(property, syntaxType, options, mockType) {
     }
     else {
         if (!default_type_to_mock_1.defaultTypeToMock[syntaxType]) {
-          syntaxType = typescript_1.SyntaxKind.AnyKeyword;
+          syntaxType = typescript_1.default.SyntaxKind.AnyKeyword;
         }
         return default_type_to_mock_1.defaultTypeToMock[syntaxType](isFixedMode);
     }
