@@ -20,7 +20,7 @@ const tslib_1 = require("tslib");
  * CHANGES:
  * - Added ability to generate multiple instances of the same
  *     interface at a time via the ```count``` argument.
- * - Prevent default error for unspecified types in processGenericPropertyType. 
+ * - Prevent default error for unspecified types in generatePrimitive(). 
  */
 const typescript_1 = tslib_1.__importDefault(require("typescript"));
 const constants_1 = require("../../lib/constants");
@@ -48,7 +48,7 @@ function generatePrimitive(property, syntaxType, options, mockType) {
     }
     else {
         if (!default_type_to_mock_1.defaultTypeToMock[syntaxType]) {
-            throw Error(`Unsupported Primitive type ${syntaxType}`);
+          syntaxType = typescript_1.SyntaxKind.AnyKeyword;
         }
         return default_type_to_mock_1.defaultTypeToMock[syntaxType](isFixedMode);
     }
@@ -103,9 +103,6 @@ function processGenericPropertyType(node, output, property, kind, mockType, opti
     if (node && node.type && typescript_1.default.isLiteralTypeNode(node.type)) {
         output[property] = getLiteralTypeValue(node.type);
         return;
-    }
-    if (mockType === '') {
-      return;
     }
     const mock = generatePrimitive(property, kind, options, mockType);
     output[property] = mock;
