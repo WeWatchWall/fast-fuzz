@@ -104,6 +104,11 @@ export function fuzzSync(
         result = error;
       }
 
+      // Dry run to hydrate the generators.
+      if (runCount === 1) {
+        continue;
+      }
+
       // Hash difference between coverage.
       let covDiff: string = JSON.stringify({
         // f: diff(fileCoverageBefore?.f, fileCoverage.f),
