@@ -121,6 +121,7 @@ export function fuzzSync(
         )
       });
       covDiff = covDiff.replace(/:\d+/g, ":1");
+      covDiff = covDiff.replace(/:null/g, ":1");
       const coverageHash: string = simpleHash(covDiff);
       
       // Track coverage history.
@@ -145,6 +146,12 @@ export function fuzzSync(
           (runCount * 1000 / (Date.now() - start)).toPrecision(4)
         )
       }));
+
+      // Clean up the global statements.
+      const globalStatements = global.__coverage__[filePath].s
+      for (const statementName in globalStatements) {
+        globalStatements[statementName] = 0;
+      }
 
       // Update accounting vars.
       lastIndex = runCount;

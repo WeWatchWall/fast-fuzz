@@ -9,6 +9,7 @@ export function cleanupError(error: any) {
 // Sets all the branch stats to 0.
 export function resetCoverage (fileName: string) {
   const fileCov: any = global.__coverage__[fileName];
+  fileCov.s = {};
   for (const key in fileCov.b) {
     const branchCov: any = fileCov.b[key];
     for (const index in branchCov) {
