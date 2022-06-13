@@ -17,8 +17,10 @@ const tslib_1 = require("tslib");
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * 
- * CHANGES: Added ability to generate multiple instances of the same
- * interface at a time via the ```count``` argument.
+ * CHANGES:
+ * - Added ability to generate multiple instances of the same
+ *     interface at a time via the ```count``` argument.
+ * - Prevent default error for unspecified types in processGenericPropertyType. 
  */
 const typescript_1 = tslib_1.__importDefault(require("typescript"));
 const constants_1 = require("../../lib/constants");
@@ -101,6 +103,9 @@ function processGenericPropertyType(node, output, property, kind, mockType, opti
     if (node && node.type && typescript_1.default.isLiteralTypeNode(node.type)) {
         output[property] = getLiteralTypeValue(node.type);
         return;
+    }
+    if (mockType === '') {
+      return;
     }
     const mock = generatePrimitive(property, kind, options, mockType);
     output[property] = mock;
