@@ -86,15 +86,15 @@ export async function fuzzAsync(
       }
       runCount++;
 
+      const args: any[] = getArgs();
+      let isError = false;
+      let result: any;
+
       const covBefore: {
         s: any,
         b: any,
         bT: any
       } = copy(fileCoverage);
-
-      const args: any[] = getArgs();
-      let isError = false;
-      let result: any;
 
       // Run the function and report the error 
       try {
@@ -102,11 +102,6 @@ export async function fuzzAsync(
       } catch (error: any) {
         isError = true;
         result = error;
-      }
-
-      // Dry run to hydrate the generators.
-      if (runCount === 1) {
-        continue;
       }
 
       // Hash difference between coverage.

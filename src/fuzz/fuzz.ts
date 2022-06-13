@@ -438,8 +438,7 @@ function fuzzMethod(
 
   const results = fuzzSync(
     method,
-    () => getArgs(method, argGenerator),
-    (args: any[]) => {
+    () => {
       // debugger;
       // const instance = generator.next();
       // const func = instance[method.name];
@@ -450,6 +449,9 @@ function fuzzMethod(
       }
 
       method.test.instance = generator.next();
+      return getArgs(method, argGenerator);
+    },
+    (args: any[]) => {      
       return method.test.instance[method.name](...args);
     },
     filePath,
@@ -515,8 +517,7 @@ async function fuzzMethodAsync(
 
   const results = await fuzzAsync(
     method,
-    () => getArgs(method, argGenerator),
-    async (args: any[]) => {
+    () => {
       // debugger;
       // const instance = generator.next();
       // const func = instance[method.name];
@@ -527,6 +528,9 @@ async function fuzzMethodAsync(
       }
 
       method.test.instance = generator.next();
+      return getArgs(method, argGenerator);
+    },
+    async (args: any[]) => {
       return await method.test.instance[method.name](...args);
     },
     filePath,
