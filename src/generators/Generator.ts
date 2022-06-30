@@ -201,8 +201,6 @@ export abstract class Generator implements IGenerator {
       }
 
       let count = 0;
-      // eslint-disable-next-line
-      // @ts-ignore — `Type instantiation is excessively deep...`
       const result = makeMatrix(dSizes, () => { 
         count++;
         return generator.values.pop();
