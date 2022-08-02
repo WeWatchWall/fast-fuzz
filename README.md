@@ -191,7 +191,7 @@ and can thus be reused in other code.
 ## TODO
 
 - Aggregate inherited types in the same interface file.
-- Redundant runner for the args-results pairs.
+- Add a redundant runner for the args-results pairs.
 - Stuffing for nested type args by registration of generators and collection of values upon successful detection.
 - Option to run the constructors.
 - Get rid of the Intermock dependency and allow same type names across files.
