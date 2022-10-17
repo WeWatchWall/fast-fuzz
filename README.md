@@ -10,11 +10,12 @@ The [Mocha](https://mochajs.org/) testing framework is recommended. You can use 
 ## Getting Started
 
 ```bash
-npm install fast-fuzz
-npm install --save-dev reflect-metadata
+npm install fast-fuzz-shim
+npm install --save-dev reflect-metadata fast-fuzz
 ```
 
-Fast-Fuzz installs in the ```dependencies``` and not ```devDependencies``` because it relies on decorators.
+The [fast-fuzz-shim](https://www.npmjs.com/package/fast-fuzz-shim) package is
+required to be installed in the ```dependencies``` because Fast-Fuzz relies on decorators.
 Fast-Fuzz cannot be installed globally with ```npm i -g fast-fuzz``` because it depends on shared state to track the decorators.
 
 The project requires ```reflect-metadata``` in the fuzzed project. Further, the target also needs:

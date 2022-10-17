@@ -1,6 +1,6 @@
 {
   "name": "fast-fuzz",
-  "version": "5.0.17",
+  "version": "5.1.0",
   "description": "Test case fuzzer with branch coverage guidance.",
   "main": "./dist/src/fast-fuzz.js",
   "types": "./dist/src/fast-fuzz.d.ts",
@@ -42,7 +42,6 @@
     "eslint": "^7.32.0",
     "latest-version": "^6.0.0",
     "mocha": "^9.1.2",
-    "objectmodel": "^4.3.0",
     "ts-mocha": "^9.0.2",
     "typescript": "^4.6.3"
   },
@@ -66,6 +65,7 @@
     "tslib": "^1.10.0"
   },
   "peerDependencies": {
+    "fast-fuzz-shim": "^1.X.X",
     "reflect-metadata": "^0.1.X",
     "typescript": "^4.X.X"
   }

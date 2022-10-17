@@ -186,7 +186,7 @@ export const argType = function (
  * Decorator for skipping method arguments.
  * @returns arg Type = `ParameterDecorator`.
  */
-  export const skipArg: ParameterDecorator = (
+export const skipArg: ParameterDecorator = (
   target: any,
   key: string | symbol,
   index: number
@@ -204,8 +204,7 @@ export const argType = function (
  * Decorator for methods.
  * @returns method Type = `MethodDecorator`.
  */
-export const method: MethodDecorator =
-(
+export const method: MethodDecorator = (
   target: any,
   key: string | symbol,
   descriptor: PropertyDescriptor
@@ -279,17 +278,16 @@ export const method: MethodDecorator =
  * Decorator for skipping methods in tests.
  * @returns method Type = `MethodDecorator`.
  */
-  export const skipMethod: MethodDecorator =
-  (
-    target: any,
-    key: string | symbol,
-    descriptor: PropertyDescriptor
-  ) => {
+export const skipMethod: MethodDecorator = (
+  target: any,
+  key: string | symbol,
+  descriptor: PropertyDescriptor
+) => {
 
-    if (!Globals.isTest) { return descriptor; }
+  if (!Globals.isTest) { return descriptor; }
 
-    // Delete the method from the central repo.
-    Decorators.skipMethod(target, key);
+  // Delete the method from the central repo.
+  Decorators.skipMethod(target, key);
 
-    return descriptor;
-  };
+  return descriptor;
+};

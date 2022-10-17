@@ -216,8 +216,9 @@ export class Code {
           moduleMethods[currentIndex + 1].name !== (<ts.FunctionDeclaration>node).name.escapedText;
         isNew = !isSkipNested;
       } else if (node.kind === ts.SyntaxKind.MethodDeclaration) {
-        // TODO: refactor with detect method type from tplant
-        const isSkipModifier: ts.Modifier = node.modifiers?.find((modifier: ts.Modifier) => 
+        // TODO: refactor with detect method type from tplant.
+        const modifiers = ts.canHaveModifiers(node) ? ts.getModifiers(node) : undefined;
+        const isSkipModifier = modifiers?.find((modifier: ts.Modifier) =>
           [
             ts.SyntaxKind.AbstractKeyword,
             ts.SyntaxKind.PrivateKeyword,
