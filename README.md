@@ -55,7 +55,7 @@ There are two ways to invoke the fast-fuzz package:
 - Through code:
 
 ```typescript
-import { fuzz } from 'fast-fuzz';
+import { fuzz } from 'fast-fuzz-shim';
 
 async Main () {
   await fuzz(
@@ -100,7 +100,7 @@ The target code usually needs to be decorated with:
 - Property decorators. This is how objects are created!
 
 ```typescript
-import { fuzzProp } from 'fast-fuzz';
+import { fuzzProp } from 'fast-fuzz-shim';
 
 export class Foo {
   
@@ -122,7 +122,7 @@ Properties can be set to ```undefined``` or ```null``` using the ```@fuzzSkipPro
 - Method and argument decorators :
 
 ```typescript
-import { fuzzMethod, fuzzArg } from 'fast-fuzz';
+import { fuzzMethod, fuzzArg } from 'fast-fuzz-shim';
 
 export class Foo {
   
