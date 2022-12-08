@@ -189,8 +189,9 @@ and can thus be reused in other code.
 - All unrelated literals should be put at the beginning of the file.
 - Any methods that are not exported or within a class should not contain literals as these will be picked up by the earlier fuzzed method in the file. Another option is to put ineligible methods before the fuzzed ones.
 
-## TODO
+## Roadmap
 
+- Union types and arguments for multiple possible classes.
 - Aggregate inherited types in the same interface file.
 - Add a redundant runner for the args-results pairs.
 - Stuffing for nested type args by registration of generators and collection of values upon successful detection.
