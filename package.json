@@ -1,6 +1,6 @@
 {
   "name": "fast-fuzz",
-  "version": "5.1.4",
+  "version": "5.1.5",
   "description": "Test case fuzzer with branch coverage guidance.",
   "main": "./dist/src/fast-fuzz.js",
   "types": "./dist/src/fast-fuzz.d.ts",
@@ -61,7 +61,7 @@
     "make-matrix": "^2.1.5",
     "multee": "^0.2.4",
     "reflect-metadata": "^0.1.13",
-    "tplant": "github:WeWatchWall/tplant",
+    "tplant": "https://github.com/WeWatchWall/fast-fuzz/raw/main/tplant-3.1.2.tgz",
     "tslib": "^2.5.0"
   },
   "peerDependencies": {
